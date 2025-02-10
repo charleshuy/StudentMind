@@ -6,4 +6,23 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StudentMind.Contract.UseCases\StudentMind.Contract.UseCases.csproj" />
+    <ProjectReference Include="..\StudentMind.Core.Contract\StudentMind.Core.Contract.csproj" />
+    <ProjectReference Include="..\StudentMind.Cor\StudentMind.Core.csproj" />
+    <ProjectReference Include="..\StudentMind.Infracstructure\StudentMind.Infracstructure.csproj" />
+    <ProjectReference Include="..\StudentMind.Services\StudentMind.Services.csproj" />
+  </ItemGroup>
+
 </Project>

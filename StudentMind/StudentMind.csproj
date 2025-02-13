@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StudentMind.Contract.UseCases\StudentMind.Contract.UseCases.csproj" />
-    <ProjectReference Include="..\StudentMind.Core.Contract\StudentMind.Core.Contract.csproj" />
     <ProjectReference Include="..\StudentMind.Cor\StudentMind.Core.csproj" />
     <ProjectReference Include="..\StudentMind.Infracstructure\StudentMind.Infracstructure.csproj" />
     <ProjectReference Include="..\StudentMind.Services\StudentMind.Services.csproj" />

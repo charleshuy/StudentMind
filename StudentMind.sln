@@ -22,11 +22,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentMind.Core", "Student
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentMind.Contract.UseCases", "StudentMind.Contract.UseCases\StudentMind.Contract.UseCases.csproj", "{A17244BD-8200-400F-9A83-FBD0D512C981}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentMind.Services", "StudentMind.Services\StudentMind.Services.csproj", "{2DEAFF67-C897-464C-940E-849D7187AFDA}"
-	ProjectSection(ProjectDependencies) = postProject
-		{A17244BD-8200-400F-9A83-FBD0D512C981} = {A17244BD-8200-400F-9A83-FBD0D512C981}
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,10 +44,6 @@ Global
 		{A17244BD-8200-400F-9A83-FBD0D512C981}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A17244BD-8200-400F-9A83-FBD0D512C981}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A17244BD-8200-400F-9A83-FBD0D512C981}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2DEAFF67-C897-464C-940E-849D7187AFDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DEAFF67-C897-464C-940E-849D7187AFDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DEAFF67-C897-464C-940E-849D7187AFDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DEAFF67-C897-464C-940E-849D7187AFDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +53,5 @@ Global
 		{470FFB11-6CDD-48F9-B8F4-AACA04C4A30C} = {4B395406-8B4A-4BBB-8156-352E8CBB5AFC}
 		{6ACF8874-A8DD-4074-90CF-22750B892572} = {E21D3D84-6602-476D-B2EC-0EF4F0374758}
 		{A17244BD-8200-400F-9A83-FBD0D512C981} = {47208D52-4B05-46E4-B05B-15B4053B1856}
-		{2DEAFF67-C897-464C-940E-849D7187AFDA} = {47208D52-4B05-46E4-B05B-15B4053B1856}
 	EndGlobalSection
 EndGlobal

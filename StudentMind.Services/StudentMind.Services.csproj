@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\StudentMind.Contract.UseCases\StudentMind.Contract.UseCases.csproj" />
+  </ItemGroup>
+
 </Project>

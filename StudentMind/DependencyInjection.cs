@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using StudentMind.Infracstructure.Context;
+using StudentMind.Infrastructure.Context;
 
 namespace StudentMind
 {

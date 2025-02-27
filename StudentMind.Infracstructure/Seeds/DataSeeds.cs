@@ -16,6 +16,7 @@ namespace StudentMind.Infracstructure.Seeds
 
             await SeedRoles(context);
             await SeedUsers(context);
+            await SeedAppointments(context);
             await SeedSurveyTypes(context);
             await SeedSurveys(context);
             await SeedQuestions(context);
@@ -39,14 +40,35 @@ namespace StudentMind.Infracstructure.Seeds
         {
             if (!context.Users.Any())
             {
-                var adminRole = context.Roles.FirstOrDefault(r => r.RoleName == "Admin");
-                var userRole = context.Roles.FirstOrDefault(r => r.RoleName == "User");
+                var adminRole = await context.Roles.FirstOrDefaultAsync(r => r.RoleName == "Admin");
+                var userRole = await context.Roles.FirstOrDefaultAsync(r => r.RoleName == "User");
+                var psychologistRole = await context.Roles.FirstOrDefaultAsync(r => r.RoleName == "Psychologist");
 
-                if (adminRole != null && userRole != null)
+                if (adminRole != null && userRole != null && psychologistRole != null)
                 {
                     context.Users.AddRange(
-                        new User { FullName = "Admin User", RoleId = adminRole.Id },
-                        new User { FullName = "Regular User", RoleId = userRole.Id }
+                        new User { FullName = "Admin User", RoleId = adminRole.Id, Email = "admin@mind.com", Username = "admin123" },
+                        new User { FullName = "Regular User", RoleId = userRole.Id, Email = "user@mind.com", Username = "user123" },
+                        new User { FullName = "Dr. John Smith", RoleId = psychologistRole.Id, Email = "john.smith@mind.com", Username = "drjohn" },
+                        new User { FullName = "Dr. Jane Doe", RoleId = psychologistRole.Id, Email = "jane.doe@mind.com", Username = "drjane" }
+                    );
+                    await context.SaveChangesAsync();
+                }
+            }
+        }
+
+        private static async Task SeedAppointments(DatabaseContext context)
+        {
+            if (!context.Appointments.Any())
+            {
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Username == "user123");
+                var psychologist = await context.Users.FirstOrDefaultAsync(u => u.Username == "drjohn");
+
+                if (user != null && psychologist != null)
+                {
+                    context.Appointments.AddRange(
+                        new Appointment { UserId = user.Id, PsychologistId = psychologist.Id },
+                        new Appointment { UserId = user.Id, PsychologistId = psychologist.Id }
                     );
                     await context.SaveChangesAsync();
                 }

@@ -8,6 +8,5 @@ namespace StudentMind.Core.Entity
 
         // Navigation properties
         public virtual ICollection<User>? Users { get; set; } // Navigation property, one role has many users
-
     }
 }

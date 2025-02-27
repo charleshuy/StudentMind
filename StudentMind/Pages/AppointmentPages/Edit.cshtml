@@ -1,0 +1,70 @@
+﻿@page
+@model StudentMind.Pages.AppointmentPage.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Appointment</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Appointment.PsychologistId" class="control-label"></label>
+                <select asp-for="Appointment.PsychologistId" class="form-control" asp-items="ViewBag.PsychologistId"></select>
+                <span asp-validation-for="Appointment.PsychologistId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Appointment.UserId" class="control-label"></label>
+                <select asp-for="Appointment.UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                <span asp-validation-for="Appointment.UserId" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Appointment.Id" />
+            <div class="form-group">
+                <label asp-for="Appointment.CreatedBy" class="control-label"></label>
+                <input asp-for="Appointment.CreatedBy" class="form-control" />
+                <span asp-validation-for="Appointment.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Appointment.LastUpdatedBy" class="control-label"></label>
+                <input asp-for="Appointment.LastUpdatedBy" class="form-control" />
+                <span asp-validation-for="Appointment.LastUpdatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Appointment.DeletedBy" class="control-label"></label>
+                <input asp-for="Appointment.DeletedBy" class="form-control" />
+                <span asp-validation-for="Appointment.DeletedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Appointment.CreatedTime" class="control-label"></label>
+                <input asp-for="Appointment.CreatedTime" class="form-control" />
+                <span asp-validation-for="Appointment.CreatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Appointment.LastUpdatedTime" class="control-label"></label>
+                <input asp-for="Appointment.LastUpdatedTime" class="form-control" />
+                <span asp-validation-for="Appointment.LastUpdatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Appointment.DeletedTime" class="control-label"></label>
+                <input asp-for="Appointment.DeletedTime" class="form-control" />
+                <span asp-validation-for="Appointment.DeletedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

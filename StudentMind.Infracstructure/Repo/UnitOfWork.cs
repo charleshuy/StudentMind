@@ -2,15 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Base;
 using StudentMind.Infracstructure.Interfaces;
+using StudentMind.Infrastructure.Context;
 
 namespace StudentMind.Infracstructure.Repo
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly DbContext _context;
+        private readonly DatabaseContext _context;
         private bool disposed = false;
 
-        public UnitOfWork(DbContext context)
+        public UnitOfWork(DatabaseContext context)
         {
             _context = context;
         }

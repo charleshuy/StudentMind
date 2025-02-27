@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infracstructure.Interfaces;
@@ -6,6 +7,7 @@ using StudentMind.Infracstructure.Interfaces;
 
 namespace StudentMind.Pages.UsersPages
 {
+    [Authorize(Roles = "Admin")]
     public class IndexModel : PageModel
     {
         private readonly IUnitOfWork _unitOfWork;

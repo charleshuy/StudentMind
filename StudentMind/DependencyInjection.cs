@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StudentMind.Infracstructure;
 using StudentMind.Infrastructure.Context;
+using System.Security.Claims;
 using System.Text;
 
 namespace StudentMind
@@ -49,31 +50,49 @@ namespace StudentMind
                     {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,  // Removed Issuer validation
-                        ValidateAudience = false, // Removed Audience validation
+                        ValidateIssuer = false,  // No need to validate issuer
+                        ValidateAudience = false, // No need to validate audience
                         ValidateLifetime = true,
-                        ClockSkew = TimeSpan.Zero // Optional: Adjust for token expiry precision
+                        ClockSkew = TimeSpan.Zero // Reduce token expiration delays
+                    };
+
+                    // Extract JWT from cookies if not in headers
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            if (context.Request.Cookies.ContainsKey("AuthToken"))
+                            {
+                                context.Token = context.Request.Cookies["AuthToken"];
+                            }
+                            return Task.CompletedTask;
+                        },
+                        OnTokenValidated = context =>
+                        {
+                            var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
+                            if (claimsIdentity == null) return Task.CompletedTask;
+
+                            // Ensure ASP.NET Core recognizes "role" claim as ClaimTypes.Role
+                            var roleClaim = claimsIdentity.FindFirst("role");
+                            if (roleClaim != null)
+                            {
+                                claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roleClaim.Value));
+                            }
+
+                            return Task.CompletedTask;
+                        }
                     };
                 });
 
-            // Add role-based authorization
+            // ✅ Use role-based authorization policies
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
                 options.AddPolicy("RequireManagerRole", policy => policy.RequireRole("Manager"));
                 options.AddPolicy("RequireUserRole", policy => policy.RequireRole("User"));
             });
-
-            //// Apply authentication globally to all controllers
-            //services.Configure<Microsoft.AspNetCore.Mvc.MvcOptions>(options =>
-            //{
-            //    var policy = new AuthorizationPolicyBuilder()
-            //        .RequireAuthenticatedUser()
-            //        .Build();
-            //    options.Filters.Add(new AuthorizeFilter(policy));
-            //});
-
         }
+
 
         public static void AddServices(this IServiceCollection services)
         {

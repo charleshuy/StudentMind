@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentMind.Core.Entity;
+using StudentMind.Infrastructure.Context;
 
-namespace StudentMind.Pages.UsersPages
+namespace StudentMind.Pages.SurveyPages
 {
     public class CreateModel : PageModel
     {
@@ -16,12 +21,12 @@ namespace StudentMind.Pages.UsersPages
 
         public IActionResult OnGet()
         {
-        ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id");
+        ViewData["TypeId"] = new SelectList(_context.SurveyTypes, "Id", "Id");
             return Page();
         }
 
         [BindProperty]
-        public User User { get; set; } = default!;
+        public Survey Survey { get; set; } = default!;
 
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
@@ -31,7 +36,7 @@ namespace StudentMind.Pages.UsersPages
                 return Page();
             }
 
-            _context.Users.Add(User);
+            _context.Surveys.Add(Survey);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

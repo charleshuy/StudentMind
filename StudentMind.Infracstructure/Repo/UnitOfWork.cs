@@ -1,12 +1,11 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Base;
 using StudentMind.Infracstructure.Interfaces;
 using StudentMind.Infrastructure.Context;
 
 namespace StudentMind.Infracstructure.Repo
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IAsyncDisposable
     {
         private readonly DatabaseContext _context;
         private bool disposed = false;
@@ -25,10 +24,12 @@ namespace StudentMind.Infracstructure.Repo
         {
             await _context.SaveChangesAsync();
         }
+
         public void Save()
         {
             _context.SaveChanges();
         }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposed)
@@ -40,11 +41,24 @@ namespace StudentMind.Infracstructure.Repo
             }
             disposed = true;
         }
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (!disposed)
+            {
+                disposed = true;
+                await _context.DisposeAsync();
+            }
+
+            GC.SuppressFinalize(this);
+        }
+
         public void BeginTransaction()
         {
             _context.Database.BeginTransaction();
@@ -59,12 +73,11 @@ namespace StudentMind.Infracstructure.Repo
         {
             _context.Database.RollbackTransaction();
         }
+
         public bool IsValid<T>(string id) where T : BaseEntity
         {
             var entity = GetRepository<T>().GetById(id);
-
-            return (entity is not null && entity.DeletedBy is null);
-
+            return entity is not null && entity.DeletedBy is null;
         }
     }
 }

@@ -1,0 +1,80 @@
+﻿@page "/users/details"
+@using Microsoft.EntityFrameworkCore
+@using StudentMind.Core.Entity
+@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>User</h2>
+    <hr />
+    @if (user is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">FullName</dt>
+            <dd class="col-sm-10">@user.FullName</dd>
+            <dt class="col-sm-2">PhoneNumber</dt>
+            <dd class="col-sm-10">@user.PhoneNumber</dd>
+            <dt class="col-sm-2">Gender</dt>
+            <dd class="col-sm-10">@user.Gender</dd>
+            <dt class="col-sm-2">Email</dt>
+            <dd class="col-sm-10">@user.Email</dd>
+            <dt class="col-sm-2">DateOfBirth</dt>
+            <dd class="col-sm-10">@user.DateOfBirth</dd>
+            <dt class="col-sm-2">RoleId</dt>
+            <dd class="col-sm-10">@user.RoleId</dd>
+            <dt class="col-sm-2">VerificationToken</dt>
+            <dd class="col-sm-10">@user.VerificationToken</dd>
+            <dt class="col-sm-2">PasswordResetToken</dt>
+            <dd class="col-sm-10">@user.PasswordResetToken</dd>
+            <dt class="col-sm-2">ResetTokenExpiry</dt>
+            <dd class="col-sm-10">@user.ResetTokenExpiry</dd>
+            <dt class="col-sm-2">Username</dt>
+            <dd class="col-sm-10">@user.Username</dd>
+            <dt class="col-sm-2">Password</dt>
+            <dd class="col-sm-10">@user.Password</dd>
+            <dt class="col-sm-2">Status</dt>
+            <dd class="col-sm-10">@user.Status</dd>
+            <dt class="col-sm-2">CreatedBy</dt>
+            <dd class="col-sm-10">@user.CreatedBy</dd>
+            <dt class="col-sm-2">LastUpdatedBy</dt>
+            <dd class="col-sm-10">@user.LastUpdatedBy</dd>
+            <dt class="col-sm-2">DeletedBy</dt>
+            <dd class="col-sm-10">@user.DeletedBy</dd>
+            <dt class="col-sm-2">CreatedTime</dt>
+            <dd class="col-sm-10">@user.CreatedTime</dd>
+            <dt class="col-sm-2">LastUpdatedTime</dt>
+            <dd class="col-sm-10">@user.LastUpdatedTime</dd>
+            <dt class="col-sm-2">DeletedTime</dt>
+            <dd class="col-sm-10">@user.DeletedTime</dd>
+        </dl>
+        <div>
+            <a href="@($"/users/edit?id={user.Id}")">Edit</a> |
+            <a href="@($"/users")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private User? user;
+
+    [SupplyParameterFromQuery]
+    private string Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        user = await context.Users.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (user is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

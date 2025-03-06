@@ -11,6 +11,7 @@ namespace StudentMind.Infracstructure.Interfaces
         void BeginTransaction();
         void CommitTransaction();
         void RollBack();
+        ValueTask DisposeAsync();
 
     }
 }

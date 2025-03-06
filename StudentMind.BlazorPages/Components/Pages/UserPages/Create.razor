@@ -1,0 +1,129 @@
+﻿@page "/users/create"
+@using Microsoft.EntityFrameworkCore
+@using StudentMind.Core.Entity
+@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>User</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="User" OnValidSubmit="AddUser" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="fullname" class="form-label">FullName:</label> 
+                <InputText id="fullname" @bind-Value="User.FullName" class="form-control" /> 
+                <ValidationMessage For="() => User.FullName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="phonenumber" class="form-label">PhoneNumber:</label> 
+                <InputText id="phonenumber" @bind-Value="User.PhoneNumber" class="form-control" /> 
+                <ValidationMessage For="() => User.PhoneNumber" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="gender" class="form-label">Gender:</label> 
+                <InputText id="gender" @bind-Value="User.Gender" class="form-control" /> 
+                <ValidationMessage For="() => User.Gender" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label> 
+                <InputText id="email" @bind-Value="User.Email" class="form-control" /> 
+                <ValidationMessage For="() => User.Email" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="dateofbirth" class="form-label">DateOfBirth:</label> 
+                <InputDate id="dateofbirth" @bind-Value="User.DateOfBirth" class="form-control" /> 
+                <ValidationMessage For="() => User.DateOfBirth" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="roleid" class="form-label">RoleId:</label> 
+                <InputText id="roleid" @bind-Value="User.RoleId" class="form-control" /> 
+                <ValidationMessage For="() => User.RoleId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="verificationtoken" class="form-label">VerificationToken:</label> 
+                <InputText id="verificationtoken" @bind-Value="User.VerificationToken" class="form-control" /> 
+                <ValidationMessage For="() => User.VerificationToken" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="passwordresettoken" class="form-label">PasswordResetToken:</label> 
+                <InputText id="passwordresettoken" @bind-Value="User.PasswordResetToken" class="form-control" /> 
+                <ValidationMessage For="() => User.PasswordResetToken" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="resettokenexpiry" class="form-label">ResetTokenExpiry:</label> 
+                <InputDate id="resettokenexpiry" @bind-Value="User.ResetTokenExpiry" class="form-control" /> 
+                <ValidationMessage For="() => User.ResetTokenExpiry" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="username" class="form-label">Username:</label> 
+                <InputText id="username" @bind-Value="User.Username" class="form-control" /> 
+                <ValidationMessage For="() => User.Username" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="password" class="form-label">Password:</label> 
+                <InputText id="password" @bind-Value="User.Password" class="form-control" /> 
+                <ValidationMessage For="() => User.Password" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="status" class="form-label">Status:</label> 
+                <InputCheckbox id="status" @bind-Value="User.Status" class="form-check-input" /> 
+                <ValidationMessage For="() => User.Status" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="createdby" class="form-label">CreatedBy:</label> 
+                <InputText id="createdby" @bind-Value="User.CreatedBy" class="form-control" /> 
+                <ValidationMessage For="() => User.CreatedBy" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="lastupdatedby" class="form-label">LastUpdatedBy:</label> 
+                <InputText id="lastupdatedby" @bind-Value="User.LastUpdatedBy" class="form-control" /> 
+                <ValidationMessage For="() => User.LastUpdatedBy" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="deletedby" class="form-label">DeletedBy:</label> 
+                <InputText id="deletedby" @bind-Value="User.DeletedBy" class="form-control" /> 
+                <ValidationMessage For="() => User.DeletedBy" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="createdtime" class="form-label">CreatedTime:</label> 
+                <InputDate id="createdtime" @bind-Value="User.CreatedTime" class="form-control" /> 
+                <ValidationMessage For="() => User.CreatedTime" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="lastupdatedtime" class="form-label">LastUpdatedTime:</label> 
+                <InputDate id="lastupdatedtime" @bind-Value="User.LastUpdatedTime" class="form-control" /> 
+                <ValidationMessage For="() => User.LastUpdatedTime" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="deletedtime" class="form-label">DeletedTime:</label> 
+                <InputDate id="deletedtime" @bind-Value="User.DeletedTime" class="form-control" /> 
+                <ValidationMessage For="() => User.DeletedTime" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/users">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private User User { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddUser()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Users.Add(User);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/users");
+    }
+}

@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /StudentMind/appsettings.json
 /StudentMind/appsettings.Development.json
+/StudentMind.BlazorPages/appsettings.json
+/StudentMind.BlazorPages/appsettings.Development.json

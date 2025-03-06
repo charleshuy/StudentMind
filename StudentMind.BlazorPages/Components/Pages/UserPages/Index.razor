@@ -1,0 +1,53 @@
+﻿@page "/users"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using StudentMind.Core.Entity
+@using StudentMind.Infracstructure.Interfaces
+@using StudentMind.Infrastructure.Context
+@implements IAsyncDisposable
+@inject IUnitOfWork UnitOfWork
+
+<PageTitle>Users</PageTitle>
+
+<h1>User List</h1>
+
+<p>
+    <a href="users/create">Create New</a>
+</p>
+
+@if (users is not null)
+{
+    <QuickGrid Class="table" Items="users">
+        <PropertyColumn Property="user => user.FullName" Title="Full Name" />
+        <PropertyColumn Property="user => user.PhoneNumber" Title="Phone" />
+        <PropertyColumn Property="user => user.Gender" Title="Gender" />
+        <PropertyColumn Property="user => user.Email" Title="Email" />
+        <PropertyColumn Property="user => user.DateOfBirth" Title="DOB" />
+        <PropertyColumn Property="user => user.Role.RoleName" Title="Rol" />
+       
+
+        <TemplateColumn Context="user">
+            <a href="@($"users/edit?id={user.Id}")">Edit</a> |
+            <a href="@($"users/details?id={user.Id}")">Details</a> |
+            <a href="@($"users/delete?id={user.Id}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private IQueryable<User> users = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userRepository = UnitOfWork.GetRepository<User>();
+        users = userRepository.Entities.Include(u => u.Role);
+    }
+
+
+    public async ValueTask DisposeAsync() => await UnitOfWork.DisposeAsync();
+}
+

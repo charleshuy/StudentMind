@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using StudentMind.Infracstructure.Seeds;
 
 namespace StudentMind

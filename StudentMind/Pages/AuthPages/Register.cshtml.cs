@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
-using StudentMind.Infracstructure.Interfaces;
+using StudentMind.Core.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace StudentMind.Pages.AuthPages

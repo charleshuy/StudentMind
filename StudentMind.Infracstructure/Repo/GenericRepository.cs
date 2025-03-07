@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StudentMind.Infracstructure.Interfaces;
+using StudentMind.Core.Interfaces;
 using StudentMind.Infracstructure.Paggings;
 using System.Linq.Expressions;
 

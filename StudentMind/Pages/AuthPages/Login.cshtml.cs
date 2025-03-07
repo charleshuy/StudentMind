@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.IdentityModel.Tokens;
 using StudentMind.Core.Entity;
-using StudentMind.Infracstructure.Interfaces;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
+using StudentMind.Core.Interfaces;
 
 public class LoginModel : PageModel
 {

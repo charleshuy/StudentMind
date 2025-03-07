@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StudentMind.Infracstructure\StudentMind.Infracstructure.csproj" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\StudentMind.Cor\StudentMind.Core.csproj" />
   </ItemGroup>
 
 </Project>

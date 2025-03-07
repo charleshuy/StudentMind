@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Base;
-using StudentMind.Infracstructure.Interfaces;
+using StudentMind.Core.Interfaces;
 using StudentMind.Infrastructure.Context;
 
 namespace StudentMind.Infracstructure.Repo

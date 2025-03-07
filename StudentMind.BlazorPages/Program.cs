@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using StudentMind.BlazorPages.Components;
 using StudentMind.Infracstructure;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services;
 
 namespace StudentMind.BlazorPages
 {
@@ -14,11 +15,8 @@ namespace StudentMind.BlazorPages
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
-            builder.Services.AddDbContextFactory<DatabaseContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("StudentMindDb"));
-            });
-            builder.Services.AddRepositoryLayer();
+            builder.Services.AddRepositoryLayer(builder.Configuration);
+            builder.Services.AddServiceLayer();
             builder.Services.AddQuickGridEntityFrameworkAdapter();
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

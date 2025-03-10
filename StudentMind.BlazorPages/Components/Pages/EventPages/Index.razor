@@ -2,45 +2,57 @@
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using StudentMind.Core.Entity
-@using StudentMind.Infrastructure.Context
+@using StudentMind.Core.Interfaces
 @implements IAsyncDisposable
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@inject IUnitOfWork UnitOfWork
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Events</PageTitle>
 
-<h1>Index</h1>
+<h1>Event List</h1>
 
 <p>
-    <a href="events/create">Create New</a>
+    <NavLink href="events/create">Create New</NavLink>
 </p>
 
-<QuickGrid Class="table" Items="context.Events">
-    <PropertyColumn Property="event => event.Name" />
-    <PropertyColumn Property="event => event.Description" />
-    <PropertyColumn Property="event => event.StartDate" />
-    <PropertyColumn Property="event => event.EndDate" />
-    <PropertyColumn Property="event => event.HostId" />
-    <PropertyColumn Property="event => event.CreatedBy" />
-    <PropertyColumn Property="event => event.LastUpdatedBy" />
-    <PropertyColumn Property="event => event.DeletedBy" />
-    <PropertyColumn Property="event => event.CreatedTime" />
-    <PropertyColumn Property="event => event.LastUpdatedTime" />
-    <PropertyColumn Property="event => event.DeletedTime" />
+@if (events is not null)
+{
+    <QuickGrid Class="table" Items="events.AsQueryable()">
+        <PropertyColumn Property="e => e.Name" Title="Name" />
+        <PropertyColumn Property="e => e.Description" Title="Description" />
+        <PropertyColumn Property="e => e.StartDate" Title="Start Date" />
+        <PropertyColumn Property="e => e.EndDate" Title="End Date" />
+        <PropertyColumn Property="e => e.HostId" Title="Host ID" />
+        <PropertyColumn Property="e => e.CreatedBy" Title="Created By" />
+        <PropertyColumn Property="e => e.LastUpdatedBy" Title="Updated By" />
+        <PropertyColumn Property="e => e.DeletedBy" Title="Deleted By" />
+        <PropertyColumn Property="e => e.CreatedTime" Title="Created Time" />
+        <PropertyColumn Property="e => e.LastUpdatedTime" Title="Updated Time" />
+        <PropertyColumn Property="e => e.DeletedTime" Title="Deleted Time" />
 
-    <TemplateColumn Context="event">
-        <a href="@($"events/edit?id={event.Id}")">Edit</a> |
-        <a href="@($"events/details?id={event.Id}")">Details</a> |
-        <a href="@($"events/delete?id={event.Id}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
+        <TemplateColumn Context="e">
+            <NavLink href="@($"events/edit?id={e.Id}")">Edit</NavLink> |
+            <NavLink href="@($"events/details?id={e.Id}")">Details</NavLink> |
+            <NavLink href="@($"events/delete?id={e.Id}")">Delete</NavLink>
+        </TemplateColumn>
+    </QuickGrid>
+}
+else
+{
+    <p>Loading...</p>
+}
 
 @code {
-    private DatabaseContext context = default!;
+    private IQueryable<Event>? events = default;
 
     protected override void OnInitialized()
     {
-        context = DbFactory.CreateDbContext();
+        var eventRepository = UnitOfWork.GetRepository<Event>();
+        events = eventRepository.Entities;
     }
 
-    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+    public async ValueTask DisposeAsync()
+    {
+        await UnitOfWork.DisposeAsync();
+    }
 }
+

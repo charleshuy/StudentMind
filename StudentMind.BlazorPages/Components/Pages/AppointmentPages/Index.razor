@@ -1,43 +1,53 @@
 ﻿@page "/appointments"
-@using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using StudentMind.Core.Entity
-@using StudentMind.Infrastructure.Context
+@using StudentMind.Core.Interfaces
 @implements IAsyncDisposable
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@inject IUnitOfWork UnitOfWork
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Appointments</PageTitle>
 
-<h1>Index</h1>
+<h1>Appointments</h1>
 
 <p>
-    <a href="appointments/create">Create New</a>
+    <NavLink href="appointments/create">Create New</NavLink>
 </p>
 
-<QuickGrid Class="table" Items="context.Appointments">
-    <PropertyColumn Property="appointment => appointment.PsychologistId" />
-    <PropertyColumn Property="appointment => appointment.UserId" />
-    <PropertyColumn Property="appointment => appointment.CreatedBy" />
-    <PropertyColumn Property="appointment => appointment.LastUpdatedBy" />
-    <PropertyColumn Property="appointment => appointment.DeletedBy" />
-    <PropertyColumn Property="appointment => appointment.CreatedTime" />
-    <PropertyColumn Property="appointment => appointment.LastUpdatedTime" />
-    <PropertyColumn Property="appointment => appointment.DeletedTime" />
+@if (appointments is not null)
+{
+    <QuickGrid Class="table" Items="appointments.AsQueryable()">
+        <PropertyColumn Property="a => a.PsychologistId" Title="Psychologist ID" />
+        <PropertyColumn Property="a => a.UserId" Title="User ID" />
+        <PropertyColumn Property="a => a.CreatedBy" Title="Created By" />
+        <PropertyColumn Property="a => a.LastUpdatedBy" Title="Updated By" />
+        <PropertyColumn Property="a => a.DeletedBy" Title="Deleted By" />
+        <PropertyColumn Property="a => a.CreatedTime" Title="Created Time" />
+        <PropertyColumn Property="a => a.LastUpdatedTime" Title="Updated Time" />
+        <PropertyColumn Property="a => a.DeletedTime" Title="Deleted Time" />
 
-    <TemplateColumn Context="appointment">
-        <a href="@($"appointments/edit?id={appointment.Id}")">Edit</a> |
-        <a href="@($"appointments/details?id={appointment.Id}")">Details</a> |
-        <a href="@($"appointments/delete?id={appointment.Id}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
+        <TemplateColumn Context="a">
+            <NavLink href="@($"appointments/edit?id={a.Id}")">Edit</NavLink> |
+            <NavLink href="@($"appointments/details?id={a.Id}")">Details</NavLink> |
+            <NavLink href="@($"appointments/delete?id={a.Id}")">Delete</NavLink>
+        </TemplateColumn>
+    </QuickGrid>
+}
+else
+{
+    <p>Loading...</p>
+}
 
 @code {
-    private DatabaseContext context = default!;
+    private IQueryable<Appointment>? appointments = default;
 
     protected override void OnInitialized()
     {
-        context = DbFactory.CreateDbContext();
+        var appointmentRepository = UnitOfWork.GetRepository<Appointment>();
+        appointments = appointmentRepository.Entities;
     }
 
-    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+    public async ValueTask DisposeAsync()
+    {
+        await UnitOfWork.DisposeAsync();
+    }
 }

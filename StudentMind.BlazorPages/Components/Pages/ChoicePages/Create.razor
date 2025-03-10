@@ -1,0 +1,79 @@
+﻿@page "/choices/create"
+@using Microsoft.EntityFrameworkCore
+@using StudentMind.Core.Entity
+@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Choice</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Choice" OnValidSubmit="AddChoice" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="content" class="form-label">Content:</label> 
+                <InputText id="content" @bind-Value="Choice.Content" class="form-control" /> 
+                <ValidationMessage For="() => Choice.Content" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="questionid" class="form-label">QuestionId:</label> 
+                <InputText id="questionid" @bind-Value="Choice.QuestionId" class="form-control" /> 
+                <ValidationMessage For="() => Choice.QuestionId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="createdby" class="form-label">CreatedBy:</label> 
+                <InputText id="createdby" @bind-Value="Choice.CreatedBy" class="form-control" /> 
+                <ValidationMessage For="() => Choice.CreatedBy" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="lastupdatedby" class="form-label">LastUpdatedBy:</label> 
+                <InputText id="lastupdatedby" @bind-Value="Choice.LastUpdatedBy" class="form-control" /> 
+                <ValidationMessage For="() => Choice.LastUpdatedBy" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="deletedby" class="form-label">DeletedBy:</label> 
+                <InputText id="deletedby" @bind-Value="Choice.DeletedBy" class="form-control" /> 
+                <ValidationMessage For="() => Choice.DeletedBy" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="createdtime" class="form-label">CreatedTime:</label> 
+                <InputDate id="createdtime" @bind-Value="Choice.CreatedTime" class="form-control" /> 
+                <ValidationMessage For="() => Choice.CreatedTime" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="lastupdatedtime" class="form-label">LastUpdatedTime:</label> 
+                <InputDate id="lastupdatedtime" @bind-Value="Choice.LastUpdatedTime" class="form-control" /> 
+                <ValidationMessage For="() => Choice.LastUpdatedTime" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="deletedtime" class="form-label">DeletedTime:</label> 
+                <InputDate id="deletedtime" @bind-Value="Choice.DeletedTime" class="form-control" /> 
+                <ValidationMessage For="() => Choice.DeletedTime" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/choices">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Choice Choice { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddChoice()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Choices.Add(Choice);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/choices");
+    }
+}

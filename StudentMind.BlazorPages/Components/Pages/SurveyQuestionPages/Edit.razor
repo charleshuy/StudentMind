@@ -1,0 +1,119 @@
+﻿@page "/surveyquestions/edit"
+@using Microsoft.EntityFrameworkCore
+@using StudentMind.Core.Entity
+@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>SurveyQuestion</h2>
+<hr />
+@if (SurveyQuestion is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="SurveyQuestion" OnValidSubmit="UpdateSurveyQuestion" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="SurveyQuestion.SurveyId" value="@SurveyQuestion.SurveyId" />
+                <div class="mb-3">
+                    <label for="id" class="form-label">Id:</label>
+                    <InputText id="id" @bind-Value="SurveyQuestion.Id" class="form-control" />
+                    <ValidationMessage For="() => SurveyQuestion.Id" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="createdby" class="form-label">CreatedBy:</label>
+                    <InputText id="createdby" @bind-Value="SurveyQuestion.CreatedBy" class="form-control" />
+                    <ValidationMessage For="() => SurveyQuestion.CreatedBy" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="lastupdatedby" class="form-label">LastUpdatedBy:</label>
+                    <InputText id="lastupdatedby" @bind-Value="SurveyQuestion.LastUpdatedBy" class="form-control" />
+                    <ValidationMessage For="() => SurveyQuestion.LastUpdatedBy" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="deletedby" class="form-label">DeletedBy:</label>
+                    <InputText id="deletedby" @bind-Value="SurveyQuestion.DeletedBy" class="form-control" />
+                    <ValidationMessage For="() => SurveyQuestion.DeletedBy" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="createdtime" class="form-label">CreatedTime:</label>
+                    <InputDate id="createdtime" @bind-Value="SurveyQuestion.CreatedTime" class="form-control" />
+                    <ValidationMessage For="() => SurveyQuestion.CreatedTime" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="lastupdatedtime" class="form-label">LastUpdatedTime:</label>
+                    <InputDate id="lastupdatedtime" @bind-Value="SurveyQuestion.LastUpdatedTime" class="form-control" />
+                    <ValidationMessage For="() => SurveyQuestion.LastUpdatedTime" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="deletedtime" class="form-label">DeletedTime:</label>
+                    <InputDate id="deletedtime" @bind-Value="SurveyQuestion.DeletedTime" class="form-control" />
+                    <ValidationMessage For="() => SurveyQuestion.DeletedTime" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/surveyquestions">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string SurveyId { get; set; }
+
+    [SupplyParameterFromForm]
+    private SurveyQuestion? SurveyQuestion { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        SurveyQuestion ??= await context.SurveyQuestions.FirstOrDefaultAsync(m => m.SurveyId == SurveyId);
+
+        if (SurveyQuestion is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateSurveyQuestion()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(SurveyQuestion!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!SurveyQuestionExists(SurveyQuestion!.SurveyId))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/surveyquestions");
+    }
+
+    private bool SurveyQuestionExists(string surveyid)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.SurveyQuestions.Any(e => e.SurveyId == surveyid);
+    }
+}

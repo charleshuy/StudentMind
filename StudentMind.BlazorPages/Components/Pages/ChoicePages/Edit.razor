@@ -1,0 +1,124 @@
+﻿@page "/choices/edit"
+@using Microsoft.EntityFrameworkCore
+@using StudentMind.Core.Entity
+@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Choice</h2>
+<hr />
+@if (Choice is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Choice" OnValidSubmit="UpdateChoice" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Choice.Id" value="@Choice.Id" />
+                <div class="mb-3">
+                    <label for="content" class="form-label">Content:</label>
+                    <InputText id="content" @bind-Value="Choice.Content" class="form-control" />
+                    <ValidationMessage For="() => Choice.Content" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="questionid" class="form-label">QuestionId:</label>
+                    <InputText id="questionid" @bind-Value="Choice.QuestionId" class="form-control" />
+                    <ValidationMessage For="() => Choice.QuestionId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="createdby" class="form-label">CreatedBy:</label>
+                    <InputText id="createdby" @bind-Value="Choice.CreatedBy" class="form-control" />
+                    <ValidationMessage For="() => Choice.CreatedBy" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="lastupdatedby" class="form-label">LastUpdatedBy:</label>
+                    <InputText id="lastupdatedby" @bind-Value="Choice.LastUpdatedBy" class="form-control" />
+                    <ValidationMessage For="() => Choice.LastUpdatedBy" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="deletedby" class="form-label">DeletedBy:</label>
+                    <InputText id="deletedby" @bind-Value="Choice.DeletedBy" class="form-control" />
+                    <ValidationMessage For="() => Choice.DeletedBy" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="createdtime" class="form-label">CreatedTime:</label>
+                    <InputDate id="createdtime" @bind-Value="Choice.CreatedTime" class="form-control" />
+                    <ValidationMessage For="() => Choice.CreatedTime" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="lastupdatedtime" class="form-label">LastUpdatedTime:</label>
+                    <InputDate id="lastupdatedtime" @bind-Value="Choice.LastUpdatedTime" class="form-control" />
+                    <ValidationMessage For="() => Choice.LastUpdatedTime" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="deletedtime" class="form-label">DeletedTime:</label>
+                    <InputDate id="deletedtime" @bind-Value="Choice.DeletedTime" class="form-control" />
+                    <ValidationMessage For="() => Choice.DeletedTime" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/choices">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Choice? Choice { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Choice ??= await context.Choices.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Choice is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateChoice()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Choice!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ChoiceExists(Choice!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/choices");
+    }
+
+    private bool ChoiceExists(string id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Choices.Any(e => e.Id == id);
+    }
+}

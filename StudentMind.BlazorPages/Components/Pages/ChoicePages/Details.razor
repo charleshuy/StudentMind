@@ -1,0 +1,60 @@
+﻿@page "/choices/details"
+@using Microsoft.EntityFrameworkCore
+@using StudentMind.Core.Entity
+@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Choice</h2>
+    <hr />
+    @if (choice is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Content</dt>
+            <dd class="col-sm-10">@choice.Content</dd>
+            <dt class="col-sm-2">QuestionId</dt>
+            <dd class="col-sm-10">@choice.QuestionId</dd>
+            <dt class="col-sm-2">CreatedBy</dt>
+            <dd class="col-sm-10">@choice.CreatedBy</dd>
+            <dt class="col-sm-2">LastUpdatedBy</dt>
+            <dd class="col-sm-10">@choice.LastUpdatedBy</dd>
+            <dt class="col-sm-2">DeletedBy</dt>
+            <dd class="col-sm-10">@choice.DeletedBy</dd>
+            <dt class="col-sm-2">CreatedTime</dt>
+            <dd class="col-sm-10">@choice.CreatedTime</dd>
+            <dt class="col-sm-2">LastUpdatedTime</dt>
+            <dd class="col-sm-10">@choice.LastUpdatedTime</dd>
+            <dt class="col-sm-2">DeletedTime</dt>
+            <dd class="col-sm-10">@choice.DeletedTime</dd>
+        </dl>
+        <div>
+            <a href="@($"/choices/edit?id={choice.Id}")">Edit</a> |
+            <a href="@($"/choices")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Choice? choice;
+
+    [SupplyParameterFromQuery]
+    private string Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        choice = await context.Choices.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (choice is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

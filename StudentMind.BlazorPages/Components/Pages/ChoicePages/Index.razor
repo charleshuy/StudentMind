@@ -1,0 +1,41 @@
+﻿@page "/choices"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using StudentMind.Core.Entity
+@using StudentMind.Core.Interfaces
+@implements IAsyncDisposable
+@inject IUnitOfWork UnitOfWork
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="choices/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="choices">
+    <PropertyColumn Property="choice => choice.Content" />
+    <PropertyColumn Property="choice => choice.Question.Content" Title="Question Content" />
+    <PropertyColumn Property="choice => choice.CreatedTime" />
+    <PropertyColumn Property="choice => choice.LastUpdatedTime" />
+    <PropertyColumn Property="choice => choice.DeletedTime" />
+
+    <TemplateColumn Context="choice">
+        <a href="@($"choices/edit?id={choice.Id}")">Edit</a> |
+        <a href="@($"choices/details?id={choice.Id}")">Details</a> |
+        <a href="@($"choices/delete?id={choice.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private IQueryable<Choice> choices = default!;
+
+    protected override void OnInitialized()
+    {
+        var choiceRepository = UnitOfWork.GetRepository<Choice>();
+        choices = choiceRepository.Entities.Include(c => c.Question);
+    }
+
+    public async ValueTask DisposeAsync() => await UnitOfWork.DisposeAsync();
+}

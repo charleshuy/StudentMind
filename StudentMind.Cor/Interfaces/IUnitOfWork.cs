@@ -1,6 +1,4 @@
-﻿
-
-namespace StudentMind.Infracstructure.Interfaces
+﻿namespace StudentMind.Core.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {

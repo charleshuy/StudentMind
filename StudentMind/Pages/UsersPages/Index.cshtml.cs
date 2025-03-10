@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
-using StudentMind.Infracstructure.Interfaces;
-
+using StudentMind.Core.Interfaces;
 
 namespace StudentMind.Pages.UsersPages
 {

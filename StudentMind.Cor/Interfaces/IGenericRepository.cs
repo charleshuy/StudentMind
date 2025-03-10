@@ -1,7 +1,6 @@
-﻿using StudentMind.Infracstructure.Paggings;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
-namespace StudentMind.Infracstructure.Interfaces
+namespace StudentMind.Core.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {
@@ -29,6 +28,5 @@ namespace StudentMind.Infracstructure.Interfaces
 
         //another
         T? Find(Expression<Func<T, bool>> predicate);
-        Task<PaginatedList<T>> GetPagging(IQueryable<T> query, int index, int pageSize);
     }
 }

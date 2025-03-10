@@ -1,0 +1,66 @@
+﻿@page "/events/details"
+@using Microsoft.EntityFrameworkCore
+@using StudentMind.Core.Entity
+@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Event</h2>
+    <hr />
+    @if (event is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@event.Name</dd>
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@event.Description</dd>
+            <dt class="col-sm-2">StartDate</dt>
+            <dd class="col-sm-10">@event.StartDate</dd>
+            <dt class="col-sm-2">EndDate</dt>
+            <dd class="col-sm-10">@event.EndDate</dd>
+            <dt class="col-sm-2">HostId</dt>
+            <dd class="col-sm-10">@event.HostId</dd>
+            <dt class="col-sm-2">CreatedBy</dt>
+            <dd class="col-sm-10">@event.CreatedBy</dd>
+            <dt class="col-sm-2">LastUpdatedBy</dt>
+            <dd class="col-sm-10">@event.LastUpdatedBy</dd>
+            <dt class="col-sm-2">DeletedBy</dt>
+            <dd class="col-sm-10">@event.DeletedBy</dd>
+            <dt class="col-sm-2">CreatedTime</dt>
+            <dd class="col-sm-10">@event.CreatedTime</dd>
+            <dt class="col-sm-2">LastUpdatedTime</dt>
+            <dd class="col-sm-10">@event.LastUpdatedTime</dd>
+            <dt class="col-sm-2">DeletedTime</dt>
+            <dd class="col-sm-10">@event.DeletedTime</dd>
+        </dl>
+        <div>
+            <a href="@($"/events/edit?id={event.Id}")">Edit</a> |
+            <a href="@($"/events")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Event? event;
+
+    [SupplyParameterFromQuery]
+    private string Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        event = await context.Events.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (event is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

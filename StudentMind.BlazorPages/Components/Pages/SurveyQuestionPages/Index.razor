@@ -2,9 +2,9 @@
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using StudentMind.Core.Entity
-@using StudentMind.Infrastructure.Context
+@using StudentMind.Core.Interfaces
 @implements IAsyncDisposable
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@inject IUnitOfWork UnitOfWork
 
 <PageTitle>Index</PageTitle>
 
@@ -14,11 +14,9 @@
     <a href="surveyquestions/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.SurveyQuestions">
-    <PropertyColumn Property="surveyquestion => surveyquestion.Id" />
-    <PropertyColumn Property="surveyquestion => surveyquestion.CreatedBy" />
-    <PropertyColumn Property="surveyquestion => surveyquestion.LastUpdatedBy" />
-    <PropertyColumn Property="surveyquestion => surveyquestion.DeletedBy" />
+<QuickGrid Class="table" Items="surveyQuestions">
+    <PropertyColumn Property="surveyquestion => surveyquestion.SurveyId" />
+    <PropertyColumn Property="surveyquestion => surveyquestion.QuestionId" />
     <PropertyColumn Property="surveyquestion => surveyquestion.CreatedTime" />
     <PropertyColumn Property="surveyquestion => surveyquestion.LastUpdatedTime" />
     <PropertyColumn Property="surveyquestion => surveyquestion.DeletedTime" />
@@ -31,12 +29,13 @@
 </QuickGrid>
 
 @code {
-    private DatabaseContext context = default!;
+    private IQueryable<SurveyQuestion> surveyQuestions = default!;
 
     protected override void OnInitialized()
     {
-        context = DbFactory.CreateDbContext();
+        var surveyQuestionRepository = UnitOfWork.GetRepository<SurveyQuestion>();
+        surveyQuestions = surveyQuestionRepository.Entities;
     }
 
-    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+    public async ValueTask DisposeAsync() => await UnitOfWork.DisposeAsync();
 }

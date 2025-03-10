@@ -1,0 +1,48 @@
+﻿@page "/surveys"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using StudentMind.Core.Entity
+@using StudentMind.Infrastructure.Context
+@implements IAsyncDisposable
+@inject IUnitOfWork UnitOfWork
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="surveys/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Surveys">
+    <PropertyColumn Property="survey => survey.Name" />
+    <PropertyColumn Property="survey => survey.Description" />
+    <PropertyColumn Property="survey => survey.StartDate" />
+    <PropertyColumn Property="survey => survey.EndDate" />
+    <PropertyColumn Property="survey => survey.TotalParticipants" />
+    <PropertyColumn Property="survey => survey.TypeId" />
+    <PropertyColumn Property="survey => survey.CreatedBy" />
+    <PropertyColumn Property="survey => survey.LastUpdatedBy" />
+    <PropertyColumn Property="survey => survey.DeletedBy" />
+    <PropertyColumn Property="survey => survey.CreatedTime" />
+    <PropertyColumn Property="survey => survey.LastUpdatedTime" />
+    <PropertyColumn Property="survey => survey.DeletedTime" />
+
+    <TemplateColumn Context="survey">
+        <a href="@($"surveys/edit?id={survey.Id}")">Edit</a> |
+        <a href="@($"surveys/details?id={survey.Id}")">Details</a> |
+        <a href="@($"surveys/delete?id={survey.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private IQueryable<Survey> surveys = default!;
+
+    protected override void OnInitialized()
+    {
+        var surveyRepository = UnitOfWork.GetRepository<Survey>();
+        surveys = surveyRepository.Entities;
+    }
+
+    public async ValueTask DisposeAsync() => await UnitOfWork.DisposeAsync();
+}

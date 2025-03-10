@@ -1,0 +1,100 @@
+﻿@page "/surveys/create"
+@using Microsoft.EntityFrameworkCore
+@using StudentMind.Core.Entity
+@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject IUnitOfWork UnitOfWork
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Survey</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Survey" OnValidSubmit="AddSurvey" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="Survey.Name" class="form-control" /> 
+                <ValidationMessage For="() => Survey.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label> 
+                <InputText id="description" @bind-Value="Survey.Description" class="form-control" /> 
+                <ValidationMessage For="() => Survey.Description" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="startdate" class="form-label">StartDate:</label> 
+                <InputDate id="startdate" @bind-Value="Survey.StartDate" class="form-control" /> 
+                <ValidationMessage For="() => Survey.StartDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="enddate" class="form-label">EndDate:</label> 
+                <InputDate id="enddate" @bind-Value="Survey.EndDate" class="form-control" /> 
+                <ValidationMessage For="() => Survey.EndDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="totalparticipants" class="form-label">TotalParticipants:</label> 
+                <InputNumber id="totalparticipants" @bind-Value="Survey.TotalParticipants" class="form-control" /> 
+                <ValidationMessage For="() => Survey.TotalParticipants" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="typeid" class="form-label">TypeId:</label> 
+                <InputText id="typeid" @bind-Value="Survey.TypeId" class="form-control" /> 
+                <ValidationMessage For="() => Survey.TypeId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="createdby" class="form-label">CreatedBy:</label> 
+                <InputText id="createdby" @bind-Value="Survey.CreatedBy" class="form-control" /> 
+                <ValidationMessage For="() => Survey.CreatedBy" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="lastupdatedby" class="form-label">LastUpdatedBy:</label> 
+                <InputText id="lastupdatedby" @bind-Value="Survey.LastUpdatedBy" class="form-control" /> 
+                <ValidationMessage For="() => Survey.LastUpdatedBy" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="deletedby" class="form-label">DeletedBy:</label> 
+                <InputText id="deletedby" @bind-Value="Survey.DeletedBy" class="form-control" /> 
+                <ValidationMessage For="() => Survey.DeletedBy" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="createdtime" class="form-label">CreatedTime:</label> 
+                <InputDate id="createdtime" @bind-Value="Survey.CreatedTime" class="form-control" /> 
+                <ValidationMessage For="() => Survey.CreatedTime" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="lastupdatedtime" class="form-label">LastUpdatedTime:</label> 
+                <InputDate id="lastupdatedtime" @bind-Value="Survey.LastUpdatedTime" class="form-control" /> 
+                <ValidationMessage For="() => Survey.LastUpdatedTime" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="deletedtime" class="form-label">DeletedTime:</label> 
+                <InputDate id="deletedtime" @bind-Value="Survey.DeletedTime" class="form-control" /> 
+                <ValidationMessage For="() => Survey.DeletedTime" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/surveys">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Survey Survey { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddSurvey()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Surveys.Add(Survey);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/surveys");
+    }
+}

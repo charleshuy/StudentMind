@@ -1,0 +1,74 @@
+﻿@page "/questions/create"
+@using Microsoft.EntityFrameworkCore
+@using StudentMind.Core.Entity
+@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Question</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Question" OnValidSubmit="AddQuestion" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="content" class="form-label">Content:</label> 
+                <InputText id="content" @bind-Value="Question.Content" class="form-control" /> 
+                <ValidationMessage For="() => Question.Content" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="createdby" class="form-label">CreatedBy:</label> 
+                <InputText id="createdby" @bind-Value="Question.CreatedBy" class="form-control" /> 
+                <ValidationMessage For="() => Question.CreatedBy" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="lastupdatedby" class="form-label">LastUpdatedBy:</label> 
+                <InputText id="lastupdatedby" @bind-Value="Question.LastUpdatedBy" class="form-control" /> 
+                <ValidationMessage For="() => Question.LastUpdatedBy" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="deletedby" class="form-label">DeletedBy:</label> 
+                <InputText id="deletedby" @bind-Value="Question.DeletedBy" class="form-control" /> 
+                <ValidationMessage For="() => Question.DeletedBy" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="createdtime" class="form-label">CreatedTime:</label> 
+                <InputDate id="createdtime" @bind-Value="Question.CreatedTime" class="form-control" /> 
+                <ValidationMessage For="() => Question.CreatedTime" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="lastupdatedtime" class="form-label">LastUpdatedTime:</label> 
+                <InputDate id="lastupdatedtime" @bind-Value="Question.LastUpdatedTime" class="form-control" /> 
+                <ValidationMessage For="() => Question.LastUpdatedTime" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="deletedtime" class="form-label">DeletedTime:</label> 
+                <InputDate id="deletedtime" @bind-Value="Question.DeletedTime" class="form-control" /> 
+                <ValidationMessage For="() => Question.DeletedTime" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/questions">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Question Question { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddQuestion()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Questions.Add(Question);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/questions");
+    }
+}

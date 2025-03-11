@@ -87,6 +87,13 @@
     private async Task AddEvent()
     {
         using var context = DbFactory.CreateDbContext();
+
+        if (Event == null)
+            Event = new Event(); 
+
+        if (string.IsNullOrEmpty(Event.Id))
+            Event.Id = Guid.NewGuid().ToString().ToUpper();
+
         context.Events.Add(Event);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/events");

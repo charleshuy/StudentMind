@@ -16,7 +16,7 @@
 
 @if (events is not null)
 {
-    <QuickGrid Class="table" Items="events.AsQueryable()">
+    <QuickGrid Class="table" Items="events.AsQueryable()" PageSize="10" AllowPaging="true">
         <PropertyColumn Property="e => e.Name" Title="Name" />
         <PropertyColumn Property="e => e.Description" Title="Description" />
         <PropertyColumn Property="e => e.StartDate" Title="Start Date" />
@@ -24,10 +24,8 @@
         <PropertyColumn Property="e => e.HostId" Title="Host ID" />
         <PropertyColumn Property="e => e.CreatedBy" Title="Created By" />
         <PropertyColumn Property="e => e.LastUpdatedBy" Title="Updated By" />
-        <PropertyColumn Property="e => e.DeletedBy" Title="Deleted By" />
         <PropertyColumn Property="e => e.CreatedTime" Title="Created Time" />
         <PropertyColumn Property="e => e.LastUpdatedTime" Title="Updated Time" />
-        <PropertyColumn Property="e => e.DeletedTime" Title="Deleted Time" />
 
         <TemplateColumn Context="e">
             <NavLink href="@($"events/edit?id={e.Id}")">Edit</NavLink> |
@@ -55,4 +53,3 @@ else
         await UnitOfWork.DisposeAsync();
     }
 }
-

@@ -21,4 +21,8 @@
     <ProjectReference Include="..\StudentMind.Infracstructure\StudentMind.Infracstructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\css\event.css" />
+  </ItemGroup>
+
 </Project>

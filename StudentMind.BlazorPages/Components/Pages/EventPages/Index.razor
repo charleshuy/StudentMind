@@ -5,39 +5,46 @@
 @using StudentMind.Core.Interfaces
 @implements IAsyncDisposable
 @inject IUnitOfWork UnitOfWork
+@inject NavigationManager NavigationManager
 
 <PageTitle>Events</PageTitle>
 
-<h1>Event List</h1>
+<link href="css/event.css" rel="stylesheet" />
 
-<p>
-    <NavLink href="events/create">Create New</NavLink>
-</p>
+<div class="modern-container">
+    <h1 class="modern-header">Events</h1>
 
-@if (events is not null)
-{
-    <QuickGrid Class="table" Items="events.AsQueryable()" PageSize="10" AllowPaging="true">
-        <PropertyColumn Property="e => e.Name" Title="Name" />
-        <PropertyColumn Property="e => e.Description" Title="Description" />
-        <PropertyColumn Property="e => e.StartDate" Title="Start Date" />
-        <PropertyColumn Property="e => e.EndDate" Title="End Date" />
-        <PropertyColumn Property="e => e.HostId" Title="Host ID" />
-        <PropertyColumn Property="e => e.CreatedBy" Title="Created By" />
-        <PropertyColumn Property="e => e.LastUpdatedBy" Title="Updated By" />
-        <PropertyColumn Property="e => e.CreatedTime" Title="Created Time" />
-        <PropertyColumn Property="e => e.LastUpdatedTime" Title="Updated Time" />
+    <p>
+        <a href="events/create" class="create-button">
+            <span class="bi bi-plus-circle" aria-hidden="true"></span>
+            New Event
+        </a>
+    </p>
 
-        <TemplateColumn Context="e">
-            <NavLink href="@($"events/edit?id={e.Id}")">Edit</NavLink> |
-            <NavLink href="@($"events/details?id={e.Id}")">Details</NavLink> |
-            <NavLink href="@($"events/delete?id={e.Id}")">Delete</NavLink>
-        </TemplateColumn>
-    </QuickGrid>
-}
-else
-{
-    <p>Loading...</p>
-}
+    @if (events is not null)
+    {
+        <QuickGrid Class="modern-table" Items="events.AsQueryable()" PageSize="10" AllowPaging="true">
+            <PropertyColumn Property="e => e.Name" Title="Event Name" Sortable="true" />
+            <PropertyColumn Property="e => e.Description" Title="Description" Sortable="true" />
+            <PropertyColumn Property="e => e.StartDate" Title="Start" Format="d MMM yyyy" Sortable="true" />
+            <PropertyColumn Property="e => e.EndDate" Title="End" Format="d MMM yyyy" Sortable="true" />
+            <PropertyColumn Property="e => e.HostId" Title="Host" Sortable="true" />
+            
+            <TemplateColumn Title="Actions" Class="action-buttons">
+                <a href="@($"events/edit?id={context.Id}")" class="edit">Edit</a>
+                <a href="@($"events/details?id={context.Id}")" class="details">Details</a>
+                <a href="@($"events/delete?id={context.Id}")" class="delete">Delete</a>
+            </TemplateColumn>
+        </QuickGrid>
+    }
+    else
+    {
+        <div class="loading">
+            <span class="bi bi-arrow-clockwise" aria-hidden="true"></span>
+            Loading events...
+        </div>
+    }
+</div>
 
 @code {
     private IQueryable<Event>? events = default;

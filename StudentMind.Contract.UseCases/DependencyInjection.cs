@@ -35,7 +35,7 @@ namespace StudentMind.Services
                 });
             }
 
-            var jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]
+            var jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"]
                 ?? throw new BaseException.CoreException("config", "Missing Jwt:Key")));
 
             services.AddAuthentication(options =>

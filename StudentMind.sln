@@ -11,16 +11,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2.SERVICES", "2.SERVICES", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.CORE", "4.CORE", "{E21D3D84-6602-476D-B2EC-0EF4F0374758}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentMind.Infracstructure", "StudentMind.Infracstructure\StudentMind.Infracstructure.csproj", "{470FFB11-6CDD-48F9-B8F4-AACA04C4A30C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentMind.Infracstructure", "StudentMind.Infracstructure\StudentMind.Infracstructure.csproj", "{470FFB11-6CDD-48F9-B8F4-AACA04C4A30C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6ACF8874-A8DD-4074-90CF-22750B892572} = {6ACF8874-A8DD-4074-90CF-22750B892572}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentMind.Core", "StudentMind.Cor\StudentMind.Core.csproj", "{6ACF8874-A8DD-4074-90CF-22750B892572}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentMind.Core", "StudentMind.Cor\StudentMind.Core.csproj", "{6ACF8874-A8DD-4074-90CF-22750B892572}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentMind.Services", "StudentMind.Contract.UseCases\StudentMind.Services.csproj", "{A17244BD-8200-400F-9A83-FBD0D512C981}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentMind.Services", "StudentMind.Contract.UseCases\StudentMind.Services.csproj", "{A17244BD-8200-400F-9A83-FBD0D512C981}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentMind.BlazorPages", "StudentMind.BlazorPages\StudentMind.BlazorPages.csproj", "{92EBEDD6-D031-4769-A5AC-3680E3C13FCF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentMind.BlazorPages", "StudentMind.BlazorPages\StudentMind.BlazorPages.csproj", "{92EBEDD6-D031-4769-A5AC-3680E3C13FCF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,5 +53,8 @@ Global
 		{6ACF8874-A8DD-4074-90CF-22750B892572} = {E21D3D84-6602-476D-B2EC-0EF4F0374758}
 		{A17244BD-8200-400F-9A83-FBD0D512C981} = {47208D52-4B05-46E4-B05B-15B4053B1856}
 		{92EBEDD6-D031-4769-A5AC-3680E3C13FCF} = {17F60DC7-BBE9-483F-AC75-D3487F4808A0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {85B2572C-E363-4411-A877-E25B6CD13992}
 	EndGlobalSection
 EndGlobal

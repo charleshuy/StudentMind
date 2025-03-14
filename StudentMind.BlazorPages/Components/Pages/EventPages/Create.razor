@@ -4,68 +4,62 @@
 @inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<head>
-    <link rel="stylesheet" href="css/event.css" />
-</head>
+<link rel="stylesheet" href="css/event.css" />
 
-
-<PageTitle>Create</PageTitle>
+<PageTitle>Create Event</PageTitle>
 <div class="center-container">
-<h1>Create</h1>
-
-<h2>Event</h2>
-<hr />
+    <h1>Create Event</h1>
+    <h2>Event Details</h2>
+    <hr />
     <div class="row">
         <div class="col-md-4">
             <EditForm method="post" Model="Event" OnValidSubmit="AddEvent" FormName="create" Enhance>
                 <DataAnnotationsValidator />
-                <ValidationSummary class="text-danger" role="alert"/>
+                <ValidationSummary class="text-danger" role="alert" />
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name:</label> 
-                    <InputText id="name" @bind-Value="Event.Name" class="form-control" /> 
-                    <ValidationMessage For="() => Event.Name" class="text-danger" /> 
-                </div>        
+                    <label for="name" class="form-label">Event Name:</label>
+                    <InputText id="name" @bind-Value="Event.Name" class="form-control" />
+                    <ValidationMessage For="() => Event.Name" class="text-danger" />
+                </div>
                 <div class="mb-3">
-                    <label for="description" class="form-label">Description:</label> 
-                    <InputText id="description" @bind-Value="Event.Description" class="form-control" /> 
-                    <ValidationMessage For="() => Event.Description" class="text-danger" /> 
-                </div>        
+                    <label for="description" class="form-label">Description:</label>
+                    <InputText id="description" @bind-Value="Event.Description" class="form-control" />
+                    <ValidationMessage For="() => Event.Description" class="text-danger" />
+                </div>
                 <div class="mb-3">
-                    <label for="startdate" class="form-label">StartDate:</label> 
-                    <InputDate id="startdate" @bind-Value="Event.StartDate" class="form-control" /> 
-                    <ValidationMessage For="() => Event.StartDate" class="text-danger" /> 
-                </div>        
+                    <label for="startdate" class="form-label">Start Date:</label>
+                    <InputDate id="startdate" @bind-Value="Event.StartDate" class="form-control" />
+                    <ValidationMessage For="() => Event.StartDate" class="text-danger" />
+                </div>
                 <div class="mb-3">
-                    <label for="enddate" class="form-label">EndDate:</label> 
-                    <InputDate id="enddate" @bind-Value="Event.EndDate" class="form-control" /> 
-                    <ValidationMessage For="() => Event.EndDate" class="text-danger" /> 
-                </div>        
+                    <label for="enddate" class="form-label">End Date:</label>
+                    <InputDate id="enddate" @bind-Value="Event.EndDate" class="form-control" />
+                    <ValidationMessage For="() => Event.EndDate" class="text-danger" />
+                </div>
                 <div class="mb-3">
-                    <label for="hostid" class="form-label">HostId:</label> 
-                    <InputText id="hostid" @bind-Value="Event.HostId" class="form-control" /> 
-                    <ValidationMessage For="() => Event.HostId" class="text-danger" /> 
-                </div>        
-            
+                    <label for="hostid" class="form-label">Host ID:</label>
+                    <InputText id="hostid" @bind-Value="Event.HostId" class="form-control" />
+                    <ValidationMessage For="() => Event.HostId" class="text-danger" />
+                </div>
                 <button type="submit" class="btn btn-primary">Create</button>
             </EditForm>
         </div>
     </div>
-</div>
-<div>
-    <a href="/events">Back to List</a>
+    <div class="center-container" style="text-align: center;">
+        <a href="/events">Back to List</a>
+    </div>
 </div>
 
 @code {
     [SupplyParameterFromForm]
     private Event Event { get; set; } = new();
 
-    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddEvent()
     {
         using var context = DbFactory.CreateDbContext();
 
         if (Event == null)
-            Event = new Event(); 
+            Event = new Event();
 
         if (string.IsNullOrEmpty(Event.Id))
             Event.Id = Guid.NewGuid().ToString().ToUpper();

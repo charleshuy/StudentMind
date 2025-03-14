@@ -1,22 +1,22 @@
-
+/* wwwroot/css/site.css */
 body {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f8fa;
+    font-family: 'Montserrat', sans-serif;
+    background: #F5F8FA;
 }
 
-
+/* Main Layout */
 .page {
     display: flex;
     min-height: 100vh;
-    background: linear-gradient(135deg, #f5f8fa 0%, #e6f0fa 100%);
+    background: linear-gradient(135deg, #F5F8FA 0%, #E6F0FA 100%);
 }
 
 .sidebar {
     width: 280px;
-    background: linear-gradient(180deg, #6BB9E0 0%, #9ACAE5 50%); /* Sky blue gradient */
+    background: linear-gradient(180deg, #4A90E2 0%, #6BA4E8 50%); /* Sky blue gradient */
     padding: 1.5rem 0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px rgba(74, 144, 226, 0.2); /* Sky blue shadow */
 }
 
 main {
@@ -24,29 +24,29 @@ main {
     padding: 2rem;
 }
 
-
+/* Navbar */
 .navbar {
-    background: linear-gradient(90deg, #6BB9E0 0%, #9ACAE5 100%);
+    background: linear-gradient(90deg, #4A90E2 0%, #6BA4E8 100%); /* Sky blue gradient */
     padding: 1rem 1.5rem;
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 2px 15px rgba(107, 185, 224, 0.3);
+    box-shadow: 0 2px 15px rgba(74, 144, 226, 0.3); /* Sky blue shadow */
 }
 
 .navbar-brand {
-    color: #FFFFFF !important; 
+    color: #FFFFFF !important;
     font-weight: 800;
     font-size: 1.8rem;
     text-decoration: none;
     transition: all 0.3s ease;
     letter-spacing: 1px;
-    font-family: 'Montserrat', sans-serif; 
-    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
     .navbar-brand:hover {
-        transform: scale(1.05); 
+        transform: scale(1.05);
         text-shadow: 0 3px 10px rgba(255, 255, 255, 0.5);
     }
 
@@ -69,7 +69,7 @@ main {
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 1.5rem;
-    color: #FFFFFF; 
+    color: #FFFFFF;
     text-decoration: none;
     border-radius: 12px;
     transition: all 0.3s ease;
@@ -78,16 +78,17 @@ main {
 
     .nav-link:hover,
     .nav-link.active {
-        background: rgba(255, 255, 255, 0.2); 
+        background: rgba(255, 255, 255, 0.2);
         color: #FFFFFF;
         transform: translateX(5px);
+        box-shadow: 0 2px 10px rgba(74, 144, 226, 0.3); /* Sky blue shadow */
     }
 
     .nav-link span.bi {
         font-size: 1.2rem;
     }
 
-
+/* Top Row */
 .top-row {
     display: flex;
     justify-content: flex-end;
@@ -96,7 +97,7 @@ main {
 }
 
     .top-row a {
-        color: #6BB9E0;
+        color: #4A90E2; /* Sky blue */
         text-decoration: none;
         font-weight: 500;
         padding: 0.5rem 1rem;
@@ -105,22 +106,23 @@ main {
     }
 
         .top-row a:hover {
-            background: rgba(107, 185, 224, 0.1);
-            color: #4682B4;
+            background: rgba(74, 144, 226, 0.1); /* Sky blue hover background */
+            color: #357ABD; /* Darker sky blue */
         }
 
-
+/* Content */
 .content {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 16px;
     padding: 2rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
+/* Error UI */
 #blazor-error-ui {
-    background: rgba(255, 99, 71, 0.1);
-    color: #FF6347;
+    background: rgba(231, 76, 60, 0.1); /* Coral background */
+    color: #E74C3C;
     padding: 1rem;
     border-radius: 8px;
     margin: 2rem;
@@ -130,7 +132,7 @@ main {
 
     #blazor-error-ui .reload,
     #blazor-error-ui .dismiss {
-        color: #FF6347;
+        color: #E74C3C;
         text-decoration: none;
         margin: 0 1rem;
         transition: all 0.3s ease;
@@ -138,11 +140,12 @@ main {
 
         #blazor-error-ui .reload:hover,
         #blazor-error-ui .dismiss:hover {
-            color: #FF4500;
+            color: #C0392B; /* Darker coral */
         }
 
+/* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, #6BB9E0 0%, #9ACAE5 100%);
+    background: linear-gradient(135deg, #4A90E2 0%, #6BA4E8 100%); /* Sky blue gradient */
     color: white;
     padding: 6rem 2rem;
     text-align: center;
@@ -176,7 +179,7 @@ main {
     gap: 0.5rem;
     padding: 0.75rem 2rem;
     background: white;
-    color: #6BB9E0;
+    color: #4A90E2; /* Sky blue */
     text-decoration: none;
     border-radius: 50px;
     font-weight: 600;
@@ -185,13 +188,13 @@ main {
 }
 
     .hero-button:hover {
-        background: #4682B4;
+        background: #357ABD; /* Darker sky blue */
         color: white;
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
 
-
+/* Features Section */
 .features-section {
     max-width: 1200px;
     margin: 4rem auto;
@@ -202,7 +205,7 @@ main {
 }
 
 .feature-card {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 16px;
     padding: 2rem;
@@ -213,17 +216,17 @@ main {
 
     .feature-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 6px 25px rgba(107, 185, 224, 0.2);
+        box-shadow: 0 6px 25px rgba(74, 144, 226, 0.2); /* Sky blue shadow */
     }
 
 .feature-icon {
     font-size: 2.5rem;
-    color: #6BB9E0;
+    color: #4A90E2; /* Sky blue */
     margin-bottom: 1rem;
 }
 
 .feature-card h3 {
-    color: #333;
+    color: #2C3E50;
     font-size: 1.5rem;
     margin-bottom: 1rem;
 }
@@ -234,20 +237,20 @@ main {
 }
 
 .feature-link {
-    color: #6BB9E0;
+    color: #4A90E2; /* Sky blue */
     text-decoration: none;
     font-weight: 500;
     transition: all 0.3s ease;
 }
 
     .feature-link:hover {
-        color: #4682B4;
+        color: #357ABD; /* Darker sky blue */
         text-decoration: underline;
     }
 
-
+/* Footer */
 .footer {
-    background: linear-gradient(90deg, #6BB9E0 0%, #9ACAE5 100%);
+    background: linear-gradient(90deg, #4A90E2 0%, #6BA4E8 100%); /* Sky blue gradient */
     color: white;
     padding: 3rem 2rem 1rem;
     margin-top: 4rem;
@@ -288,7 +291,7 @@ main {
         }
 
             .footer-section ul li a:hover {
-                color: #4682B4;
+                color: #357ABD; /* Darker sky blue */
                 text-decoration: underline;
             }
 
@@ -301,7 +304,7 @@ main {
     opacity: 0.8;
 }
 
-
+/* Responsive */
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;

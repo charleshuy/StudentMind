@@ -4,87 +4,89 @@
 @inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Edit</PageTitle>
+<link rel="stylesheet" href="css/event.css" />
 
-<h1>Edit</h1>
+<PageTitle>Edit Event</PageTitle>
 
-<h2>Event</h2>
-<hr />
-@if (Event is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div class="row">
-        <div class="col-md-4">
-            <EditForm method="post" Model="Event" OnValidSubmit="UpdateEvent" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary role="alert"/>
-                <input type="hidden" name="Event.Id" value="@Event.Id" />
-                <div class="mb-3">
-                    <label for="name" class="form-label">Name:</label>
-                    <InputText id="name" @bind-Value="Event.Name" class="form-control" />
-                    <ValidationMessage For="() => Event.Name" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description:</label>
-                    <InputText id="description" @bind-Value="Event.Description" class="form-control" />
-                    <ValidationMessage For="() => Event.Description" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="startdate" class="form-label">StartDate:</label>
-                    <InputDate id="startdate" @bind-Value="Event.StartDate" class="form-control" />
-                    <ValidationMessage For="() => Event.StartDate" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="enddate" class="form-label">EndDate:</label>
-                    <InputDate id="enddate" @bind-Value="Event.EndDate" class="form-control" />
-                    <ValidationMessage For="() => Event.EndDate" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="hostid" class="form-label">HostId:</label>
-                    <InputText id="hostid" @bind-Value="Event.HostId" class="form-control" />
-                    <ValidationMessage For="() => Event.HostId" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="createdby" class="form-label">CreatedBy:</label>
-                    <InputText id="createdby" @bind-Value="Event.CreatedBy" class="form-control" />
-                    <ValidationMessage For="() => Event.CreatedBy" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="lastupdatedby" class="form-label">LastUpdatedBy:</label>
-                    <InputText id="lastupdatedby" @bind-Value="Event.LastUpdatedBy" class="form-control" />
-                    <ValidationMessage For="() => Event.LastUpdatedBy" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="deletedby" class="form-label">DeletedBy:</label>
-                    <InputText id="deletedby" @bind-Value="Event.DeletedBy" class="form-control" />
-                    <ValidationMessage For="() => Event.DeletedBy" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="createdtime" class="form-label">CreatedTime:</label>
-                    <InputDate id="createdtime" @bind-Value="Event.CreatedTime" class="form-control" />
-                    <ValidationMessage For="() => Event.CreatedTime" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="lastupdatedtime" class="form-label">LastUpdatedTime:</label>
-                    <InputDate id="lastupdatedtime" @bind-Value="Event.LastUpdatedTime" class="form-control" />
-                    <ValidationMessage For="() => Event.LastUpdatedTime" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="deletedtime" class="form-label">DeletedTime:</label>
-                    <InputDate id="deletedtime" @bind-Value="Event.DeletedTime" class="form-control" />
-                    <ValidationMessage For="() => Event.DeletedTime" class="text-danger" />
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </EditForm>
+<div class="center-container">
+    <h1>Edit Event</h1>
+    <h2>Event Details</h2>
+    <hr />
+    @if (Event is null)
+    {
+        <div class="loading"><em>Loading...</em></div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <EditForm method="post" Model="Event" OnValidSubmit="UpdateEvent" FormName="edit" Enhance>
+                    <DataAnnotationsValidator />
+                    <ValidationSummary role="alert" />
+                    <input type="hidden" name="Event.Id" value="@Event.Id" />
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Event Name:</label>
+                        <InputText id="name" @bind-Value="Event.Name" class="form-control" />
+                        <ValidationMessage For="() => Event.Name" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description:</label>
+                        <InputText id="description" @bind-Value="Event.Description" class="form-control" />
+                        <ValidationMessage For="() => Event.Description" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="startdate" class="form-label">Start Date:</label>
+                        <InputDate id="startdate" @bind-Value="Event.StartDate" class="form-control" />
+                        <ValidationMessage For="() => Event.StartDate" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="enddate" class="form-label">End Date:</label>
+                        <InputDate id="enddate" @bind-Value="Event.EndDate" class="form-control" />
+                        <ValidationMessage For="() => Event.EndDate" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="hostid" class="form-label">Host ID:</label>
+                        <InputText id="hostid" @bind-Value="Event.HostId" class="form-control" />
+                        <ValidationMessage For="() => Event.HostId" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createdby" class="form-label">Created By:</label>
+                        <InputText id="createdby" @bind-Value="Event.CreatedBy" class="form-control" />
+                        <ValidationMessage For="() => Event.CreatedBy" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastupdatedby" class="form-label">Last Updated By:</label>
+                        <InputText id="lastupdatedby" @bind-Value="Event.LastUpdatedBy" class="form-control" />
+                        <ValidationMessage For="() => Event.LastUpdatedBy" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="deletedby" class="form-label">Deleted By:</label>
+                        <InputText id="deletedby" @bind-Value="Event.DeletedBy" class="form-control" />
+                        <ValidationMessage For="() => Event.DeletedBy" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createdtime" class="form-label">Created Time:</label>
+                        <InputDate id="createdtime" @bind-Value="Event.CreatedTime" class="form-control" />
+                        <ValidationMessage For="() => Event.CreatedTime" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastupdatedtime" class="form-label">Last Updated Time:</label>
+                        <InputDate id="lastupdatedtime" @bind-Value="Event.LastUpdatedTime" class="form-control" />
+                        <ValidationMessage For="() => Event.LastUpdatedTime" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="deletedtime" class="form-label">Deleted Time:</label>
+                        <InputDate id="deletedtime" @bind-Value="Event.DeletedTime" class="form-control" />
+                        <ValidationMessage For="() => Event.DeletedTime" class="text-danger" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </EditForm>
+            </div>
         </div>
+    }
+    <div class="center-container" style="text-align: center; margin-top: 2rem;">
+        <a href="/events">Back to List</a>
     </div>
-}
-
-<div>
-    <a href="/events">Back to List</a>
 </div>
 
 @code {
@@ -105,8 +107,6 @@ else
         }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateEvent()
     {
         using var context = DbFactory.CreateDbContext();

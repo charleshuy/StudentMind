@@ -15,10 +15,7 @@
     <h1 class="modern-header">Events</h1>
 
     <p>
-        <a href="events/create" class="create-button">
-            <span class="bi bi-plus-circle" aria-hidden="true"></span>
-            New Event
-        </a>
+        <a href="events/create" class="new-event-button">NEW EVENT</a>
     </p>
 
     @if (events is not null)
@@ -26,10 +23,10 @@
         <QuickGrid Class="modern-table" Items="events.AsQueryable()" PageSize="10" AllowPaging="true">
             <PropertyColumn Property="e => e.Name" Title="Event Name" Sortable="true" />
             <PropertyColumn Property="e => e.Description" Title="Description" Sortable="true" />
-            <PropertyColumn Property="e => e.StartDate" Title="Start" Format="d MMM yyyy" Sortable="true" />
-            <PropertyColumn Property="e => e.EndDate" Title="End" Format="d MMM yyyy" Sortable="true" />
+            <PropertyColumn Property="e => e.StartDate" Title="Start" Format="d MMMM yyyy" Sortable="true" />
+            <PropertyColumn Property="e => e.EndDate" Title="End" Format="d MMMM yyyy" Sortable="true" />
             <PropertyColumn Property="e => e.HostId" Title="Host" Sortable="true" />
-            
+
             <TemplateColumn Title="Actions" Class="action-buttons">
                 <a href="@($"events/edit?id={context.Id}")" class="edit">Edit</a>
                 <a href="@($"events/details?id={context.Id}")" class="details">Details</a>
@@ -39,10 +36,7 @@
     }
     else
     {
-        <div class="loading">
-            <span class="bi bi-arrow-clockwise" aria-hidden="true"></span>
-            Loading events...
-        </div>
+        <div class="loading">Loading events...</div>
     }
 </div>
 

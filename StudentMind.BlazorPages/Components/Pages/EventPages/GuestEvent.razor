@@ -1,0 +1,62 @@
+﻿@page "/guest-events"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using StudentMind.Core.Entity
+@using StudentMind.Core.Interfaces
+@implements IAsyncDisposable
+@inject IUnitOfWork UnitOfWork
+@inject NavigationManager NavigationManager
+
+<PageTitle>Guest Events</PageTitle>
+
+<link href="css/guest-event.css" rel="stylesheet" />
+
+<div class="guest-container">
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Explore Our Events</h1>
+            <p class="hero-subtitle">Discover exciting events open to all. Join us by registering today!</p>
+            <a href="register" class="hero-button">Register Now <span class="bi bi-arrow-right"></span></a>
+        </div>
+    </section>
+
+    <section class="events-section">
+        <h2 class="section-title">Upcoming Events</h2>
+        @if (events is not null && events.Any())
+        {
+            <div class="event-cards">
+                @foreach (var eventItem in events)
+                {
+                    <div class="event-card">
+                        <div class="event-image" style="background-image: url('https://www.lbcc.edu/sites/main/files/imagecache/lightbox/main-images/tile-upcoming-events.jpg');"></div>
+                        <div class="event-details">
+                            <h3 class="event-title">@eventItem.Name</h3>
+                            <p class="event-date">Start: @(eventItem.StartDate.ToString("d MMMM yyyy") ?? "TBD")</p>
+                            <p class="event-date">End: @(eventItem.EndDate.ToString("d MMMM yyyy") ?? "TBD")</p>
+                            <a href="@($"guest-event-details?id={eventItem.Id}")" class="view-details">View Details</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="loading">No events available at the moment...</div>
+        }
+    </section>
+</div>
+
+@code {
+    private IQueryable<Event>? events = default;
+
+    protected override void OnInitialized()
+    {
+        var eventRepository = UnitOfWork.GetRepository<Event>();
+        events = eventRepository.Entities;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await UnitOfWork.DisposeAsync();
+    }
+}

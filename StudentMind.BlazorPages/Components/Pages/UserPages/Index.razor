@@ -9,34 +9,37 @@
 
 <PageTitle>Users</PageTitle>
 
-<h1>User List</h1>
+<link href="css/user.css" rel="stylesheet" />
 
-<p>
-    <a href="users/create">Create New</a>
-</p>
+<div class="modern-container">
+    <h1 class="modern-header">User List</h1>
 
-@if (users is not null)
-{
-    <QuickGrid Class="table" Items="users">
-        <PropertyColumn Property="user => user.FullName" Title="Full Name" />
-        <PropertyColumn Property="user => user.PhoneNumber" Title="Phone" />
-        <PropertyColumn Property="user => user.Gender" Title="Gender" />
-        <PropertyColumn Property="user => user.Email" Title="Email" />
-        <PropertyColumn Property="user => user.DateOfBirth" Title="DOB" />
-        <PropertyColumn Property="user => user.Role.RoleName" Title="Rol" />
-       
+    <p>
+        <a href="users/create" class="create-button">CREATE NEW</a>
+    </p>
 
-        <TemplateColumn Context="user">
-            <a href="@($"users/edit?id={user.Id}")">Edit</a> |
-            <a href="@($"users/details?id={user.Id}")">Details</a> |
-            <a href="@($"users/delete?id={user.Id}")">Delete</a>
-        </TemplateColumn>
-    </QuickGrid>
-}
-else
-{
-    <p>Loading...</p>
-}
+    @if (users is not null)
+    {
+        <QuickGrid Class="modern-table" Items="users" PageSize="10" AllowPaging="true">
+            <PropertyColumn Property="user => user.FullName" Title="Full Name" Sortable="true" />
+            <PropertyColumn Property="user => user.PhoneNumber" Title="Phone" Sortable="true" />
+            <PropertyColumn Property="user => user.Gender" Title="Gender" Sortable="true" />
+            <PropertyColumn Property="user => user.Email" Title="Email" Sortable="true" />
+            <PropertyColumn Property="user => user.DateOfBirth" Title="DOB" Format="d MMMM yyyy" Sortable="true" />
+            <PropertyColumn Property="user => user.Role.RoleName" Title="Role" Sortable="true" />
+
+            <TemplateColumn Title="Actions" Class="action-buttons">
+                <a href="@($"users/edit?id={context.Id}")" class="edit">Edit</a>
+                <a href="@($"users/details?id={context.Id}")" class="details">Details</a>
+                <a href="@($"users/delete?id={context.Id}")" class="delete">Delete</a>
+            </TemplateColumn>
+        </QuickGrid>
+    }
+    else
+    {
+        <div class="loading">Loading users...</div>
+    }
+</div>
 
 @code {
     private IQueryable<User> users = default!;
@@ -47,7 +50,5 @@ else
         users = userRepository.Entities.Include(u => u.Role);
     }
 
-
     public async ValueTask DisposeAsync() => await UnitOfWork.DisposeAsync();
 }
-

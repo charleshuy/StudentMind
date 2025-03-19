@@ -7,35 +7,39 @@
 
 <PageTitle>Appointments</PageTitle>
 
-<h1>Appointments</h1>
+<link href="css/appointment.css" rel="stylesheet" />
 
-<p>
-    <NavLink href="appointments/create">Create New</NavLink>
-</p>
+<div class="modern-container">
+    <h1 class="modern-header">Appointments</h1>
 
-@if (appointments is not null)
-{
-    <QuickGrid Class="table" Items="appointments.AsQueryable()">
-        <PropertyColumn Property="a => a.PsychologistId" Title="Psychologist ID" />
-        <PropertyColumn Property="a => a.UserId" Title="User ID" />
-        <PropertyColumn Property="a => a.CreatedBy" Title="Created By" />
-        <PropertyColumn Property="a => a.LastUpdatedBy" Title="Updated By" />
-        <PropertyColumn Property="a => a.DeletedBy" Title="Deleted By" />
-        <PropertyColumn Property="a => a.CreatedTime" Title="Created Time" />
-        <PropertyColumn Property="a => a.LastUpdatedTime" Title="Updated Time" />
-        <PropertyColumn Property="a => a.DeletedTime" Title="Deleted Time" />
+    <p>
+        <a href="appointments/create" class="create-button">CREATE NEW</a>
+    </p>
 
-        <TemplateColumn Context="a">
-            <NavLink href="@($"appointments/edit?id={a.Id}")">Edit</NavLink> |
-            <NavLink href="@($"appointments/details?id={a.Id}")">Details</NavLink> |
-            <NavLink href="@($"appointments/delete?id={a.Id}")">Delete</NavLink>
-        </TemplateColumn>
-    </QuickGrid>
-}
-else
-{
-    <p>Loading...</p>
-}
+    @if (appointments is not null)
+    {
+        <QuickGrid Class="modern-table" Items="appointments.AsQueryable()" PageSize="10" AllowPaging="true">
+            <PropertyColumn Property="a => a.PsychologistId" Title="Psychologist ID" Sortable="true" />
+            <PropertyColumn Property="a => a.UserId" Title="User ID" Sortable="true" />
+            <PropertyColumn Property="a => a.CreatedBy" Title="Created By" Sortable="true" />
+            <PropertyColumn Property="a => a.LastUpdatedBy" Title="Updated By" Sortable="true" />
+            <PropertyColumn Property="a => a.DeletedBy" Title="Deleted By" Sortable="true" />
+            <PropertyColumn Property="a => a.CreatedTime" Title="Created Time" Format="d MMMM yyyy" Sortable="true" />
+            <PropertyColumn Property="a => a.LastUpdatedTime" Title="Updated Time" Format="d MMMM yyyy" Sortable="true" />
+            <PropertyColumn Property="a => a.DeletedTime" Title="Deleted Time" Format="d MMMM yyyy" Sortable="true" />
+
+            <TemplateColumn Title="Actions" Class="action-buttons">
+                <a href="@($"appointments/edit?id={context.Id}")" class="edit">Edit</a>
+                <a href="@($"appointments/details?id={context.Id}")" class="details">Details</a>
+                <a href="@($"appointments/delete?id={context.Id}")" class="delete">Delete</a>
+            </TemplateColumn>
+        </QuickGrid>
+    }
+    else
+    {
+        <div class="loading">Loading appointments...</div>
+    }
+</div>
 
 @code {
     private IQueryable<Appointment>? appointments = default;

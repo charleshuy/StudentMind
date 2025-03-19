@@ -12,7 +12,7 @@ namespace StudentMind.Core.Base
     {
         protected BaseEntity()
         {
-            Id = Guid.NewGuid().ToString().ToUpper();
+            this.Id = Guid.NewGuid().ToString().ToUpper();
             CreatedTime = LastUpdatedTime = CoreHelper.SystemTimeNow;
         }
 

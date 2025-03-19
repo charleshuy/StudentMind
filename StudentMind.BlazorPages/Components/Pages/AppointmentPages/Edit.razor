@@ -4,72 +4,62 @@
 @inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Edit</PageTitle>
+<PageTitle>Edit Appointment</PageTitle>
 
-<h1>Edit</h1>
+<link href="css/appointment.css" rel="stylesheet" />
 
-<h2>Appointment</h2>
-<hr />
-@if (Appointment is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div class="row">
-        <div class="col-md-4">
-            <EditForm method="post" Model="Appointment" OnValidSubmit="UpdateAppointment" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary role="alert"/>
-                <input type="hidden" name="Appointment.Id" value="@Appointment.Id" />
-                <div class="mb-3">
-                    <label for="psychologistid" class="form-label">PsychologistId:</label>
-                    <InputText id="psychologistid" @bind-Value="Appointment.PsychologistId" class="form-control" />
-                    <ValidationMessage For="() => Appointment.PsychologistId" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="userid" class="form-label">UserId:</label>
-                    <InputText id="userid" @bind-Value="Appointment.UserId" class="form-control" />
-                    <ValidationMessage For="() => Appointment.UserId" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="createdby" class="form-label">CreatedBy:</label>
-                    <InputText id="createdby" @bind-Value="Appointment.CreatedBy" class="form-control" />
-                    <ValidationMessage For="() => Appointment.CreatedBy" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="lastupdatedby" class="form-label">LastUpdatedBy:</label>
-                    <InputText id="lastupdatedby" @bind-Value="Appointment.LastUpdatedBy" class="form-control" />
-                    <ValidationMessage For="() => Appointment.LastUpdatedBy" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="deletedby" class="form-label">DeletedBy:</label>
-                    <InputText id="deletedby" @bind-Value="Appointment.DeletedBy" class="form-control" />
-                    <ValidationMessage For="() => Appointment.DeletedBy" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="createdtime" class="form-label">CreatedTime:</label>
-                    <InputDate id="createdtime" @bind-Value="Appointment.CreatedTime" class="form-control" />
-                    <ValidationMessage For="() => Appointment.CreatedTime" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="lastupdatedtime" class="form-label">LastUpdatedTime:</label>
-                    <InputDate id="lastupdatedtime" @bind-Value="Appointment.LastUpdatedTime" class="form-control" />
-                    <ValidationMessage For="() => Appointment.LastUpdatedTime" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="deletedtime" class="form-label">DeletedTime:</label>
-                    <InputDate id="deletedtime" @bind-Value="Appointment.DeletedTime" class="form-control" />
-                    <ValidationMessage For="() => Appointment.DeletedTime" class="text-danger" />
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </EditForm>
+<div class="center-container">
+    <h1>Edit Appointment</h1>
+
+    <h2>Update Appointment</h2>
+    <hr />
+    @if (!isLoaded)
+    {
+        <div class="loading">Loading...</div>
+    }
+    else if (errorMessage != null)
+    {
+        <div class="text-danger">@errorMessage</div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <EditForm method="post" Model="Appointment" OnValidSubmit="UpdateAppointment" FormName="edit" Enhance>
+                    <DataAnnotationsValidator />
+                    <ValidationSummary role="alert" class="text-danger" />
+                    <input type="hidden" name="Appointment.Id" value="@Appointment.Id" />
+                    <div class="mb-3">
+                        <label for="psychologistid" class="form-label">Psychologist:</label>
+                        <InputSelect id="psychologistid" @bind-Value="Appointment.PsychologistId" class="form-control">
+                            <option value="">Select a Psychologist</option>
+                            @foreach (var psychologist in psychologists)
+                            {
+                                <option value="@psychologist.Id">@psychologist.FullName</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="() => Appointment.PsychologistId" class="text-danger" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="userid" class="form-label">User:</label>
+                        <InputSelect id="userid" @bind-Value="Appointment.UserId" class="form-control">
+                            <option value="">Select a User</option>
+                            @foreach (var user in users)
+                            {
+                                <option value="@user.Id">@user.FullName</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="() => Appointment.UserId" class="text-danger" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </EditForm>
+            </div>
         </div>
-    </div>
-}
+    }
 
-<div>
-    <a href="/appointments">Back to List</a>
+    <div>
+        <a href="/appointments" class="back-link">Back to List</a>
+    </div>
 </div>
 
 @code {
@@ -79,41 +69,95 @@ else
     [SupplyParameterFromForm]
     private Appointment? Appointment { get; set; }
 
+    private List<User> psychologists = new();
+    private List<User> users = new();
+    private bool isLoaded = false;
+    private string? errorMessage;
+
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Appointment ??= await context.Appointments.FirstOrDefaultAsync(m => m.Id == Id);
-
-        if (Appointment is null)
+        try
         {
-            NavigationManager.NavigateTo("notfound");
+            using var context = DbFactory.CreateDbContext();
+            Appointment ??= await context.Appointments
+                .Include(a => a.Psychologist)
+                .Include(a => a.User)
+                .FirstOrDefaultAsync(m => m.Id == Id);
+
+            if (Appointment is null)
+            {
+                NavigationManager.NavigateTo("notfound");
+                return;
+            }
+
+            // Fetch psychologists and users for dropdowns
+            psychologists = await context.Users
+                .Include(u => u.Role)
+                .Where(u => u.Role.RoleName == "Psychologist") // Adjust based on your role logic
+                .ToListAsync();
+            users = await context.Users
+                .Include(u => u.Role)
+                .Where(u => u.Role.RoleName == "User") // Adjust based on your role logic
+                .ToListAsync();
+
+            isLoaded = true;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading data: {ex.Message}";
+            isLoaded = true;
         }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateAppointment()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Appointment!).State = EntityState.Modified;
-
         try
         {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!AppointmentExists(Appointment!.Id))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
-        }
+            using var context = DbFactory.CreateDbContext();
+            // Fetch the Psychologist and User entities based on their IDs
+            var psychologist = await context.Users
+                .FirstOrDefaultAsync(u => u.Id == Appointment.PsychologistId);
+            var user = await context.Users
+                .FirstOrDefaultAsync(u => u.Id == Appointment.UserId);
 
-        NavigationManager.NavigateTo("/appointments");
+            if (psychologist == null || user == null)
+            {
+                errorMessage = "Selected psychologist or user not found.";
+                return;
+            }
+
+            // Update the navigation properties
+            Appointment.Psychologist = psychologist;
+            Appointment.User = user;
+
+            // Update metadata programmatically
+            Appointment.LastUpdatedBy = "CurrentUserId"; // Replace with actual user ID from authentication
+            Appointment.LastUpdatedTime = DateTime.Now;
+
+            context.Attach(Appointment!).State = EntityState.Modified;
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AppointmentExists(Appointment!.Id))
+                {
+                    NavigationManager.NavigateTo("notfound");
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            NavigationManager.NavigateTo("/appointments");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating appointment: {ex.Message}";
+        }
     }
 
     private bool AppointmentExists(string id)

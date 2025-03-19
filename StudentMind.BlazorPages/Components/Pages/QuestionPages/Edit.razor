@@ -1,7 +1,8 @@
 ﻿@page "/questions/edit"
 @using Microsoft.EntityFrameworkCore
 @using StudentMind.Core.Entity
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@using StudentMind.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
 <PageTitle>Edit</PageTitle>
@@ -76,8 +77,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Question ??= await context.Questions.FirstOrDefaultAsync(m => m.Id == Id);
+        var questionRepository = UnitOfWork.GetRepository<Question>();
+        Question = await questionRepository.Entities.FirstOrDefaultAsync(s => s.Id == Id);
 
         if (Question is null)
         {
@@ -89,16 +90,15 @@ else
     // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateQuestion()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Question!).State = EntityState.Modified;
+        await UnitOfWork.GetRepository<Question>().UpdateAsync(Question);
 
         try
         {
-            await context.SaveChangesAsync();
+            await UnitOfWork.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!QuestionExists(Question!.Id))
+            if (!(await QuestionExists(Question!.Id)))
             {
                 NavigationManager.NavigateTo("notfound");
             }
@@ -111,9 +111,10 @@ else
         NavigationManager.NavigateTo("/questions");
     }
 
-    private bool QuestionExists(string id)
+    private async Task<bool> QuestionExists(string id)
     {
-        using var context = DbFactory.CreateDbContext();
-        return context.Questions.Any(e => e.Id == id);
+        var questionRepository = UnitOfWork.GetRepository<Question>();
+        Question = await questionRepository.Entities.FirstOrDefaultAsync(s => s.Id == Id);
+        return Question != null;
     }
 }

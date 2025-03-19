@@ -61,8 +61,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var surveyQuestionRepository = UnitOfWork.GetRepository<SurveyQuestion>();
-        surveyquestion = await surveyQuestionRepository.Entities.FirstOrDefaultAsync(s => s.Id == SurveyId);
+        var questionRepository = UnitOfWork.GetRepository<Question>();
+        question = await questionRepository.Entities.FirstOrDefaultAsync(s => s.Id == Id);
 
         if (question is null)
         {

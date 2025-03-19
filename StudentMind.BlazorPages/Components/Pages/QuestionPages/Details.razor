@@ -1,7 +1,8 @@
 ﻿@page "/questions/details"
 @using Microsoft.EntityFrameworkCore
 @using StudentMind.Core.Entity
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@using StudentMind.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
 <PageTitle>Details</PageTitle>
@@ -47,8 +48,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        question = await context.Questions.FirstOrDefaultAsync(m => m.Id == Id);
+        var questionRepository = UnitOfWork.GetRepository<Question>();
+        question = await questionRepository.Entities.FirstOrDefaultAsync(s => s.Id == Id);
 
         if (question is null)
         {

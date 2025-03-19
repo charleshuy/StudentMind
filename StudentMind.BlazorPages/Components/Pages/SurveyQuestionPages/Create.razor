@@ -1,7 +1,8 @@
 ﻿@page "/surveyquestions/create"
 @using Microsoft.EntityFrameworkCore
 @using StudentMind.Core.Entity
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@using StudentMind.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
 <PageTitle>Create</PageTitle>
@@ -21,35 +22,15 @@
                 <ValidationMessage For="() => SurveyQuestion.Id" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="createdby" class="form-label">CreatedBy:</label> 
-                <InputText id="createdby" @bind-Value="SurveyQuestion.CreatedBy" class="form-control" /> 
-                <ValidationMessage For="() => SurveyQuestion.CreatedBy" class="text-danger" /> 
-            </div>        
+                <label for="surveyid" class="form-label">Survey Id:</label> 
+                <InputText id="surveyid" @bind-Value="SurveyQuestion.SurveyId" class="form-control" />
+                <ValidationMessage For="() => SurveyQuestion.SurveyId" class="text-danger" /> 
+            </div>    
             <div class="mb-3">
-                <label for="lastupdatedby" class="form-label">LastUpdatedBy:</label> 
-                <InputText id="lastupdatedby" @bind-Value="SurveyQuestion.LastUpdatedBy" class="form-control" /> 
-                <ValidationMessage For="() => SurveyQuestion.LastUpdatedBy" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="deletedby" class="form-label">DeletedBy:</label> 
-                <InputText id="deletedby" @bind-Value="SurveyQuestion.DeletedBy" class="form-control" /> 
-                <ValidationMessage For="() => SurveyQuestion.DeletedBy" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="createdtime" class="form-label">CreatedTime:</label> 
-                <InputDate id="createdtime" @bind-Value="SurveyQuestion.CreatedTime" class="form-control" /> 
-                <ValidationMessage For="() => SurveyQuestion.CreatedTime" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="lastupdatedtime" class="form-label">LastUpdatedTime:</label> 
-                <InputDate id="lastupdatedtime" @bind-Value="SurveyQuestion.LastUpdatedTime" class="form-control" /> 
-                <ValidationMessage For="() => SurveyQuestion.LastUpdatedTime" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="deletedtime" class="form-label">DeletedTime:</label> 
-                <InputDate id="deletedtime" @bind-Value="SurveyQuestion.DeletedTime" class="form-control" /> 
-                <ValidationMessage For="() => SurveyQuestion.DeletedTime" class="text-danger" /> 
-            </div>        
+                <label for="questionid" class="form-label">Question Id:</label>
+                <InputText id="questionid" @bind-Value="SurveyQuestion.QuestionId" class="form-control" />
+                <ValidationMessage For="() => SurveyQuestion.QuestionId" class="text-danger" />
+            </div>
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
     </div>
@@ -66,9 +47,9 @@
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddSurveyQuestion()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.SurveyQuestions.Add(SurveyQuestion);
-        await context.SaveChangesAsync();
+        var surveyQuestionRepository = UnitOfWork.GetRepository<SurveyQuestion>();
+        await surveyQuestionRepository.InsertAsync(SurveyQuestion);
+        await UnitOfWork.SaveAsync();
         NavigationManager.NavigateTo("/surveyquestions");
     }
 }

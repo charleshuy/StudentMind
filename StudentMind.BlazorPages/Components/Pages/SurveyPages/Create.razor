@@ -83,6 +83,11 @@
     {
         try
         {
+            if (string.IsNullOrWhiteSpace(Survey.Description))
+            {
+                Survey.Description = "N/A";
+            }
+
             var surveyRepository = UnitOfWork.GetRepository<Survey>();
             await surveyRepository.InsertAsync(Survey);
             await UnitOfWork.SaveAsync();
@@ -90,12 +95,13 @@
         }
         catch (Exception ex)
         {
+            Console.WriteLine("Exception: " + ex.Message);
             Console.WriteLine("Survey: " + Survey.Name);
-            Console.WriteLine("Survey: " + Survey.Description);
-            Console.WriteLine("Survey: " + Survey.StartDate);
-            Console.WriteLine("Survey: " + Survey.EndDate);
-            Console.WriteLine("Survey: " + Survey.TotalParticipants);
-            Console.WriteLine("Survey: " + Survey.TypeId);
+            Console.WriteLine("        " + Survey.Description);
+            Console.WriteLine("        " + Survey.StartDate);
+            Console.WriteLine("        " + Survey.EndDate);
+            Console.WriteLine("        " + Survey.TotalParticipants);
+            Console.WriteLine("        " + Survey.TypeId);
         }
     }
 }

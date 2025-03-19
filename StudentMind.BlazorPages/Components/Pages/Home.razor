@@ -1,7 +1,60 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>StudentMind - Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<link href="css/site.css" rel="stylesheet" />
 
-Welcome to your new app.
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">Welcome to StudentMind</h1>
+        <p class="hero-subtitle">Empowering education through innovative tools and insights</p>
+        <a href="/events" class="hero-button">Explore Events</a>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="feature-card">
+        <span class="bi bi-calendar-event feature-icon" aria-hidden="true"></span>
+        <h3>Events</h3>
+        <p>Stay updated with upcoming educational events and workshops.</p>
+        <a href="/events" class="feature-link">Learn More</a>
+    </div>
+    <div class="feature-card">
+        <span class="bi bi-clipboard-data feature-icon" aria-hidden="true"></span>
+        <h3>Surveys</h3>
+        <p>Gather insights with our powerful survey tools.</p>
+        <a href="/surveys" class="feature-link">Learn More</a>
+    </div>
+    <div class="feature-card">
+        <span class="bi bi-question-circle-fill feature-icon" aria-hidden="true"></span>
+        <h3>Questions</h3>
+        <p>Create and manage interactive question banks.</p>
+        <a href="/questions" class="feature-link">Learn More</a>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>StudentMind</h4>
+            <p>Enhancing learning experiences since 2025</p>
+        </div>
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="/events">Events</a></li>
+                <li><a href="/surveys">Surveys</a></li>
+                <li><a href="/users">Users</a></li>
+                <li><a href="/login">Login</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Contact</h4>
+            <p>Email: support@studentmind.com</p>
+            <p>Phone: (123) 456-7890</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; @DateTime.Now.Year StudentMind. All rights reserved.</p>
+    </div>
+</footer>

@@ -1,7 +1,8 @@
 ﻿@page "/surveys/edit"
 @using Microsoft.EntityFrameworkCore
 @using StudentMind.Core.Entity
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@using StudentMind.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
 <PageTitle>Edit</PageTitle>
@@ -52,36 +53,6 @@ else
                     <InputText id="typeid" @bind-Value="Survey.TypeId" class="form-control" />
                     <ValidationMessage For="() => Survey.TypeId" class="text-danger" />
                 </div>
-                <div class="mb-3">
-                    <label for="createdby" class="form-label">CreatedBy:</label>
-                    <InputText id="createdby" @bind-Value="Survey.CreatedBy" class="form-control" />
-                    <ValidationMessage For="() => Survey.CreatedBy" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="lastupdatedby" class="form-label">LastUpdatedBy:</label>
-                    <InputText id="lastupdatedby" @bind-Value="Survey.LastUpdatedBy" class="form-control" />
-                    <ValidationMessage For="() => Survey.LastUpdatedBy" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="deletedby" class="form-label">DeletedBy:</label>
-                    <InputText id="deletedby" @bind-Value="Survey.DeletedBy" class="form-control" />
-                    <ValidationMessage For="() => Survey.DeletedBy" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="createdtime" class="form-label">CreatedTime:</label>
-                    <InputDate id="createdtime" @bind-Value="Survey.CreatedTime" class="form-control" />
-                    <ValidationMessage For="() => Survey.CreatedTime" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="lastupdatedtime" class="form-label">LastUpdatedTime:</label>
-                    <InputDate id="lastupdatedtime" @bind-Value="Survey.LastUpdatedTime" class="form-control" />
-                    <ValidationMessage For="() => Survey.LastUpdatedTime" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="deletedtime" class="form-label">DeletedTime:</label>
-                    <InputDate id="deletedtime" @bind-Value="Survey.DeletedTime" class="form-control" />
-                    <ValidationMessage For="() => Survey.DeletedTime" class="text-danger" />
-                </div>
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
         </div>
@@ -101,8 +72,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Survey ??= await context.Surveys.FirstOrDefaultAsync(m => m.Id == Id);
+        var surveyRepository = UnitOfWork.GetRepository<Survey>();
+        Survey = await surveyRepository.Entities.Include(s => s.Type).FirstOrDefaultAsync(s => s.Id == Id);
 
         if (Survey is null)
         {
@@ -114,16 +85,15 @@ else
     // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateSurvey()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Survey!).State = EntityState.Modified;
-
+        await UnitOfWork.GetRepository<Survey>().UpdateAsync(Survey);
+        
         try
         {
-            await context.SaveChangesAsync();
+            await UnitOfWork.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!SurveyExists(Survey!.Id))
+            if (!(await SurveyExistsAsync(Survey!.Id)))
             {
                 NavigationManager.NavigateTo("notfound");
             }
@@ -136,9 +106,13 @@ else
         NavigationManager.NavigateTo("/surveys");
     }
 
-    private bool SurveyExists(string id)
+    private async Task<bool> SurveyExistsAsync(string id)
     {
-        using var context = DbFactory.CreateDbContext();
-        return context.Surveys.Any(e => e.Id == id);
+        var surveyRepository = UnitOfWork.GetRepository<Survey>();
+        var survey = await surveyRepository.Entities
+            .Include(s => s.Type)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
+        return survey != null; // Return true if found, false if not
     }
 }

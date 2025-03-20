@@ -1,7 +1,8 @@
 ﻿@page "/surveyquestions/edit"
 @using Microsoft.EntityFrameworkCore
 @using StudentMind.Core.Entity
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@using StudentMind.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
 <PageTitle>Edit</PageTitle>
@@ -76,8 +77,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        SurveyQuestion ??= await context.SurveyQuestions.FirstOrDefaultAsync(m => m.SurveyId == SurveyId);
+        var surveyQuestionRepository = UnitOfWork.GetRepository<SurveyQuestion>();
+        SurveyQuestion = await surveyQuestionRepository.Entities.FirstOrDefaultAsync(s => s.Id == SurveyId);
 
         if (SurveyQuestion is null)
         {
@@ -89,16 +90,15 @@ else
     // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateSurveyQuestion()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(SurveyQuestion!).State = EntityState.Modified;
+        await UnitOfWork.GetRepository<SurveyQuestion>().UpdateAsync(SurveyQuestion);
 
         try
         {
-            await context.SaveChangesAsync();
+            await UnitOfWork.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!SurveyQuestionExists(SurveyQuestion!.SurveyId))
+            if (!(await SurveyQuestionExists(SurveyQuestion!.SurveyId)))
             {
                 NavigationManager.NavigateTo("notfound");
             }
@@ -111,9 +111,10 @@ else
         NavigationManager.NavigateTo("/surveyquestions");
     }
 
-    private bool SurveyQuestionExists(string surveyid)
+    private async Task<bool> SurveyQuestionExists(string surveyid)
     {
-        using var context = DbFactory.CreateDbContext();
-        return context.SurveyQuestions.Any(e => e.SurveyId == surveyid);
+        var surveyQuestionRepository = UnitOfWork.GetRepository<SurveyQuestion>();
+        SurveyQuestion = await surveyQuestionRepository.Entities.FirstOrDefaultAsync(s => s.Id == surveyid);
+        return SurveyQuestion != null;
     }
 }

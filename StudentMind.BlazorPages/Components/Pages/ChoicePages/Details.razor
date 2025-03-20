@@ -1,7 +1,8 @@
 ﻿@page "/choices/details"
 @using Microsoft.EntityFrameworkCore
 @using StudentMind.Core.Entity
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@using StudentMind.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
 <PageTitle>Details</PageTitle>
@@ -49,8 +50,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        choice = await context.Choices.FirstOrDefaultAsync(m => m.Id == Id);
+        var choiceRepository = UnitOfWork.GetRepository<Choice>();
+        choice = await choiceRepository.Entities.FirstOrDefaultAsync(s => s.Id == Id);
 
         if (choice is null)
         {

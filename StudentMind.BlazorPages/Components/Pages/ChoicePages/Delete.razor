@@ -1,7 +1,8 @@
 ﻿@page "/choices/delete"
 @using Microsoft.EntityFrameworkCore
 @using StudentMind.Core.Entity
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@using StudentMind.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
 <PageTitle>Delete</PageTitle>
@@ -64,8 +65,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        choice = await context.Choices.FirstOrDefaultAsync(m => m.Id == Id);
+        var choiceRepository = UnitOfWork.GetRepository<Choice>();
+        choice = await choiceRepository.Entities.FirstOrDefaultAsync(s => s.Id == Id);
 
         if (choice is null)
         {
@@ -75,9 +76,8 @@
 
     private async Task DeleteChoice()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Choices.Remove(choice!);
-        await context.SaveChangesAsync();
+        await UnitOfWork.GetRepository<Choice>().DeleteAsync(choice);
+        await UnitOfWork.SaveAsync();
         NavigationManager.NavigateTo("/choices");
     }
 }

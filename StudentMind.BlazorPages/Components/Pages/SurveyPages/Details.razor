@@ -1,7 +1,8 @@
 ﻿@page "/surveys/details"
 @using Microsoft.EntityFrameworkCore
 @using StudentMind.Core.Entity
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@using StudentMind.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
 <PageTitle>Details</PageTitle>
@@ -29,12 +30,6 @@
             <dd class="col-sm-10">@survey.TotalParticipants</dd>
             <dt class="col-sm-2">TypeId</dt>
             <dd class="col-sm-10">@survey.TypeId</dd>
-            <dt class="col-sm-2">CreatedBy</dt>
-            <dd class="col-sm-10">@survey.CreatedBy</dd>
-            <dt class="col-sm-2">LastUpdatedBy</dt>
-            <dd class="col-sm-10">@survey.LastUpdatedBy</dd>
-            <dt class="col-sm-2">DeletedBy</dt>
-            <dd class="col-sm-10">@survey.DeletedBy</dd>
             <dt class="col-sm-2">CreatedTime</dt>
             <dd class="col-sm-10">@survey.CreatedTime</dd>
             <dt class="col-sm-2">LastUpdatedTime</dt>
@@ -57,8 +52,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        survey = await context.Surveys.FirstOrDefaultAsync(m => m.Id == Id);
+        var surveyRepository = UnitOfWork.GetRepository<Survey>();
+        survey = await surveyRepository.Entities.Include(s => s.Type).FirstOrDefaultAsync(s => s.Id == Id);
 
         if (survey is null)
         {

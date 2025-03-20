@@ -1,7 +1,8 @@
 ﻿@page "/surveyquestions/delete"
 @using Microsoft.EntityFrameworkCore
 @using StudentMind.Core.Entity
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@using StudentMind.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
 <PageTitle>Delete</PageTitle>
@@ -60,8 +61,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        surveyquestion = await context.SurveyQuestions.FirstOrDefaultAsync(m => m.SurveyId == SurveyId);
+        var surveyQuestionRepository = UnitOfWork.GetRepository<SurveyQuestion>();
+        surveyquestion = await surveyQuestionRepository.Entities.FirstOrDefaultAsync(s => s.Id == SurveyId);
 
         if (surveyquestion is null)
         {
@@ -71,9 +72,8 @@
 
     private async Task DeleteSurveyQuestion()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.SurveyQuestions.Remove(surveyquestion!);
-        await context.SaveChangesAsync();
+        await UnitOfWork.GetRepository<SurveyQuestion>().DeleteAsync(surveyquestion);
+        await UnitOfWork.SaveAsync();
         NavigationManager.NavigateTo("/surveyquestions");
     }
 }

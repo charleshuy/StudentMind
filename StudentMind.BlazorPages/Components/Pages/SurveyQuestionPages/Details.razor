@@ -1,7 +1,8 @@
 ﻿@page "/surveyquestions/details"
 @using Microsoft.EntityFrameworkCore
 @using StudentMind.Core.Entity
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@using StudentMind.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
 <PageTitle>Details</PageTitle>
@@ -47,8 +48,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        surveyquestion = await context.SurveyQuestions.FirstOrDefaultAsync(m => m.SurveyId == SurveyId);
+        var surveyQuestionRepository = UnitOfWork.GetRepository<SurveyQuestion>();
+        surveyquestion = await surveyQuestionRepository.Entities.FirstOrDefaultAsync(s => s.Id == SurveyId);
 
         if (surveyquestion is null)
         {

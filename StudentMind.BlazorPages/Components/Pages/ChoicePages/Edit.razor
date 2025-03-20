@@ -1,7 +1,8 @@
 ﻿@page "/choices/edit"
 @using Microsoft.EntityFrameworkCore
 @using StudentMind.Core.Entity
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@using StudentMind.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
 <PageTitle>Edit</PageTitle>
@@ -81,8 +82,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Choice ??= await context.Choices.FirstOrDefaultAsync(m => m.Id == Id);
+        var choiceRepository = UnitOfWork.GetRepository<Choice>();
+        Choice = await choiceRepository.Entities.FirstOrDefaultAsync(s => s.Id == Id);
 
         if (Choice is null)
         {
@@ -94,16 +95,15 @@ else
     // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateChoice()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Choice!).State = EntityState.Modified;
+        await UnitOfWork.GetRepository<Choice>().UpdateAsync(Choice);
 
         try
         {
-            await context.SaveChangesAsync();
+            await UnitOfWork.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!ChoiceExists(Choice!.Id))
+            if (!(await ChoiceExists(Choice!.Id)))
             {
                 NavigationManager.NavigateTo("notfound");
             }
@@ -116,9 +116,10 @@ else
         NavigationManager.NavigateTo("/choices");
     }
 
-    private bool ChoiceExists(string id)
+    private async Task<bool> ChoiceExists(string id)
     {
-        using var context = DbFactory.CreateDbContext();
-        return context.Choices.Any(e => e.Id == id);
+        var choiceRepository = UnitOfWork.GetRepository<Choice>();
+        Choice = await choiceRepository.Entities.FirstOrDefaultAsync(s => s.Id == Id);
+        return Choice != null;
     }
 }

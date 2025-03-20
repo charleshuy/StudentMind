@@ -12,8 +12,8 @@ namespace StudentMind.Core.Entity
         public string SurveyId { get; set; }
         public string QuestionId { get; set; }
 
-        public Survey Survey { get; set; }
-        public Question Question { get; set; }
+        public Survey? Survey { get; set; }
+        public Question? Question { get; set; }
     }
 
 }

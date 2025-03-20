@@ -25,6 +25,7 @@ namespace StudentMind.Core.Interfaces
         Task UpdateAsync(T obj);
         Task DeleteAsync(object entity);
         Task SaveAsync();
+        Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
 
         //another
         T? Find(Expression<Func<T, bool>> predicate);

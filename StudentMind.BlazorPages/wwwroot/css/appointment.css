@@ -1,0 +1,62 @@
+﻿.modern-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modern-header {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.create-button {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+    .create-button:hover {
+        background-color: #218838;
+    }
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .modern-table th, .modern-table td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+.action-buttons a {
+    margin-right: 10px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.edit {
+    color: #007bff;
+}
+
+.details {
+    color: #17a2b8;
+}
+
+.delete {
+    color: #dc3545;
+}
+
+.loading {
+    text-align: center;
+    font-size: 18px;
+    color: #555;
+}

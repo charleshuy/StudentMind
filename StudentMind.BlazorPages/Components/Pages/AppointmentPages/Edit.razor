@@ -1,16 +1,15 @@
 ﻿@page "/appointments/edit"
-@using Microsoft.EntityFrameworkCore
 @using StudentMind.Core.Entity
-@inject IDbContextFactory<StudentMind.Infrastructure.Context.DatabaseContext> DbFactory
+@using StudentMind.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
-<PageTitle>Edit</PageTitle>
+<PageTitle>Edit Appointment</PageTitle>
 
-<h1>Edit</h1>
-
-<h2>Appointment</h2>
+<h1>Edit Appointment</h1>
 <hr />
-@if (Appointment is null)
+
+@if (Appointment == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -18,50 +17,34 @@ else
 {
     <div class="row">
         <div class="col-md-4">
-            <EditForm method="post" Model="Appointment" OnValidSubmit="UpdateAppointment" FormName="edit" Enhance>
+            <EditForm Model="Appointment" OnValidSubmit="UpdateAppointment">
                 <DataAnnotationsValidator />
-                <ValidationSummary role="alert"/>
-                <input type="hidden" name="Appointment.Id" value="@Appointment.Id" />
+                <ValidationSummary class="text-danger" role="alert" />
+
                 <div class="mb-3">
-                    <label for="psychologistid" class="form-label">PsychologistId:</label>
+                    <label for="psychologistid" class="form-label">Psychologist ID:</label>
                     <InputText id="psychologistid" @bind-Value="Appointment.PsychologistId" class="form-control" />
                     <ValidationMessage For="() => Appointment.PsychologistId" class="text-danger" />
                 </div>
+
                 <div class="mb-3">
-                    <label for="userid" class="form-label">UserId:</label>
+                    <label for="userid" class="form-label">User ID:</label>
                     <InputText id="userid" @bind-Value="Appointment.UserId" class="form-control" />
                     <ValidationMessage For="() => Appointment.UserId" class="text-danger" />
                 </div>
+
                 <div class="mb-3">
-                    <label for="createdby" class="form-label">CreatedBy:</label>
-                    <InputText id="createdby" @bind-Value="Appointment.CreatedBy" class="form-control" />
-                    <ValidationMessage For="() => Appointment.CreatedBy" class="text-danger" />
+                    <label for="starttime" class="form-label">Start Time:</label>
+                    <InputDate id="starttime" @bind-Value="Appointment.StartTime" class="form-control" />
+                    <ValidationMessage For="() => Appointment.StartTime" class="text-danger" />
                 </div>
+
                 <div class="mb-3">
-                    <label for="lastupdatedby" class="form-label">LastUpdatedBy:</label>
-                    <InputText id="lastupdatedby" @bind-Value="Appointment.LastUpdatedBy" class="form-control" />
-                    <ValidationMessage For="() => Appointment.LastUpdatedBy" class="text-danger" />
+                    <label for="endtime" class="form-label">End Time:</label>
+                    <InputDate id="endtime" @bind-Value="Appointment.EndTime" class="form-control" />
+                    <ValidationMessage For="() => Appointment.EndTime" class="text-danger" />
                 </div>
-                <div class="mb-3">
-                    <label for="deletedby" class="form-label">DeletedBy:</label>
-                    <InputText id="deletedby" @bind-Value="Appointment.DeletedBy" class="form-control" />
-                    <ValidationMessage For="() => Appointment.DeletedBy" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="createdtime" class="form-label">CreatedTime:</label>
-                    <InputDate id="createdtime" @bind-Value="Appointment.CreatedTime" class="form-control" />
-                    <ValidationMessage For="() => Appointment.CreatedTime" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="lastupdatedtime" class="form-label">LastUpdatedTime:</label>
-                    <InputDate id="lastupdatedtime" @bind-Value="Appointment.LastUpdatedTime" class="form-control" />
-                    <ValidationMessage For="() => Appointment.LastUpdatedTime" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="deletedtime" class="form-label">DeletedTime:</label>
-                    <InputDate id="deletedtime" @bind-Value="Appointment.DeletedTime" class="form-control" />
-                    <ValidationMessage For="() => Appointment.DeletedTime" class="text-danger" />
-                </div>
+
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
         </div>
@@ -74,15 +57,13 @@ else
 
 @code {
     [SupplyParameterFromQuery]
-    private string? Id { get; set; }
+    private string Id { get; set; }
 
-    [SupplyParameterFromForm]
     private Appointment? Appointment { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Appointment ??= await context.Appointments.FirstOrDefaultAsync(m => m.Id == Id);
+        Appointment = await UnitOfWork.GetRepository<Appointment>().GetByIdAsync(Id);
 
         if (Appointment is null)
         {
@@ -90,35 +71,20 @@ else
         }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateAppointment()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Appointment!).State = EntityState.Modified;
+        if (Appointment == null) return;
 
-        try
-        {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!AppointmentExists(Appointment!.Id))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
-        }
+        await UnitOfWork.GetRepository<Appointment>().UpdateAsync(Appointment);
+
+        await UnitOfWork.SaveAsync();
+
 
         NavigationManager.NavigateTo("/appointments");
     }
 
-    private bool AppointmentExists(string id)
+    private async Task<bool> AppointmentExists(string id)
     {
-        using var context = DbFactory.CreateDbContext();
-        return context.Appointments.Any(e => e.Id == id);
+        return await UnitOfWork.GetRepository<Appointment>().ExistsAsync(a => a.Id == id);
     }
 }

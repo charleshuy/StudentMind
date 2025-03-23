@@ -19,8 +19,8 @@ namespace StudentMind.Core.Entity
         public DateTime EndDate { get; set; }
         [Required(ErrorMessage = "Total Participants is required")]
         public int TotalParticipants { get; set; }
-        [Required(ErrorMessage = "Type id is required")]
-        public string TypeId { get; set; }
+        //[Required(ErrorMessage = "Type id is required")]
+        public string? TypeId { get; set; }
 
         public SurveyType? Type { get; set; }
         public ICollection<SurveyResponse>? SurveyResponses { get; set; }

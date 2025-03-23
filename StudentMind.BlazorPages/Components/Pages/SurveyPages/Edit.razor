@@ -49,8 +49,14 @@ else
                     <ValidationMessage For="() => Survey.TotalParticipants" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="typeid" class="form-label">TypeId:</label>
-                    <InputText id="typeid" @bind-Value="Survey.TypeId" class="form-control" />
+                    <label for="typeid" class="form-label">Survey Type:</label>
+                    <InputSelect id="typeid" @bind-Value="Survey.TypeId" class="form-control">
+                        <option value="">Select a type</option>
+                        @foreach (var type in SurveyTypes)
+                        {
+                            <option value="@type.Id">@type.Name</option>
+                        }
+                    </InputSelect>
                     <ValidationMessage For="() => Survey.TypeId" class="text-danger" />
                 </div>
                 <button type="submit" class="btn btn-primary">Save</button>
@@ -70,8 +76,11 @@ else
     [SupplyParameterFromForm]
     private Survey? Survey { get; set; }
 
+    private List<SurveyType> SurveyTypes { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
+		SurveyTypes = await UnitOfWork.GetRepository<SurveyType>().Entities.ToListAsync();
         var surveyRepository = UnitOfWork.GetRepository<Survey>();
         Survey = await surveyRepository.Entities.Include(s => s.Type).FirstOrDefaultAsync(s => s.Id == Id);
 
@@ -90,6 +99,9 @@ else
         try
         {
             await UnitOfWork.SaveAsync();
+            var updatedSurvey = await UnitOfWork.GetRepository<Survey>().Entities.FirstOrDefaultAsync(s => s.Id == Survey.Id);
+            Console.WriteLine($"Updated Survey: {updatedSurvey?.Name}");
+
         }
         catch (DbUpdateConcurrencyException)
         {

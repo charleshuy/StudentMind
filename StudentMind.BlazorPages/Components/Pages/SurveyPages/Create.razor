@@ -47,16 +47,13 @@
 
             <div class="mb-3">
                 <label for="typeid" class="form-label">Survey Type:</label>
-                <select id="typeid" @bind="Survey.TypeId" class="form-control">
-                    <option value="">-- Select Survey Type --</option>
-                    @if (SurveyTypes != null)
+                <InputSelect id="type" @bind-Value="Survey.TypeId">
+                    <option value="">Select a type</option>
+                    @foreach (var type in SurveyTypes)
                     {
-                        @foreach (var type in SurveyTypes)
-                        {
-                            <option value="@type.Id">@type.Name</option>
-                        }
+                        <option value="@type.Id">@type.Name</option>
                     }
-                </select>
+                </InputSelect>
                 <ValidationMessage For="() => Survey.TypeId" class="text-danger" />
             </div>
 
@@ -70,6 +67,7 @@
 </div>
 
 @code {
+    [SupplyParameterFromForm]
     private Survey Survey { get; set; } = new();
     private List<SurveyType> SurveyTypes { get; set; } = new();
 
@@ -81,27 +79,17 @@
 
     private async Task AddSurvey()
     {
-        try
+        if (string.IsNullOrWhiteSpace(Survey.Description))
         {
-            if (string.IsNullOrWhiteSpace(Survey.Description))
-            {
-                Survey.Description = "N/A";
-            }
+            Survey.Description = "N/A";
+        }
 
-            var surveyRepository = UnitOfWork.GetRepository<Survey>();
-            await surveyRepository.InsertAsync(Survey);
-            await UnitOfWork.SaveAsync();
-            NavigationManager.NavigateTo("/surveys");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Exception: " + ex.Message);
-            Console.WriteLine("Survey: " + Survey.Name);
-            Console.WriteLine("        " + Survey.Description);
-            Console.WriteLine("        " + Survey.StartDate);
-            Console.WriteLine("        " + Survey.EndDate);
-            Console.WriteLine("        " + Survey.TotalParticipants);
-            Console.WriteLine("        " + Survey.TypeId);
-        }
+		Survey.Id = Guid.NewGuid().ToString().ToUpper();
+        var surveyRepository = UnitOfWork.GetRepository<Survey>();
+        await surveyRepository.InsertAsync(Survey);
+        await UnitOfWork.SaveAsync();
+
+        // Ensure UI updates before navigation
+        NavigationManager.NavigateTo("/surveys", forceLoad: true);
     }
 }

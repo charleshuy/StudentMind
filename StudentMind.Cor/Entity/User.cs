@@ -1,5 +1,7 @@
 ﻿using StudentMind.Core.Base;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace StudentMind.Core.Entity
 {
@@ -24,11 +26,18 @@ namespace StudentMind.Core.Entity
 
         // Navigation Properties
         public virtual Role? Role { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Certificate>? Certificates { get; set; } = new List<Certificate>();
+        [JsonIgnore]
         public virtual ICollection<Appointment>? PsychologistAppointments { get; set; } = new List<Appointment>();
+        [JsonIgnore]
         public virtual ICollection<Appointment>? UserAppointments { get; set; } = new List<Appointment>();
+        [JsonIgnore]
         public virtual ICollection<SurveyResponse>? SurveyResponses { get; set; } = new List<SurveyResponse>();
+
+        [IgnoreDataMember]
         public virtual ICollection<UserEvent>? UserEvents { get; set; } = new List<UserEvent>();
+        [JsonIgnore]
         public virtual ICollection<History>? Histories { get; set; } = new List<History>();
 
     }

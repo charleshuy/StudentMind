@@ -17,27 +17,12 @@ namespace StudentMind.Infracstructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.2")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CertificateUser", b =>
-                {
-                    b.Property<string>("CertificatesId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UsersId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("CertificatesId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("CertificateUser");
-                });
-
-            modelBuilder.Entity("StudentMind.Core.Entity.Appointment", b =>
+            modelBuilder.Entity("Appointment", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -54,15 +39,27 @@ namespace StudentMind.Infracstructure.Migrations
                     b.Property<DateTimeOffset?>("DeletedTime")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTimeOffset>("EndTime")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("LastUpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("LastUpdatedTime")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PsychologistId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTimeOffset>("StartTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -75,6 +72,21 @@ namespace StudentMind.Infracstructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Appointments");
+                });
+
+            modelBuilder.Entity("CertificateUser", b =>
+                {
+                    b.Property<string>("CertificatesId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CertificatesId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("CertificateUser");
                 });
 
             modelBuilder.Entity("StudentMind.Core.Entity.Certificate", b =>
@@ -246,6 +258,7 @@ namespace StudentMind.Infracstructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Content")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedBy")
@@ -569,22 +582,7 @@ namespace StudentMind.Infracstructure.Migrations
                     b.ToTable("UserEvents");
                 });
 
-            modelBuilder.Entity("CertificateUser", b =>
-                {
-                    b.HasOne("StudentMind.Core.Entity.Certificate", null)
-                        .WithMany()
-                        .HasForeignKey("CertificatesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StudentMind.Core.Entity.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("StudentMind.Core.Entity.Appointment", b =>
+            modelBuilder.Entity("Appointment", b =>
                 {
                     b.HasOne("StudentMind.Core.Entity.User", "Psychologist")
                         .WithMany("PsychologistAppointments")
@@ -601,6 +599,21 @@ namespace StudentMind.Infracstructure.Migrations
                     b.Navigation("Psychologist");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CertificateUser", b =>
+                {
+                    b.HasOne("StudentMind.Core.Entity.Certificate", null)
+                        .WithMany()
+                        .HasForeignKey("CertificatesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentMind.Core.Entity.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("StudentMind.Core.Entity.Choice", b =>
@@ -701,13 +714,11 @@ namespace StudentMind.Infracstructure.Migrations
                     b.HasOne("StudentMind.Core.Entity.Event", "Event")
                         .WithMany("UserEvents")
                         .HasForeignKey("ProgramId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("StudentMind.Core.Entity.User", "User")
                         .WithMany("UserEvents")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Event");

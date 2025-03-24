@@ -3,6 +3,7 @@ using StudentMind.BlazorPages.Components;
 using StudentMind.Infracstructure;
 using StudentMind.Infrastructure.Context;
 using StudentMind.Services;
+using System.Text.Json.Serialization;
 
 namespace StudentMind.BlazorPages
 {
@@ -22,6 +23,11 @@ namespace StudentMind.BlazorPages
              {
                  options.UseSqlServer(builder.Configuration.GetConnectionString("StudentMindDb"));
              });
+
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
 
             builder.Services.AddCors(options =>
             {

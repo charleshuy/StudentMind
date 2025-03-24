@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Interfaces;
 using StudentMind.Infracstructure.Paggings;
+using StudentMind.Infrastructure.Context;
 using System.Linq.Expressions;
 
 
@@ -8,10 +9,10 @@ namespace StudentMind.Infracstructure.Repo
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly DbContext _context;
+        private readonly DatabaseContext _context;
         private readonly DbSet<T> _dbSet;
 
-        public GenericRepository(DbContext context)
+        public GenericRepository(DatabaseContext context)
         {
             _context = context;
             _dbSet = context.Set<T>();
@@ -93,6 +94,10 @@ namespace StudentMind.Infracstructure.Repo
         public async Task InsertRangeAsync(List<T> obj)
         {
             await _dbSet.AddRangeAsync(obj);
+        }
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.AnyAsync(predicate);
         }
     }
 }

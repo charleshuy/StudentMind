@@ -22,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentMind.Services", "Stu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentMind.BlazorPages", "StudentMind.BlazorPages\StudentMind.BlazorPages.csproj", "{92EBEDD6-D031-4769-A5AC-3680E3C13FCF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentMind.Razor", "StudentMind.Razor\StudentMind.Razor.csproj", "{62834222-0FF3-4E28-9417-D5E13D7A5E7C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{92EBEDD6-D031-4769-A5AC-3680E3C13FCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92EBEDD6-D031-4769-A5AC-3680E3C13FCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92EBEDD6-D031-4769-A5AC-3680E3C13FCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62834222-0FF3-4E28-9417-D5E13D7A5E7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62834222-0FF3-4E28-9417-D5E13D7A5E7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62834222-0FF3-4E28-9417-D5E13D7A5E7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62834222-0FF3-4E28-9417-D5E13D7A5E7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{6ACF8874-A8DD-4074-90CF-22750B892572} = {E21D3D84-6602-476D-B2EC-0EF4F0374758}
 		{A17244BD-8200-400F-9A83-FBD0D512C981} = {47208D52-4B05-46E4-B05B-15B4053B1856}
 		{92EBEDD6-D031-4769-A5AC-3680E3C13FCF} = {17F60DC7-BBE9-483F-AC75-D3487F4808A0}
+		{62834222-0FF3-4E28-9417-D5E13D7A5E7C} = {17F60DC7-BBE9-483F-AC75-D3487F4808A0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {85B2572C-E363-4411-A877-E25B6CD13992}

@@ -18,6 +18,7 @@ namespace StudentMind.Services
         {
             services.AddAuthentication(configuration);
             services.AddScoped<IFirebaseAuthService, FirebaseAuthService>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         private static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)

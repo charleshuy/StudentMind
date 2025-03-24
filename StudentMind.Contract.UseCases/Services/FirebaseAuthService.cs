@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Net.Http;
+using System.Text.Json;
 using StudentMind.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,54 +17,63 @@ namespace StudentMind.Services.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
 
         public FirebaseAuthService(IUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
+            _httpClient = new HttpClient();
         }
 
-        public async Task<string> SignInWithFirebaseAsync(string idToken)
+        public async Task<string> SignInWithEmailPasswordAsync(string email, string password)
         {
             try
             {
-                // ✅ Verify Firebase Token
-                FirebaseToken decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(idToken);
-                string firebaseUserId = decodedToken.Uid;
-                string? email = decodedToken.Claims.ContainsKey("email") ? decodedToken.Claims["email"].ToString() : null;
-                string? fullName = decodedToken.Claims.ContainsKey("name") ? decodedToken.Claims["name"].ToString() : "Unknown";
-                string? username = email?.Split('@')[0] ?? firebaseUserId;
+                var apiKey = _configuration["Firebase:ApiKey"];
+                var signInUrl = $"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={apiKey}";
 
-                if (string.IsNullOrEmpty(email))
+                var payload = new
                 {
-                    throw new Exception("Firebase token does not contain an email.");
-                }
+                    email = email,
+                    password = password,
+                    returnSecureToken = true
+                };
 
-                // ✅ Check if the user exists
+                var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(signInUrl, content);
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Invalid email or password.");
+
+                var responseData = JsonSerializer.Deserialize<JsonElement>(await response.Content.ReadAsStringAsync());
+                var idToken = responseData.GetProperty("idToken").GetString();
+
+                // Check if user exists
                 var userRepo = _unitOfWork.GetRepository<User>();
-                var user = (await userRepo.Entities.FirstOrDefaultAsync(u => u.Email == email));
+                var user = await userRepo.Entities.FirstOrDefaultAsync(u => u.Email == email);
 
                 if (user == null)
                 {
-                    // ✅ Create a new user
+                    // Create a new user
                     user = new User
                     {
-                        Username = username,
+                        Username = email.Split('@')[0],
                         Email = email,
-                        FullName = fullName,
-                        RoleId = await GetDefaultRoleIdAsync() // Assign default role
+                        FullName = "Unknown",
+                        RoleId = await GetDefaultRoleIdAsync()
                     };
 
                     await userRepo.InsertAsync(user);
                     await _unitOfWork.SaveAsync();
                 }
 
-                // ✅ Generate JWT Token
+                // Generate JWT Token
                 return await GenerateJwtToken(user);
             }
-            catch (FirebaseAuthException)
+            catch (Exception ex)
             {
-                throw new Exception("Invalid Firebase token.");
+                throw new Exception($"Firebase authentication failed: {ex.Message}");
             }
         }
 
@@ -75,7 +86,7 @@ namespace StudentMind.Services.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Email ?? ""),
-                new Claim(ClaimTypes.Role, user.Role?.RoleName ?? "User") // Assign user role
+                new Claim(ClaimTypes.Role, user.Role?.RoleName ?? "User")
             };
 
             var token = new JwtSecurityToken(
@@ -92,7 +103,7 @@ namespace StudentMind.Services.Services
         private async Task<string> GetDefaultRoleIdAsync()
         {
             var roleRepo = _unitOfWork.GetRepository<Role>();
-            var defaultRole = (await roleRepo.Entities.FirstOrDefaultAsync(r => r.RoleName == "User"));
+            var defaultRole = await roleRepo.Entities.FirstOrDefaultAsync(r => r.RoleName == "User");
             return defaultRole?.Id.ToString() ?? throw new Exception("Default role not found.");
         }
     }

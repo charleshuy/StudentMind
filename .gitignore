@@ -367,3 +367,6 @@ FodyWeavers.xsd
 /StudentMind.BlazorPages/appsettings.Development.json
 /StudentMind.BlazorPages/thecoffeehand-3bf49-firebase-adminsdk-fbsvc-bc50f37e05.json
 /StudentMind.BlazorPages/firebase-adminsdk.json
+/StudentMind.Razor/appsettings.json
+/StudentMind.Razor/appsettings.Development.json
+/StudentMind.Razor/firebase-adminsdk.json

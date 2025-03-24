@@ -5,24 +5,26 @@
 @inject IUnitOfWork UnitOfWork
 @inject NavigationManager NavigationManager
 
-<PageTitle>Create</PageTitle>
+<PageTitle>Create Question</PageTitle>
 
-<h1>Create</h1>
+<h1>Create Question</h1>
 
-<h2>Question</h2>
-<hr />
 <div class="row">
     <div class="col-md-4">
-        <EditForm Model="FormModel" OnValidSubmit="AddQuestion" FormName="create">
+        <EditForm Model="questionModel" OnValidSubmit="AddQuestion" FormName="add-question-form">
             <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
+            <ValidationSummary class="text-danger" />
+
             <div class="mb-3">
                 <label for="content" class="form-label">Content:</label>
-                <InputText id="content" name="Content" @bind-Value="FormModel.Content" class="form-control" />
-                <ValidationMessage For="() => FormModel.Content" class="text-danger" />
+                <InputText id="content" @bind-Value="questionModel.Content" class="form-control" />
+                <ValidationMessage For="() => questionModel.Content" class="text-danger" />
             </div>
+
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
+
+        <p>Debug: Current Content Value = "@questionModel.Content"</p> <!-- Real-time debug -->
     </div>
 </div>
 
@@ -31,23 +33,31 @@
 </div>
 
 @code {
-    // Simple form model (could be more fields as needed)
-    private FormInputModel FormModel { get; set; } = new FormInputModel();
-    private Question Question { get; set; } = new Question();
+    [SupplyParameterFromForm]
+    private QuestionModel questionModel { get; set; } = new();
 
     private async Task AddQuestion()
     {
-        // Manually assign form data to entity
-        Question.Content = FormModel.Content;
-
+        Console.WriteLine($"Submitting Question: {questionModel.Content}");
+        if (string.IsNullOrWhiteSpace(questionModel.Content))
+        {
+            Console.WriteLine("Error: Question content is empty!");
+            return;
+        }
+		Question newQuestion = new Question
+			{
+				Id = Guid.NewGuid().ToString().ToUpper(),
+				Content = questionModel.Content
+			};
         var questionRepository = UnitOfWork.GetRepository<Question>();
-        await questionRepository.InsertAsync(Question);
+        await questionRepository.InsertAsync(newQuestion);
         await UnitOfWork.SaveAsync();
-        NavigationManager.NavigateTo("/questions");
+
+        Console.WriteLine("Question saved successfully!");
+        NavigationManager.NavigateTo("/questions", forceLoad: false);
     }
 
-    // Simple DTO-like model
-    public class FormInputModel
+    public class QuestionModel
     {
         public string Content { get; set; } = string.Empty;
     }

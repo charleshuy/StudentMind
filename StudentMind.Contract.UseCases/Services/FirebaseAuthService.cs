@@ -1,12 +1,10 @@
-﻿using FirebaseAdmin.Auth;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using StudentMind.Core.Entity;
 using StudentMind.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Net.Http;
 using System.Text.Json;
 using StudentMind.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -79,7 +77,7 @@ namespace StudentMind.Services.Services
 
         private async Task<string> GenerateJwtToken(User user)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new Exception("JWT key not found")));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"] ?? throw new Exception("JWT key not found")));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>

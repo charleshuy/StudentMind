@@ -42,7 +42,7 @@ namespace StudentMind.BlazorPages
 
 
 
-            builder.Services.AddRepositoryLayer();
+            builder.Services.AddRepositoryLayer(builder.Configuration);
             builder.Services.AddServiceLayer(builder.Configuration);
             builder.Services.AddQuickGridEntityFrameworkAdapter();
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();

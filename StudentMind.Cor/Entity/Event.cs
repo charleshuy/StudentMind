@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace StudentMind.Core.Entity
@@ -16,6 +17,7 @@ namespace StudentMind.Core.Entity
         public string HostId { get; set; }
 
         public User Host { get; set; }
-        public ICollection<UserEvent> UserEvents { get; set; }
+        [JsonIgnore]
+        public ICollection<UserEvent>? UserEvents { get; set; }
     }
 }

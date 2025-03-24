@@ -10,6 +10,7 @@ namespace StudentMind.Infracstructure
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
         }
     }
 }

@@ -85,15 +85,19 @@ namespace StudentMind.Infrastructure.Context
             modelBuilder.Entity<UserEvent>()
                 .HasKey(ue => new { ue.ProgramId, ue.UserId });
 
+            // Event - UserEvent Relationship
             modelBuilder.Entity<UserEvent>()
                 .HasOne(ue => ue.Event)
                 .WithMany(e => e.UserEvents)
-                .HasForeignKey(ue => ue.ProgramId);
+                .HasForeignKey(ue => ue.ProgramId)
+                .OnDelete(DeleteBehavior.ClientSetNull); // Adjust delete behavior
 
             modelBuilder.Entity<UserEvent>()
                 .HasOne(ue => ue.User)
-                .WithMany(u => u.UserEvents) // Explicit collection in User
-                .HasForeignKey(ue => ue.UserId).OnDelete(DeleteBehavior.NoAction); ;
+                .WithMany(u => u.UserEvents)
+                .HasForeignKey(ue => ue.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull); // Adjust delete behavior
+
 
             // SurveyType - Survey Relationship
             modelBuilder.Entity<SurveyType>()

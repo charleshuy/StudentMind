@@ -47,17 +47,23 @@ namespace StudentMind.Services.Services
                 var responseData = JsonSerializer.Deserialize<JsonElement>(await response.Content.ReadAsStringAsync());
                 var idToken = responseData.GetProperty("idToken").GetString();
 
-                // Check if user exists
+                // Check email verification status
+                var isEmailVerified = await IsEmailVerifiedAsync(idToken);
+
+                if (!isEmailVerified)
+                    throw new Exception("Email is not verified. Please check your inbox and verify your email.");
+
+                // Check if user exists in the database
                 var userRepo = _unitOfWork.GetRepository<User>();
                 var user = await userRepo.Entities.FirstOrDefaultAsync(u => u.Email == email);
 
                 if (user == null)
                 {
-                    // Create a new user
                     user = new User
                     {
                         Username = email.Split('@')[0],
                         Email = email,
+                        Password = password,
                         FullName = "Unknown",
                         RoleId = await GetDefaultRoleIdAsync()
                     };
@@ -74,6 +80,112 @@ namespace StudentMind.Services.Services
                 throw new Exception($"Firebase authentication failed: {ex.Message}");
             }
         }
+
+        private async Task<bool> IsEmailVerifiedAsync(string idToken)
+        {
+            var apiKey = _configuration["Firebase:ApiKey"];
+            var accountInfoUrl = $"https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={apiKey}";
+
+            var payload = new { idToken };
+            var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(accountInfoUrl, content);
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("Failed to retrieve account information.");
+
+            var responseData = JsonSerializer.Deserialize<JsonElement>(await response.Content.ReadAsStringAsync());
+            var users = responseData.GetProperty("users");
+
+            if (users.GetArrayLength() > 0)
+            {
+                return users[0].GetProperty("emailVerified").GetBoolean();
+            }
+
+            return false;
+        }
+
+
+        public async Task RegisterUserAsync(string email, string password)
+        {
+            try
+            {
+                var apiKey = _configuration["Firebase:ApiKey"];
+                var signUpUrl = $"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={apiKey}";
+
+                var payload = new
+                {
+                    email = email,
+                    password = password,
+                    returnSecureToken = true
+                };
+
+                var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(signUpUrl, content);
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Failed to register user. Please try again.");
+
+                var responseData = JsonSerializer.Deserialize<JsonElement>(await response.Content.ReadAsStringAsync());
+                var idToken = responseData.GetProperty("idToken").GetString();
+
+                // Send verification email
+                await SendEmailVerificationAsync(idToken);
+
+                // Optional: Additional logic to handle user data in your database
+
+                // Check if user exists
+                var userRepo = _unitOfWork.GetRepository<User>();
+                var user = await userRepo.Entities.FirstOrDefaultAsync(u => u.Email == email);
+
+                if (user != null)
+                {
+                    // Create a new user
+                    user = new User
+                    {
+                        Username = email.Split('@')[0],
+                        Email = email,
+                        Password = password,
+                        FullName = "Unknown",
+                        RoleId = await GetDefaultRoleIdAsync()
+                    };
+
+                    await userRepo.InsertAsync(user);
+                    await _unitOfWork.SaveAsync();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Registration failed: {ex.Message}");
+            }
+        }
+
+        public async Task SendEmailVerificationAsync(string idToken)
+        {
+            try
+            {
+                var apiKey = _configuration["Firebase:ApiKey"];
+                var verificationUrl = $"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={apiKey}";
+
+                var payload = new
+                {
+                    requestType = "VERIFY_EMAIL",
+                    idToken = idToken
+                };
+
+                var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(verificationUrl, content);
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Failed to send verification email.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Email verification failed: {ex.Message}");
+            }
+        }
+
+
 
         private async Task<string> GenerateJwtToken(User user)
         {

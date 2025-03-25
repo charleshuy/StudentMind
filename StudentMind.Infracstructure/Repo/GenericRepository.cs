@@ -94,5 +94,9 @@ namespace StudentMind.Infracstructure.Repo
         {
             await _dbSet.AddRangeAsync(obj);
         }
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.AnyAsync(predicate);
+        }
     }
 }

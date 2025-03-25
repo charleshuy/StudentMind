@@ -17,7 +17,16 @@ namespace StudentMind.Services
         public static void AddServiceLayer(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication(configuration);
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdmin", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("RequireManager", policy => policy.RequireRole("Manager"));
+                options.AddPolicy("RequireUser", policy => policy.RequireRole("User"));
+                options.AddPolicy("AdminOrManager", policy => policy.RequireRole("Admin", "Manager"));
+            });
+
             services.AddScoped<IFirebaseAuthService, FirebaseAuthService>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         private static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
@@ -57,18 +66,20 @@ namespace StudentMind.Services
                 };
             })
             // Custom JWT Authentication
+            // Custom JWT Authentication
             .AddJwtBearer("Jwt", options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = false, // No Issuer validation
-                    ValidateAudience = false, // No Audience validation
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = jwtKey,
-                    RoleClaimType = ClaimTypes.Role
+                    RoleClaimType = ClaimTypes.Role // Ensure this is set
                 };
             });
+
         }
     }
 

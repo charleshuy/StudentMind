@@ -2,6 +2,7 @@
 {
     public interface IFirebaseAuthService
     {
-        Task<string> SignInWithFirebaseAsync(string idToken);
+        Task<string> SignInWithEmailPasswordAsync(string email, string password);
+        Task RegisterUserAsync(string email, string password);
     }
 }

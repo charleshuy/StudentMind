@@ -17,9 +17,11 @@ else
 {
     <div class="row">
         <div class="col-md-4">
-            <EditForm Model="Appointment" OnValidSubmit="UpdateAppointment">
+            <EditForm method="post" Model="Appointment" OnValidSubmit="UpdateAppointment" FormName="EditAppointmentForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary class="text-danger" role="alert" />
+
+                <input type="hidden" name="Appointment.Id" value="@Appointment.Id" />
 
                 <div class="mb-3">
                     <label for="psychologistid" class="form-label">Psychologist ID:</label>
@@ -57,34 +59,35 @@ else
 
 @code {
     [SupplyParameterFromQuery]
-    private string Id { get; set; }
+    public string? Id { get; set; }
 
     private Appointment? Appointment { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    [SupplyParameterFromForm]
+    private Appointment? UpdAppointment { get; set; }
+
+    protected override async Task OnParametersSetAsync()
     {
         Appointment = await UnitOfWork.GetRepository<Appointment>().GetByIdAsync(Id);
 
-        if (Appointment is null)
+        if (Appointment == null)
         {
             NavigationManager.NavigateTo("notfound");
+            return;
         }
     }
 
     private async Task UpdateAppointment()
     {
         if (Appointment == null) return;
-
-        await UnitOfWork.GetRepository<Appointment>().UpdateAsync(Appointment);
-
+        Appointment.UserId = UpdAppointment.UserId;
+        Appointment.PsychologistId = UpdAppointment.PsychologistId;
+        Appointment.StartTime = UpdAppointment.StartTime;
+        Appointment.EndTime = UpdAppointment.EndTime;
+        UnitOfWork.GetRepository<Appointment>().Update(Appointment);
         await UnitOfWork.SaveAsync();
-
 
         NavigationManager.NavigateTo("/appointments");
     }
-
-    private async Task<bool> AppointmentExists(string id)
-    {
-        return await UnitOfWork.GetRepository<Appointment>().ExistsAsync(a => a.Id == id);
-    }
 }
+

@@ -8,16 +8,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.DTO;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.ChoicePages
 {
     public class EditModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IChoiceService _choiceService;
+        private readonly IQuestionService _questionService;
 
-        public EditModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public EditModel(IChoiceService choiceService, IQuestionService questionService)
         {
-            _context = context;
+            _choiceService = choiceService;
+            _questionService = questionService;
         }
 
         [BindProperty]
@@ -30,13 +34,13 @@ namespace StudentMind.Razor.Pages.ChoicePages
                 return NotFound();
             }
 
-            var choice =  await _context.Choices.FirstOrDefaultAsync(m => m.Id == id);
+            var choice =  await _choiceService.GetChoiceById(id);
             if (choice == null)
             {
                 return NotFound();
             }
             Choice = choice;
-           ViewData["QuestionId"] = new SelectList(_context.Questions, "Id", "Id");
+            ViewData["QuestionId"] = new SelectList(await _questionService.GetQuestions(), "Id", "Content");
             return Page();
         }
 
@@ -49,15 +53,18 @@ namespace StudentMind.Razor.Pages.ChoicePages
                 return Page();
             }
 
-            _context.Attach(Choice).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                ChoiceDTO choiceDTO = new ChoiceDTO
+                {
+                    Content = Choice.Content,
+                    QuestionId = Choice.QuestionId
+                };
+                await _choiceService.UpdateChoice(Choice.Id, choiceDTO);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ChoiceExists(Choice.Id))
+                if (!(await ChoiceExists(Choice.Id)))
                 {
                     return NotFound();
                 }
@@ -70,9 +77,9 @@ namespace StudentMind.Razor.Pages.ChoicePages
             return RedirectToPage("./Index");
         }
 
-        private bool ChoiceExists(string id)
+        private async Task<bool> ChoiceExists(string id)
         {
-            return _context.Choices.Any(e => e.Id == id);
+            return _choiceService.GetChoiceById(id) != null;
         }
     }
 }

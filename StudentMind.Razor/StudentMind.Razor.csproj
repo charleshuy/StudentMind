@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="Pages\ChoicePages\" />
-    <Folder Include="Pages\QuestionPages\" />
     <Folder Include="Pages\SurveyQuestionPages\" />
   </ItemGroup>
 

@@ -1,0 +1,66 @@
+﻿@page
+@model StudentMind.Razor.Pages.QuestionPages.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Question</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Question.Content" class="control-label"></label>
+                <input asp-for="Question.Content" class="form-control" />
+                <span asp-validation-for="Question.Content" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Question.Id" />
+            <div class="form-group">
+                <label asp-for="Question.CreatedBy" class="control-label"></label>
+                <input asp-for="Question.CreatedBy" class="form-control" />
+                <span asp-validation-for="Question.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Question.LastUpdatedBy" class="control-label"></label>
+                <input asp-for="Question.LastUpdatedBy" class="form-control" />
+                <span asp-validation-for="Question.LastUpdatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Question.DeletedBy" class="control-label"></label>
+                <input asp-for="Question.DeletedBy" class="form-control" />
+                <span asp-validation-for="Question.DeletedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Question.CreatedTime" class="control-label"></label>
+                <input asp-for="Question.CreatedTime" class="form-control" />
+                <span asp-validation-for="Question.CreatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Question.LastUpdatedTime" class="control-label"></label>
+                <input asp-for="Question.LastUpdatedTime" class="form-control" />
+                <span asp-validation-for="Question.LastUpdatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Question.DeletedTime" class="control-label"></label>
+                <input asp-for="Question.DeletedTime" class="form-control" />
+                <span asp-validation-for="Question.DeletedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
-using StudentMind.Infrastructure.Context;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.QuestionPages
 {
     public class DetailsModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IQuestionService _questionService;
 
-        public DetailsModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public DetailsModel(IQuestionService questionService)
         {
-            _context = context;
+            _questionService = questionService;
         }
 
         public Question Question { get; set; } = default!;
@@ -28,7 +24,7 @@ namespace StudentMind.Razor.Pages.QuestionPages
                 return NotFound();
             }
 
-            var question = await _context.Questions.FirstOrDefaultAsync(m => m.Id == id);
+            var question = await _questionService.GetQuestionById(id);
             if (question == null)
             {
                 return NotFound();

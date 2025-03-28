@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.SurveyPages
 {
     public class DetailsModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly ISurveyService _surveyService;
 
-        public DetailsModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public DetailsModel(ISurveyService surveyService)
         {
-            _context = context;
+            _surveyService = surveyService;
         }
 
         public Survey Survey { get; set; } = default!;
@@ -28,7 +29,7 @@ namespace StudentMind.Razor.Pages.SurveyPages
                 return NotFound();
             }
 
-            var survey = await _context.Surveys.FirstOrDefaultAsync(m => m.Id == id);
+            var survey = await _surveyService.GetSurveyById(id);
             if (survey == null)
             {
                 return NotFound();

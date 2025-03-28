@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
-using StudentMind.Infrastructure.Context;
+using StudentMind.Services.DTO;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.QuestionPages
 {
     public class EditModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IQuestionService _questionService;
 
-        public EditModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public EditModel(IQuestionService questionService)
         {
-            _context = context;
+            _questionService = questionService;
         }
 
         [BindProperty]
@@ -30,7 +26,7 @@ namespace StudentMind.Razor.Pages.QuestionPages
                 return NotFound();
             }
 
-            var question =  await _context.Questions.FirstOrDefaultAsync(m => m.Id == id);
+            var question =  await _questionService.GetQuestionById(id);
             if (question == null)
             {
                 return NotFound();
@@ -48,15 +44,17 @@ namespace StudentMind.Razor.Pages.QuestionPages
                 return Page();
             }
 
-            _context.Attach(Question).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                QuestionDTO questionDto = new QuestionDTO
+                {
+                    Content = Question.Content
+                };
+                await _questionService.UpdateQuestion(Question.Id, questionDto);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!QuestionExists(Question.Id))
+                if (!(await QuestionExists(Question.Id)))
                 {
                     return NotFound();
                 }
@@ -69,9 +67,9 @@ namespace StudentMind.Razor.Pages.QuestionPages
             return RedirectToPage("./Index");
         }
 
-        private bool QuestionExists(string id)
+        private async Task<bool> QuestionExists(string id)
         {
-            return _context.Questions.Any(e => e.Id == id);
+            return await _questionService.GetQuestionById(id) != null;
         }
     }
 }

@@ -26,7 +26,9 @@ namespace StudentMind.Services.Services
                 StartDate = surveyDto.StartDate,
                 EndDate = surveyDto.EndDate,
                 TotalParticipants = surveyDto.TotalParticipants,
-                TypeId = surveyDto.TypeId
+                TypeId = surveyDto.TypeId,
+                CreatedTime = DateTime.Now,
+                LastUpdatedTime = DateTime.Now
             };
             await surveyRepo.InsertAsync(survey);
             await _unitOfWork.SaveAsync();
@@ -43,6 +45,7 @@ namespace StudentMind.Services.Services
             survey.EndDate = surveyDto.EndDate;
             survey.TotalParticipants = surveyDto.TotalParticipants;
             survey.TypeId = surveyDto.TypeId;
+            survey.LastUpdatedTime = DateTime.Now;
             await surveyRepo.UpdateAsync(survey);
             await _unitOfWork.SaveAsync();
             return survey;
@@ -51,14 +54,15 @@ namespace StudentMind.Services.Services
         public async Task DeleteSurvey(string id)
         {
             var surveyRepo = _unitOfWork.GetRepository<Survey>();
-            await surveyRepo.DeleteAsync(id);
+            Survey survey = surveyRepo.GetById(id);
+            await surveyRepo.DeleteAsync(survey);
             await _unitOfWork.SaveAsync();
         }
 
         public async Task<Survey> GetSurveyById(string id)
         {
             var surveyRepo = _unitOfWork.GetRepository<Survey>();
-            return await surveyRepo.GetByIdAsync(id);
+            return await surveyRepo.Entities.Include(s => s.Type).FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public async Task<List<Survey>> GetSurveys()

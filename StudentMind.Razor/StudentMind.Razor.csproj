@@ -19,4 +19,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\ChoicePages\" />
+    <Folder Include="Pages\QuestionPages\" />
+    <Folder Include="Pages\SurveyQuestionPages\" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,94 @@
+﻿@page
+@model StudentMind.Razor.Pages.SurveyPages.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Survey</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Survey.Name" class="control-label"></label>
+                <input asp-for="Survey.Name" class="form-control" />
+                <span asp-validation-for="Survey.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Survey.Description" class="control-label"></label>
+                <input asp-for="Survey.Description" class="form-control" />
+                <span asp-validation-for="Survey.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Survey.StartDate" class="control-label"></label>
+                <input asp-for="Survey.StartDate" class="form-control" />
+                <span asp-validation-for="Survey.StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Survey.EndDate" class="control-label"></label>
+                <input asp-for="Survey.EndDate" class="form-control" />
+                <span asp-validation-for="Survey.EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Survey.TotalParticipants" class="control-label"></label>
+                <input asp-for="Survey.TotalParticipants" class="form-control" />
+                <span asp-validation-for="Survey.TotalParticipants" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Survey.TypeId" class="control-label"></label>
+                <select asp-for="Survey.TypeId" class="form-control" asp-items="ViewBag.TypeId"></select>
+                <span asp-validation-for="Survey.TypeId" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Survey.Id" />
+            <div class="form-group">
+                <label asp-for="Survey.CreatedBy" class="control-label"></label>
+                <input asp-for="Survey.CreatedBy" class="form-control" />
+                <span asp-validation-for="Survey.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Survey.LastUpdatedBy" class="control-label"></label>
+                <input asp-for="Survey.LastUpdatedBy" class="form-control" />
+                <span asp-validation-for="Survey.LastUpdatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Survey.DeletedBy" class="control-label"></label>
+                <input asp-for="Survey.DeletedBy" class="form-control" />
+                <span asp-validation-for="Survey.DeletedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Survey.CreatedTime" class="control-label"></label>
+                <input asp-for="Survey.CreatedTime" class="form-control" />
+                <span asp-validation-for="Survey.CreatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Survey.LastUpdatedTime" class="control-label"></label>
+                <input asp-for="Survey.LastUpdatedTime" class="form-control" />
+                <span asp-validation-for="Survey.LastUpdatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Survey.DeletedTime" class="control-label"></label>
+                <input asp-for="Survey.DeletedTime" class="form-control" />
+                <span asp-validation-for="Survey.DeletedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

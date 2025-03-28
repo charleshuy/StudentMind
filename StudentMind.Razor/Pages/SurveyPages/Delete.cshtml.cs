@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.SurveyPages
 {
     public class DeleteModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly ISurveyService _surveyService;
 
-        public DeleteModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public DeleteModel(ISurveyService surveyService)
         {
-            _context = context;
+            _surveyService = surveyService;
         }
 
         [BindProperty]
@@ -29,7 +30,7 @@ namespace StudentMind.Razor.Pages.SurveyPages
                 return NotFound();
             }
 
-            var survey = await _context.Surveys.FirstOrDefaultAsync(m => m.Id == id);
+            var survey = await _surveyService.GetSurveyById(id);
 
             if (survey == null)
             {
@@ -49,12 +50,11 @@ namespace StudentMind.Razor.Pages.SurveyPages
                 return NotFound();
             }
 
-            var survey = await _context.Surveys.FindAsync(id);
+            var survey = await _surveyService.GetSurveyById(id);
             if (survey != null)
             {
                 Survey = survey;
-                _context.Surveys.Remove(Survey);
-                await _context.SaveChangesAsync();
+                await _surveyService.DeleteSurvey(id);
             }
 
             return RedirectToPage("./Index");

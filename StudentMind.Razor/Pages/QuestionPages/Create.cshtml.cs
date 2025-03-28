@@ -7,16 +7,18 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.DTO;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.QuestionPages
 {
     public class CreateModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IQuestionService _questionService;
 
-        public CreateModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public CreateModel(IQuestionService questionService)
         {
-            _context = context;
+            _questionService = questionService;
         }
 
         public IActionResult OnGet()
@@ -35,8 +37,11 @@ namespace StudentMind.Razor.Pages.QuestionPages
                 return Page();
             }
 
-            _context.Questions.Add(Question);
-            await _context.SaveChangesAsync();
+            QuestionDTO question = new QuestionDTO
+            {
+                Content = Question.Content
+            };
+            await _questionService.CreateQuestion(question);
 
             return RedirectToPage("./Index");
         }

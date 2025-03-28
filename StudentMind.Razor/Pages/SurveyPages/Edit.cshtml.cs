@@ -8,16 +8,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.DTO;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.SurveyPages
 {
     public class EditModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly ISurveyService _surveyService;
+        private readonly ISurveyTypeService _surveyTypeService;
 
-        public EditModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public EditModel(ISurveyService surveyService, ISurveyTypeService surveyTypeService)
         {
-            _context = context;
+            _surveyService = surveyService;
+            _surveyTypeService = surveyTypeService;
         }
 
         [BindProperty]
@@ -30,13 +34,13 @@ namespace StudentMind.Razor.Pages.SurveyPages
                 return NotFound();
             }
 
-            var survey =  await _context.Surveys.FirstOrDefaultAsync(m => m.Id == id);
+            var survey =  await _surveyService.GetSurveyById(id);
             if (survey == null)
             {
                 return NotFound();
             }
             Survey = survey;
-           ViewData["TypeId"] = new SelectList(_context.SurveyTypes, "Id", "Id");
+            ViewData["TypeId"] = new SelectList(await _surveyTypeService.GetSurveyTypes(), "Id", "Name");
             return Page();
         }
 
@@ -49,15 +53,22 @@ namespace StudentMind.Razor.Pages.SurveyPages
                 return Page();
             }
 
-            _context.Attach(Survey).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                SurveyDTO surveyDTO = new SurveyDTO
+                {
+                    Name = Survey.Name,
+                    Description = Survey.Description,
+                    TypeId = Survey.TypeId,
+                    StartDate = Survey.StartDate,
+                    EndDate = Survey.EndDate,
+                    TotalParticipants = Survey.TotalParticipants
+                };
+                await _surveyService.UpdateSurvey(Survey.Id, surveyDTO);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SurveyExists(Survey.Id))
+                if (!(await SurveyExists(Survey.Id)))
                 {
                     return NotFound();
                 }
@@ -70,9 +81,9 @@ namespace StudentMind.Razor.Pages.SurveyPages
             return RedirectToPage("./Index");
         }
 
-        private bool SurveyExists(string id)
+        private async Task<bool> SurveyExists(string id)
         {
-            return _context.Surveys.Any(e => e.Id == id);
+            return await _surveyService.GetSurveyById(id) != null;
         }
     }
 }

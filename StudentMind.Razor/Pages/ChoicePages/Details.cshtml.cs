@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.ChoicePages
 {
     public class DetailsModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IChoiceService _choiceService;
 
-        public DetailsModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public DetailsModel(IChoiceService choiceService)
         {
-            _context = context;
+            _choiceService = choiceService;
         }
 
         public Choice Choice { get; set; } = default!;
@@ -28,7 +29,7 @@ namespace StudentMind.Razor.Pages.ChoicePages
                 return NotFound();
             }
 
-            var choice = await _context.Choices.FirstOrDefaultAsync(m => m.Id == id);
+            var choice = await _choiceService.GetChoiceById(id);
             if (choice == null)
             {
                 return NotFound();

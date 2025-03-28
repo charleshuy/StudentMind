@@ -1,27 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentMind.Core.Entity;
-using StudentMind.Infrastructure.Context;
+using StudentMind.Services.DTO;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.ChoicePages
 {
     public class CreateModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IChoiceService _choiceService;
+        private readonly IQuestionService _questionService;
 
-        public CreateModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public CreateModel(IChoiceService choiceService, IQuestionService questionService)
         {
-            _context = context;
+            _choiceService = choiceService;
+            _questionService = questionService;
         }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGet()
         {
-        ViewData["QuestionId"] = new SelectList(_context.Questions, "Id", "Id");
+            ViewData["QuestionId"] = new SelectList(await _questionService.GetQuestions(), "Id", "Content");
             return Page();
         }
 
@@ -36,8 +35,12 @@ namespace StudentMind.Razor.Pages.ChoicePages
                 return Page();
             }
 
-            _context.Choices.Add(Choice);
-            await _context.SaveChangesAsync();
+            ChoiceDTO choiceDTO = new ChoiceDTO
+            {
+                Content = Choice.Content,
+                QuestionId = Choice.QuestionId
+            };
+            await _choiceService.CreateChoice(choiceDTO);
 
             return RedirectToPage("./Index");
         }

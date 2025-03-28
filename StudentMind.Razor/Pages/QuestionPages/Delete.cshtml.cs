@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
-using StudentMind.Infrastructure.Context;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.QuestionPages
 {
     public class DeleteModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IQuestionService _questionService;
 
-        public DeleteModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public DeleteModel(IQuestionService questionService)
         {
-            _context = context;
+            _questionService = questionService;
         }
 
         [BindProperty]
@@ -29,7 +25,7 @@ namespace StudentMind.Razor.Pages.QuestionPages
                 return NotFound();
             }
 
-            var question = await _context.Questions.FirstOrDefaultAsync(m => m.Id == id);
+            var question = await _questionService.GetQuestionById(id);
 
             if (question == null)
             {
@@ -49,12 +45,11 @@ namespace StudentMind.Razor.Pages.QuestionPages
                 return NotFound();
             }
 
-            var question = await _context.Questions.FindAsync(id);
+            var question = await _questionService.GetQuestionById(id);
             if (question != null)
             {
                 Question = question;
-                _context.Questions.Remove(Question);
-                await _context.SaveChangesAsync();
+                await _questionService.DeleteQuestion(question.Id);
             }
 
             return RedirectToPage("./Index");

@@ -1,28 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentMind.Core.Entity;
-using StudentMind.Infrastructure.Context;
+using StudentMind.Services.DTO;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.SurveyQuestionPages
 {
     public class CreateModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly ISurveyQuestionService _surveyQuestionService;
+        private readonly ISurveyService _surveyService;
+        private readonly IQuestionService _questionService;
 
-        public CreateModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public CreateModel(ISurveyQuestionService surveyQuestionService, ISurveyService surveyService, IQuestionService questionService)
         {
-            _context = context;
+            _surveyQuestionService = surveyQuestionService;
+            _surveyService = surveyService;
+            _questionService = questionService;
         }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-        ViewData["QuestionId"] = new SelectList(_context.Questions, "Id", "Id");
-        ViewData["SurveyId"] = new SelectList(_context.Surveys, "Id", "Id");
+            ViewData["SurveyId"] = new SelectList(await _surveyService.GetSurveys(), "Id", "Name");
+            ViewData["QuestionId"] = new SelectList(await _questionService.GetQuestions(), "Id", "Content");
             return Page();
         }
 
@@ -37,8 +38,14 @@ namespace StudentMind.Razor.Pages.SurveyQuestionPages
                 return Page();
             }
 
-            _context.SurveyQuestions.Add(SurveyQuestion);
-            await _context.SaveChangesAsync();
+            Console.WriteLine("Survey: " + SurveyQuestion.SurveyId);
+            Console.WriteLine("Question: " + SurveyQuestion.QuestionId);
+            SurveyQuestionDTO surveyQuestionDTO = new SurveyQuestionDTO
+            {
+                SurveyId = SurveyQuestion.SurveyId,
+                QuestionId = SurveyQuestion.QuestionId
+            };
+            await _surveyQuestionService.CreateSurveyQuestion(surveyQuestionDTO);
 
             return RedirectToPage("./Index");
         }

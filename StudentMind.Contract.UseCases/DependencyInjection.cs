@@ -31,6 +31,7 @@ namespace StudentMind.Services
             services.AddScoped<ISurveyTypeService, SurveyTypeService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IChoiceService, ChoiceService>();
+            services.AddScoped<ISurveyQuestionService, SurveyQuestionService>();
         }
 
         private static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)

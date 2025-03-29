@@ -47,10 +47,10 @@
 @foreach (var item in Model.SurveyQuestion) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Survey.Id)
+                @Html.DisplayFor(modelItem => item.Survey.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Question.Id)
+                @Html.DisplayFor(modelItem => item.Question.Content)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Id)
@@ -74,9 +74,9 @@
                 @Html.DisplayFor(modelItem => item.DeletedTime)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @* <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> | *@
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }

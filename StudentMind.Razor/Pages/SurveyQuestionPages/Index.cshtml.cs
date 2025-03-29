@@ -7,25 +7,24 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.SurveyQuestionPages
 {
     public class IndexModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly ISurveyQuestionService _surveyQuestionService;
 
-        public IndexModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public IndexModel(ISurveyQuestionService surveyQuestionService)
         {
-            _context = context;
+            _surveyQuestionService = surveyQuestionService;
         }
 
         public IList<SurveyQuestion> SurveyQuestion { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            SurveyQuestion = await _context.SurveyQuestions
-                .Include(s => s.Question)
-                .Include(s => s.Survey).ToListAsync();
+            SurveyQuestion = await _surveyQuestionService.GetSurveyQuestions();
         }
     }
 }

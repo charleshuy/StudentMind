@@ -39,7 +39,7 @@ namespace StudentMind.Services.Services
         public async Task DeleteSurveyQuestion(string id)
         {
             var surveyQuestionRepo = _unitOfWork.GetRepository<SurveyQuestion>();
-            SurveyQuestion surveyQuestion = surveyQuestionRepo.GetById(id);
+            SurveyQuestion surveyQuestion = await this.GetSurveyQuestionById(id);
             await surveyQuestionRepo.DeleteAsync(surveyQuestion);
             await _unitOfWork.SaveAsync();
         }
@@ -56,16 +56,16 @@ namespace StudentMind.Services.Services
             return surveyQuestionRepo.Entities.Include(s => s.Survey).Include(s => s.Question).ToList();
         }
 
-        public async Task<SurveyQuestion> UpdateSurveyQuestion(string id, SurveyQuestionDTO surveyQuestionDto)
-        {
-            var surveyQuestionRepo = _unitOfWork.GetRepository<SurveyQuestion>();
-            var surveyQuestion = await surveyQuestionRepo.GetByIdAsync(id);
-            surveyQuestion.SurveyId = surveyQuestionDto.SurveyId;
-            surveyQuestion.QuestionId = surveyQuestionDto.QuestionId;
-            surveyQuestion.LastUpdatedTime = DateTime.Now;
-            await surveyQuestionRepo.UpdateAsync(surveyQuestion);
-            await _unitOfWork.SaveAsync();
-            return surveyQuestion;
-        }
+        //public async Task<SurveyQuestion> UpdateSurveyQuestion(string id, SurveyQuestionDTO surveyQuestionDto)
+        //{
+        //    var surveyQuestionRepo = _unitOfWork.GetRepository<SurveyQuestion>();
+        //    var surveyQuestion = await this.GetSurveyQuestionById(id);
+        //    surveyQuestion.SurveyId = surveyQuestionDto.SurveyId;
+        //    surveyQuestion.QuestionId = surveyQuestionDto.QuestionId;
+        //    surveyQuestion.LastUpdatedTime = DateTime.Now;
+        //    await surveyQuestionRepo.UpdateAsync(surveyQuestion);
+        //    await _unitOfWork.SaveAsync();
+        //    return surveyQuestion;
+        //}
     }
 }

@@ -8,16 +8,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.DTO;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.SurveyQuestionPages
 {
     public class EditModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly ISurveyQuestionService _surveyQuestionService;
+        private readonly ISurveyService _surveyService;
+        private readonly IQuestionService _questionService;
 
-        public EditModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public EditModel(ISurveyQuestionService surveyQuestionService, ISurveyService surveyService, IQuestionService questionService)
         {
-            _context = context;
+            _surveyQuestionService = surveyQuestionService;
+            _surveyService = surveyService;
+            _questionService = questionService;
         }
 
         [BindProperty]
@@ -30,14 +36,14 @@ namespace StudentMind.Razor.Pages.SurveyQuestionPages
                 return NotFound();
             }
 
-            var surveyquestion =  await _context.SurveyQuestions.FirstOrDefaultAsync(m => m.SurveyId == id);
+            var surveyquestion =  await _surveyQuestionService.GetSurveyQuestionById(id);
             if (surveyquestion == null)
             {
                 return NotFound();
             }
             SurveyQuestion = surveyquestion;
-           ViewData["QuestionId"] = new SelectList(_context.Questions, "Id", "Id");
-           ViewData["SurveyId"] = new SelectList(_context.Surveys, "Id", "Id");
+            ViewData["SurveyId"] = new SelectList(await _surveyService.GetSurveys(), "Id", "Name");
+            ViewData["QuestionId"] = new SelectList(await _questionService.GetQuestions(), "Id", "Content");
             return Page();
         }
 
@@ -50,15 +56,18 @@ namespace StudentMind.Razor.Pages.SurveyQuestionPages
                 return Page();
             }
 
-            _context.Attach(SurveyQuestion).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                SurveyQuestionDTO surveyQuestionDTO = new SurveyQuestionDTO 
+                {
+                    SurveyId = SurveyQuestion.SurveyId,
+                    QuestionId = SurveyQuestion.QuestionId
+                };
+                //await _surveyQuestionService.UpdateSurveyQuestion(SurveyQuestion.Id, surveyQuestionDTO);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SurveyQuestionExists(SurveyQuestion.SurveyId))
+                if (!(await SurveyQuestionExists(SurveyQuestion.SurveyId)))
                 {
                     return NotFound();
                 }
@@ -71,9 +80,9 @@ namespace StudentMind.Razor.Pages.SurveyQuestionPages
             return RedirectToPage("./Index");
         }
 
-        private bool SurveyQuestionExists(string id)
+        private async Task<bool> SurveyQuestionExists(string id)
         {
-            return _context.SurveyQuestions.Any(e => e.SurveyId == id);
+            return await _surveyQuestionService.GetSurveyQuestionById(id) != null;
         }
     }
 }

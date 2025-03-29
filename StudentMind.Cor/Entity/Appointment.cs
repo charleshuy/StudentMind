@@ -2,27 +2,34 @@
 using StudentMind.Core.Entity;
 using StudentMind.Core.Enum;
 using System.ComponentModel.DataAnnotations;
+using StudentMind.Core.Validations;
 
-public class Appointment : BaseEntity
+namespace StudentMind.Core.Entity
 {
-    [Required(ErrorMessage = "Psychologist ID is required.")]
-    public string PsychologistId { get; set; } = string.Empty; // Ensure it has a default value
+    public class Appointment : BaseEntity
+    {
+        [Required(ErrorMessage = "Psychologist is required.")]
+        public string PsychologistId { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "User ID is required.")]
-    public string UserId { get; set; } = string.Empty; // Ensure it has a default value
+        [Required(ErrorMessage = "Student is required.")]
+        public string UserId { get; set; } = string.Empty;
 
-    [Required]
-    public DateTimeOffset StartTime { get; set; }
+        [Required(ErrorMessage = "Start time is required.")]
+        [FutureDate]
+        public DateTimeOffset StartTime { get; set; }
 
-    [Required]
-    //[DateGreaterThan("StartTime", ErrorMessage = "EndTime must be after StartTime.")]
-    public DateTimeOffset EndTime { get; set; }
+        [Required(ErrorMessage = "End time is required.")]
+        [DateGreaterThan("StartTime", ErrorMessage = "End time must be after start time.")]
+        public DateTimeOffset EndTime { get; set; }
 
-    public string? Note { get; set; }
+        [StringLength(500, ErrorMessage = "Note cannot exceed 500 characters.")]
+        public string? Note { get; set; }
 
-    public EnumStatus Status { get; set; }
+        [Required(ErrorMessage = "Status is required.")]
+        [Range(0, int.MaxValue, ErrorMessage = "Please select a valid status.")]
+        public EnumStatus Status { get; set; } = EnumStatus.Pending;
 
-    // Navigation properties (Optional, but ensure they are nullable to avoid issues)
-    public User? Psychologist { get; set; }
-    public User? User { get; set; }
+        public User? Psychologist { get; set; }
+        public User? User { get; set; }
+    }
 }

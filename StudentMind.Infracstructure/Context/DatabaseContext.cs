@@ -20,6 +20,7 @@ namespace StudentMind.Infrastructure.Context
         public DbSet<Event> Events { get; set; }
         public DbSet<UserEvent> UserEvents { get; set; }
         public DbSet<SurveyType> SurveyTypes { get; set; }
+        public DbSet<HealthScoreRule> HealthScoreRules { get; set; }
         public DbSet<History> Histories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -55,12 +56,26 @@ namespace StudentMind.Infrastructure.Context
             modelBuilder.Entity<SurveyResponse>()
                 .HasOne(sr => sr.Survey)
                 .WithMany(s => s.SurveyResponses)
-                .HasForeignKey(sr => sr.SurveyId);
+                .HasForeignKey(sr => sr.SurveyId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<SurveyResponse>()
                 .HasOne(sr => sr.User)
-                .WithMany(u => u.SurveyResponses) // Explicit collection in User
-                .HasForeignKey(sr => sr.UserId);
+                .WithMany(u => u.SurveyResponses)
+                .HasForeignKey(sr => sr.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<SurveyResponse>()
+                .HasOne(sr => sr.Question)
+                .WithMany(q => q.SurveyResponses)
+                .HasForeignKey(sr => sr.QuestionId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<SurveyResponse>()
+                .HasOne(sr => sr.Choice)
+                .WithMany(c => c.SurveyResponses)
+                .HasForeignKey(sr => sr.ChoiceId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             // Survey - SurveyQuestion Relationship
             modelBuilder.Entity<SurveyQuestion>()
@@ -75,6 +90,13 @@ namespace StudentMind.Infrastructure.Context
                 .HasOne(sq => sq.Question)
                 .WithMany(q => q.SurveyQuestions)
                 .HasForeignKey(sq => sq.QuestionId);
+
+            // HealthScore - Survey Relationship
+            modelBuilder.Entity<HealthScoreRule>()
+                .HasOne(hsr => hsr.Survey)
+                .WithMany(s => s.HealthScoreRules) // Assuming Survey has a collection of HealthScoreRules
+                .HasForeignKey(hsr => hsr.SurveyId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             // Question - Choice Relationship
             modelBuilder.Entity<Choice>()

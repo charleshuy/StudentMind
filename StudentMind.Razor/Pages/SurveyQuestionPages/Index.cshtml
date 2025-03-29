@@ -1,0 +1,84 @@
+﻿@page
+@model StudentMind.Razor.Pages.SurveyQuestionPages.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SurveyQuestion[0].Survey)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SurveyQuestion[0].Question)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SurveyQuestion[0].Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SurveyQuestion[0].CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SurveyQuestion[0].LastUpdatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SurveyQuestion[0].DeletedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SurveyQuestion[0].CreatedTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SurveyQuestion[0].LastUpdatedTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SurveyQuestion[0].DeletedTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.SurveyQuestion) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Survey.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Question.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastUpdatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeletedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastUpdatedTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeletedTime)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

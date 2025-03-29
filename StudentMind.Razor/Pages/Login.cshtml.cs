@@ -18,7 +18,7 @@ namespace StudentMind.Razor.Pages
 
         [BindProperty]
         public string Password { get; set; }
-
+        
         public string? Message { get; set; }
 
         public async Task<IActionResult> OnPostAsync()

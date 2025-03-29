@@ -1,30 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using StudentMind.Core.Entity;
-using StudentMind.Infrastructure.Context;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using StudentMind.Services.DTO;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.UserPages
 {
     public class IndexModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IUserService _userService;
 
-        public IndexModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public IndexModel(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
-        public IList<User> User { get;set; } = default!;
+        public IReadOnlyCollection<UserDTO> Users { get; set; } = new List<UserDTO>();
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int pageNumber = 1, int pageSize = 5)
         {
-            User = await _context.Users
-                .Include(u => u.Role).ToListAsync();
+            var paginatedUsers = await _userService.GetUsersAsync(pageNumber, pageSize);
+            Users = paginatedUsers.Items;
+            CurrentPage = paginatedUsers.PageNumber;
+            TotalPages = paginatedUsers.TotalPages;
         }
     }
 }

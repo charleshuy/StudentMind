@@ -25,5 +25,6 @@ namespace StudentMind.Core.Entity
         public SurveyType? Type { get; set; }
         public ICollection<SurveyResponse>? SurveyResponses { get; set; }
         public ICollection<SurveyQuestion>? SurveyQuestions { get; set; }
+        public ICollection<HealthScoreRule>? HealthScoreRules { get; set; }
     }
 }

@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var jwtToken = HttpContextAccessor.HttpContext?.Session.GetString("JWT_Token");
+    bool isLoggedIn = !string.IsNullOrEmpty(jwtToken);
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -47,10 +53,27 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/surveyresponsepages/index">Survey Response</a>
                         </li>
                     </ul>
+
+                    <!-- Login/Logout Button -->
+                    <ul class="navbar-nav">
+                        @if (isLoggedIn)
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-danger" asp-page="/Logout">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-primary" asp-page="/Login">Login</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

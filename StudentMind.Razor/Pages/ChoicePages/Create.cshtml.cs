@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentMind.Core.Entity;
 using StudentMind.Services.DTO;
 using StudentMind.Services.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace StudentMind.Razor.Pages.ChoicePages
 {
@@ -18,8 +20,21 @@ namespace StudentMind.Razor.Pages.ChoicePages
             _questionService = questionService;
         }
 
+        public string? UserId { get; private set; }
+
         public async Task<IActionResult> OnGet()
         {
+            var token = HttpContext.Session.GetString("JWT_Token");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                UserId = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                Console.WriteLine("Userid: " + UserId);
+            }
+
             ViewData["QuestionId"] = new SelectList(await _questionService.GetQuestions(), "Id", "Content");
             return Page();
         }
@@ -41,7 +56,7 @@ namespace StudentMind.Razor.Pages.ChoicePages
                 QuestionId = Choice.QuestionId,
                 Point = Choice.Point,
             };
-            await _choiceService.CreateChoice(choiceDTO);
+            await _choiceService.CreateChoice(choiceDTO, UserId);
 
             return RedirectToPage("./Index");
         }

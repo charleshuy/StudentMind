@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Services.DTO;
 using StudentMind.Services.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace StudentMind.Razor.Pages.ChoicePages
 {
@@ -21,9 +23,20 @@ namespace StudentMind.Razor.Pages.ChoicePages
 
         [BindProperty]
         public Choice Choice { get; set; } = default!;
+        public string? UserId { get; private set; }
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
+            var token = HttpContext.Session.GetString("JWT_Token");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                UserId = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -56,7 +69,7 @@ namespace StudentMind.Razor.Pages.ChoicePages
                     QuestionId = Choice.QuestionId,
                     Point = Choice.Point,
                 };
-                await _choiceService.UpdateChoice(Choice.Id, choiceDTO);
+                await _choiceService.UpdateChoice(Choice.Id, choiceDTO, UserId);
             }
             catch (DbUpdateConcurrencyException)
             {

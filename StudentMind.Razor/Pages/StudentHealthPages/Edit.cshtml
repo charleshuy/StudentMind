@@ -1,0 +1,80 @@
+﻿@page
+@model StudentMind.Razor.Pages.StudentHealthPages.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>StudentHealth</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="StudentHealth.StudentId" class="control-label"></label>
+                <select asp-for="StudentHealth.StudentId" class="form-control" asp-items="ViewBag.StudentId"></select>
+                <span asp-validation-for="StudentHealth.StudentId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StudentHealth.SurveyId" class="control-label"></label>
+                <select asp-for="StudentHealth.SurveyId" class="form-control" asp-items="ViewBag.SurveyId"></select>
+                <span asp-validation-for="StudentHealth.SurveyId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StudentHealth.Score" class="control-label"></label>
+                <input asp-for="StudentHealth.Score" class="form-control" />
+                <span asp-validation-for="StudentHealth.Score" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StudentHealth.Category" class="control-label"></label>
+                <input asp-for="StudentHealth.Category" class="form-control" />
+                <span asp-validation-for="StudentHealth.Category" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="StudentHealth.Id" />
+            <div class="form-group">
+                <label asp-for="StudentHealth.CreatedBy" class="control-label"></label>
+                <input asp-for="StudentHealth.CreatedBy" class="form-control" />
+                <span asp-validation-for="StudentHealth.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StudentHealth.LastUpdatedBy" class="control-label"></label>
+                <input asp-for="StudentHealth.LastUpdatedBy" class="form-control" />
+                <span asp-validation-for="StudentHealth.LastUpdatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StudentHealth.DeletedBy" class="control-label"></label>
+                <input asp-for="StudentHealth.DeletedBy" class="form-control" />
+                <span asp-validation-for="StudentHealth.DeletedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StudentHealth.CreatedTime" class="control-label"></label>
+                <input asp-for="StudentHealth.CreatedTime" class="form-control" />
+                <span asp-validation-for="StudentHealth.CreatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StudentHealth.LastUpdatedTime" class="control-label"></label>
+                <input asp-for="StudentHealth.LastUpdatedTime" class="form-control" />
+                <span asp-validation-for="StudentHealth.LastUpdatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StudentHealth.DeletedTime" class="control-label"></label>
+                <input asp-for="StudentHealth.DeletedTime" class="form-control" />
+                <span asp-validation-for="StudentHealth.DeletedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

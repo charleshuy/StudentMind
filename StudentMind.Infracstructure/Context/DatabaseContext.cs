@@ -22,6 +22,7 @@ namespace StudentMind.Infrastructure.Context
         public DbSet<SurveyType> SurveyTypes { get; set; }
         public DbSet<HealthScoreRule> HealthScoreRules { get; set; }
         public DbSet<History> Histories { get; set; }
+        public DbSet<StudentHealth> StudentHealths { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

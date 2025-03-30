@@ -23,6 +23,12 @@
                 <select asp-for="Choice.QuestionId" class ="form-control" asp-items="ViewBag.QuestionId"></select>
             </div>
             <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Choice.Point" class="control-label"></label>
+                <input asp-for="Choice.Point" class="form-control" />
+                <span asp-validation-for="Choice.Point" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>

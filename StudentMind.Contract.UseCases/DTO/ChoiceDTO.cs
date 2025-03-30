@@ -10,5 +10,6 @@ namespace StudentMind.Services.DTO
     {
         public string Content { get; set; }
         public string QuestionId { get; set; }
+        public int Point { get; set; }
     }
 }

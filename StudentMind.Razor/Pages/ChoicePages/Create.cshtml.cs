@@ -38,7 +38,8 @@ namespace StudentMind.Razor.Pages.ChoicePages
             ChoiceDTO choiceDTO = new ChoiceDTO
             {
                 Content = Choice.Content,
-                QuestionId = Choice.QuestionId
+                QuestionId = Choice.QuestionId,
+                Point = Choice.Point,
             };
             await _choiceService.CreateChoice(choiceDTO);
 

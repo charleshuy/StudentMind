@@ -23,6 +23,7 @@ namespace StudentMind.Services.Services
                 Id = Guid.NewGuid().ToString().ToUpper(),
                 Content = choiceDto.Content,
                 QuestionId = choiceDto.QuestionId,
+                Point = choiceDto.Point,
                 CreatedTime = DateTime.Now,
                 LastUpdatedTime = DateTime.Now
             };
@@ -57,6 +58,7 @@ namespace StudentMind.Services.Services
             var Choice = await ChoiceRepo.GetByIdAsync(id);
             Choice.Content = choiceDto.Content;
             Choice.QuestionId = choiceDto.QuestionId;
+            Choice.Point = choiceDto.Point;
             Choice.LastUpdatedTime = DateTime.Now;
             await ChoiceRepo.UpdateAsync(Choice);
             await _unitOfWork.SaveAsync();

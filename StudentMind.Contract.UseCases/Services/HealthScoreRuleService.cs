@@ -71,5 +71,13 @@ namespace StudentMind.Services.Services
             await _unitOfWork.SaveAsync();
             return healthScoreRule;
         }
+
+        public async Task<HealthScoreRule> GetRuleByScore(int score)
+        {
+            var healthScoreRuleRepo = _unitOfWork.GetRepository<HealthScoreRule>();
+            return await healthScoreRuleRepo.Entities
+                .Where(rule => score >= rule.MinScore && score <= rule.MaxScore)
+                .FirstOrDefaultAsync();
+        }
     }
 }

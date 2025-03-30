@@ -49,7 +49,19 @@ namespace StudentMind.Razor.Pages.TakeSurvey
                 return Page();
             }
 
-            return RedirectToPage("Submit", new { Answers });
+            // Retrieve the survey again
+            string surveyId = Request.Form["SurveyId"];
+            Survey = await _surveyService.GetSurveyById(surveyId);
+
+            if (Survey == null)
+            {
+                return NotFound();
+            }
+
+            // Store Answers in TempData as JSON (TempData only supports simple types)
+            TempData["Answers"] = System.Text.Json.JsonSerializer.Serialize(Answers);
+
+            return RedirectToPage("Submit", new { surveyId = Survey.Id });
         }
     }
 }

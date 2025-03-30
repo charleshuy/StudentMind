@@ -15,5 +15,6 @@ namespace StudentMind.Services.Interfaces
         Task DeleteHealthScoreRule(string id);
         Task<HealthScoreRule> GetHealthScoreRuleById(string id);
         Task<List<HealthScoreRule>> GetHealthScoreRules();
+        Task<HealthScoreRule> GetRuleByScore(int score);
     }
 }

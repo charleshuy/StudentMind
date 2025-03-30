@@ -51,6 +51,14 @@ namespace StudentMind.Services.Services
             return await ChoiceRepo.Entities.Include(c => c.Question).FirstOrDefaultAsync(s => s.Id == id);
         }
 
+        public async Task<List<Choice>> GetChoicesByIds(List<string> choiceIds)
+        {
+            var ChoiceRepo = _unitOfWork.GetRepository<Choice>();
+            return await ChoiceRepo.Entities
+                .Where(c => choiceIds.Contains(c.Id))
+                .ToListAsync();
+        }
+
         public async Task<List<Choice>> GetChoices()
         {
             var ChoiceRepo = _unitOfWork.GetRepository<Choice>();

@@ -12,5 +12,6 @@ namespace StudentMind.Services.Interfaces
         Task<List<Choice>> GetChoices();
         Task<List<Choice>> GetChoicesByQuestionId(string questionId);
         Task<List<Choice>> GetChoicesBySurveyId(string surveyId);
+        Task<List<Choice>> GetChoicesByIds(List<string> choiceIds);
     }
 }

@@ -10,5 +10,6 @@ namespace StudentMind.Services.Interfaces
         Task DeleteSurveyQuestion(string id);
         Task<SurveyQuestion> GetSurveyQuestionById(string id);
         Task<List<SurveyQuestion>> GetSurveyQuestions();
+        Task<List<Question>> GetQuestionsBySurveyId(string surveyId);
     }
 }

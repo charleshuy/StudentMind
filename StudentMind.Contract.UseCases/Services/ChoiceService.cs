@@ -15,7 +15,7 @@ namespace StudentMind.Services.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Choice> CreateChoice(ChoiceDTO choiceDto)
+        public async Task<Choice> CreateChoice(ChoiceDTO choiceDto, string userId)
         {
             var ChoiceRepo = _unitOfWork.GetRepository<Choice>();
             var Choice = new Choice
@@ -27,6 +27,11 @@ namespace StudentMind.Services.Services
                 CreatedTime = DateTime.Now,
                 LastUpdatedTime = DateTime.Now
             };
+            if(userId != null)
+            {
+                Choice.CreatedBy = userId;
+                Choice.LastUpdatedBy = userId;
+            }
             await ChoiceRepo.InsertAsync(Choice);
             await _unitOfWork.SaveAsync();
             return Choice;
@@ -52,7 +57,7 @@ namespace StudentMind.Services.Services
             return ChoiceRepo.Entities.Include(c => c.Question).ToList();
         }
 
-        public async Task<Choice> UpdateChoice(string id, ChoiceDTO choiceDto)
+        public async Task<Choice> UpdateChoice(string id, ChoiceDTO choiceDto, string userId)
         {
             var ChoiceRepo = _unitOfWork.GetRepository<Choice>();
             var Choice = await ChoiceRepo.GetByIdAsync(id);
@@ -60,9 +65,34 @@ namespace StudentMind.Services.Services
             Choice.QuestionId = choiceDto.QuestionId;
             Choice.Point = choiceDto.Point;
             Choice.LastUpdatedTime = DateTime.Now;
+            if(userId != null)
+            {
+                Choice.LastUpdatedBy = userId;
+            }
             await ChoiceRepo.UpdateAsync(Choice);
             await _unitOfWork.SaveAsync();
             return Choice;
+        }
+
+        public async Task<List<Choice>> GetChoicesByQuestionId(string questionId)
+        {
+            var ChoiceRepo = _unitOfWork.GetRepository<Choice>();
+            return await ChoiceRepo.Entities.Include(c => c.Question).Where(c => c.QuestionId == questionId).ToListAsync();
+        }
+
+        public async Task<List<Choice>> GetChoicesBySurveyId(string surveyId)
+        {
+            var surveyQuestionRepo = _unitOfWork.GetRepository<SurveyQuestion>();
+            var choiceRepo = _unitOfWork.GetRepository<Choice>();
+
+            var questionIds = await surveyQuestionRepo.Entities
+                .Where(sq => sq.SurveyId == surveyId)
+                .Select(sq => sq.QuestionId)
+                .ToListAsync();
+
+            return await choiceRepo.Entities
+                .Where(c => questionIds.Contains(c.QuestionId))
+                .ToListAsync();
         }
     }
 }

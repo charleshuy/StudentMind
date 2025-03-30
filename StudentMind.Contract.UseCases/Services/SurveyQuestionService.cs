@@ -67,5 +67,20 @@ namespace StudentMind.Services.Services
         //    await _unitOfWork.SaveAsync();
         //    return surveyQuestion;
         //}
+
+        public async Task<List<Question>> GetQuestionsBySurveyId(string surveyId)
+        {
+            var surveyQuestionRepo = _unitOfWork.GetRepository<SurveyQuestion>();
+            var questionRepo = _unitOfWork.GetRepository<Question>();
+
+            var questionIds = await surveyQuestionRepo.Entities
+                .Where(sq => sq.SurveyId == surveyId)
+                .Select(sq => sq.QuestionId)
+                .ToListAsync();
+
+            return await questionRepo.Entities
+                .Where(q => questionIds.Contains(q.Id))
+                .ToListAsync();
+        }
     }
 }

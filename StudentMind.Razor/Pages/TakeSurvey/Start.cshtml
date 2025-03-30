@@ -1,0 +1,29 @@
+﻿@page
+@model StudentMind.Razor.Pages.TakeSurvey.StartModel
+@{
+    ViewData["Title"] = Model.Survey?.Name ?? "Survey";
+}
+
+<h2>@Model.Survey?.Name</h2>
+
+<form method="post">
+    <input type="hidden" name="SurveyId" value="@Model.Survey.Id" />
+
+    @foreach (var question in Model.Questions)
+    {
+        <div>
+            <p><strong>@question.Content</strong></p>
+
+            @foreach (var choice in Model.Choices.Where(c => c.QuestionId == question.Id))
+            {
+                <label>
+                    <input type="radio" name="Answers[@question.Id]" value="@choice.Id" required />
+                    @choice.Content
+                </label>
+            }
+        </div>
+        <hr />
+    }
+
+    <button type="submit">Submit</button>
+</form>

@@ -1,0 +1,16 @@
+﻿@page
+@model StudentMind.Razor.Pages.TakeSurvey.IndexModel
+@{
+    ViewData["Title"] = "Select a Survey";
+}
+
+<h2>Select a Survey</h2>
+
+<ul>
+    @foreach (var survey in Model.Surveys)
+    {
+        <li>
+            <a asp-page="Start" asp-route-surveyId="@survey.Id">@survey.Name</a>
+        </li>
+    }
+</ul>

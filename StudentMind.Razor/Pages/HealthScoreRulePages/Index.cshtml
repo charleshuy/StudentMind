@@ -20,7 +20,7 @@
                 @Html.DisplayNameFor(model => model.HealthScoreRule[0].MaxScore)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.HealthScoreRule[0].category)
+                @* @Html.DisplayNameFor(model => model.HealthScoreRule[0].category) *@ Category
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.HealthScoreRule[0].Survey)
@@ -59,7 +59,7 @@
                 @Html.DisplayFor(modelItem => item.category)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Survey.Id)
+                @Html.DisplayFor(modelItem => item.Survey.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

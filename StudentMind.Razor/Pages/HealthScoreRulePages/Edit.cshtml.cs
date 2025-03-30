@@ -8,16 +8,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.DTO;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.HealthScoreRulePages
 {
     public class EditModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IHealthScoreRuleService _healthScoreRuleService;
+        private readonly ISurveyService _surveyService;
 
-        public EditModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public EditModel(IHealthScoreRuleService healthScoreRuleService, ISurveyService surveyService)
         {
-            _context = context;
+            _healthScoreRuleService = healthScoreRuleService;
+            _surveyService = surveyService;
         }
 
         [BindProperty]
@@ -30,13 +34,13 @@ namespace StudentMind.Razor.Pages.HealthScoreRulePages
                 return NotFound();
             }
 
-            var healthscorerule =  await _context.HealthScoreRules.FirstOrDefaultAsync(m => m.Id == id);
+            var healthscorerule =  await _healthScoreRuleService.GetHealthScoreRuleById(id);
             if (healthscorerule == null)
             {
                 return NotFound();
             }
             HealthScoreRule = healthscorerule;
-           ViewData["SurveyId"] = new SelectList(_context.Surveys, "Id", "Id");
+            ViewData["SurveyId"] = new SelectList(await _surveyService.GetSurveys(), "Id", "Name");
             return Page();
         }
 
@@ -49,15 +53,20 @@ namespace StudentMind.Razor.Pages.HealthScoreRulePages
                 return Page();
             }
 
-            _context.Attach(HealthScoreRule).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                HealthScoreRuleDTO healthScoreRuleDto = new HealthScoreRuleDTO
+                {
+                    SurveyId = HealthScoreRule.SurveyId,
+                    MinScore = HealthScoreRule.MinScore,
+                    MaxScore = HealthScoreRule.MaxScore,
+                    category = HealthScoreRule.category
+                };
+                await _healthScoreRuleService.UpdateHealthScoreRule(HealthScoreRule.Id, healthScoreRuleDto);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!HealthScoreRuleExists(HealthScoreRule.Id))
+                if (!(await HealthScoreRuleExists(HealthScoreRule.Id)))
                 {
                     return NotFound();
                 }
@@ -70,9 +79,9 @@ namespace StudentMind.Razor.Pages.HealthScoreRulePages
             return RedirectToPage("./Index");
         }
 
-        private bool HealthScoreRuleExists(string id)
+        private async Task<bool> HealthScoreRuleExists(string id)
         {
-            return _context.HealthScoreRules.Any(e => e.Id == id);
+            return await _healthScoreRuleService.GetHealthScoreRuleById(id) != null;
         }
     }
 }

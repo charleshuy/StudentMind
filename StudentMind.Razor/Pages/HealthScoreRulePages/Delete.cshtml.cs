@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.HealthScoreRulePages
 {
     public class DeleteModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IHealthScoreRuleService _healthScoreRuleService;
 
-        public DeleteModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public DeleteModel(IHealthScoreRuleService healthScoreRuleService)
         {
-            _context = context;
+            _healthScoreRuleService = healthScoreRuleService;
         }
 
         [BindProperty]
@@ -29,7 +30,7 @@ namespace StudentMind.Razor.Pages.HealthScoreRulePages
                 return NotFound();
             }
 
-            var healthscorerule = await _context.HealthScoreRules.FirstOrDefaultAsync(m => m.Id == id);
+            var healthscorerule = await _healthScoreRuleService.GetHealthScoreRuleById(id);
 
             if (healthscorerule == null)
             {
@@ -49,12 +50,11 @@ namespace StudentMind.Razor.Pages.HealthScoreRulePages
                 return NotFound();
             }
 
-            var healthscorerule = await _context.HealthScoreRules.FindAsync(id);
+            var healthscorerule = await _healthScoreRuleService.GetHealthScoreRuleById(id);
             if (healthscorerule != null)
             {
                 HealthScoreRule = healthscorerule;
-                _context.HealthScoreRules.Remove(HealthScoreRule);
-                await _context.SaveChangesAsync();
+                await _healthScoreRuleService.DeleteHealthScoreRule(HealthScoreRule.Id);
             }
 
             return RedirectToPage("./Index");

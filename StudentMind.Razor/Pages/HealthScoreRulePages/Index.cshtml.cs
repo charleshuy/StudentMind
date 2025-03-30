@@ -7,24 +7,24 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.HealthScoreRulePages
 {
     public class IndexModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IHealthScoreRuleService _healthScoreRuleService;
 
-        public IndexModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public IndexModel(IHealthScoreRuleService healthScoreRuleService)
         {
-            _context = context;
+            _healthScoreRuleService = healthScoreRuleService;
         }
 
         public IList<HealthScoreRule> HealthScoreRule { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            HealthScoreRule = await _context.HealthScoreRules
-                .Include(h => h.Survey).ToListAsync();
+            HealthScoreRule = await _healthScoreRuleService.GetHealthScoreRules();
         }
     }
 }

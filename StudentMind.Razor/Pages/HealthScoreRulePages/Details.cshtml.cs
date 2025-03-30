@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.HealthScoreRulePages
 {
     public class DetailsModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IHealthScoreRuleService _healthScoreRuleService;
 
-        public DetailsModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public DetailsModel(IHealthScoreRuleService healthScoreRuleService)
         {
-            _context = context;
+            _healthScoreRuleService = healthScoreRuleService;
         }
 
         public HealthScoreRule HealthScoreRule { get; set; } = default!;
@@ -28,7 +29,7 @@ namespace StudentMind.Razor.Pages.HealthScoreRulePages
                 return NotFound();
             }
 
-            var healthscorerule = await _context.HealthScoreRules.FirstOrDefaultAsync(m => m.Id == id);
+            var healthscorerule = await _healthScoreRuleService.GetHealthScoreRuleById(id);
             if (healthscorerule == null)
             {
                 return NotFound();

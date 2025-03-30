@@ -6,6 +6,7 @@ namespace StudentMind.Services.Interfaces
     {
         Task<UserDTO?> GetUserByIdAsync(string userId);
         Task<PaginatedList<UserDTO>> GetUsersAsync(int pageNumber, int pageSize);
+        Task<List<UserDTO>> GetAllUsersAsync();
         Task<UserDTO> CreateUserAsync(UserRequestDTO userDto);
         Task<bool> UpdateUserAsync(string userId, UserRequestDTO userDto);
         Task<bool> DeleteUserAsync(string userId);

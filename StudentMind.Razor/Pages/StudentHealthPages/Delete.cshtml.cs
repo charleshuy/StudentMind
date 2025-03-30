@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.StudentHealthPages
 {
     public class DeleteModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IStudentHealthService _studentHealthService;
 
-        public DeleteModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public DeleteModel(IStudentHealthService studentHealthService)
         {
-            _context = context;
+            _studentHealthService = studentHealthService;
         }
 
         [BindProperty]
@@ -29,7 +30,7 @@ namespace StudentMind.Razor.Pages.StudentHealthPages
                 return NotFound();
             }
 
-            var studenthealth = await _context.StudentHealths.FirstOrDefaultAsync(m => m.Id == id);
+            var studenthealth = await _studentHealthService.GetStudentHealthById(id);
 
             if (studenthealth == null)
             {
@@ -49,12 +50,11 @@ namespace StudentMind.Razor.Pages.StudentHealthPages
                 return NotFound();
             }
 
-            var studenthealth = await _context.StudentHealths.FindAsync(id);
+            var studenthealth = await _studentHealthService.GetStudentHealthById(id);
             if (studenthealth != null)
             {
                 StudentHealth = studenthealth;
-                _context.StudentHealths.Remove(StudentHealth);
-                await _context.SaveChangesAsync();
+                await _studentHealthService.DeleteStudentHealth(StudentHealth.Id);
             }
 
             return RedirectToPage("./Index");

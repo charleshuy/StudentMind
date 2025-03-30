@@ -47,6 +47,25 @@ namespace StudentMind.Services.Services
             return await PaginatedList<UserDTO>.CreateAsync(query, pageNumber, pageSize);
         }
 
+        public async Task<List<UserDTO>> GetAllUsersAsync()
+        {
+            var userRepo = _unitOfWork.GetRepository<User>();
+            var query = userRepo.Entities.AsNoTracking()
+                .Select(u => new UserDTO
+                {
+                    Id = u.Id,
+                    FullName = u.FullName,
+                    Email = u.Email ?? "",
+                    Username = u.Username,
+                    Gender = u.Gender,
+                    RoleId = u.RoleId,
+                    Status = u.Status,
+                    CreatedTime = u.CreatedTime,
+                    LastUpdatedTime = u.LastUpdatedTime
+                });
+
+            return await query.ToListAsync();
+        }
 
         public async Task<UserDTO> CreateUserAsync(UserRequestDTO userDto)
         {

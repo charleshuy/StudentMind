@@ -26,6 +26,6 @@ namespace StudentMind.Core.Entity
         public ICollection<SurveyResponse>? SurveyResponses { get; set; }
         public ICollection<SurveyQuestion>? SurveyQuestions { get; set; }
         public ICollection<HealthScoreRule>? HealthScoreRules { get; set; }
-        public virtual ICollection<StudentHealth>? StudentHealths { get; set; } = new List<StudentHealth>();
+        public ICollection<StudentHealth>? StudentHealths { get; set; }
     }
 }

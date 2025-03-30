@@ -8,16 +8,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.DTO;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.StudentHealthPages
 {
     public class EditModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IStudentHealthService _studentHealthService;
+        private readonly IUserService _userService;
+        private readonly ISurveyService _surveyService;
 
-        public EditModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public EditModel(IStudentHealthService studentHealthService, IUserService userService, ISurveyService surveyService)
         {
-            _context = context;
+            _studentHealthService = studentHealthService;
+            _userService = userService;
+            _surveyService = surveyService;
         }
 
         [BindProperty]
@@ -30,14 +36,14 @@ namespace StudentMind.Razor.Pages.StudentHealthPages
                 return NotFound();
             }
 
-            var studenthealth =  await _context.StudentHealths.FirstOrDefaultAsync(m => m.Id == id);
+            var studenthealth =  await _studentHealthService.GetStudentHealthById(id);
             if (studenthealth == null)
             {
                 return NotFound();
             }
             StudentHealth = studenthealth;
-           ViewData["StudentId"] = new SelectList(_context.Users, "Id", "Id");
-           ViewData["SurveyId"] = new SelectList(_context.Surveys, "Id", "Id");
+            ViewData["StudentId"] = new SelectList(await _userService.GetAllUsersAsync(), "Id", "FullName");
+            ViewData["SurveyId"] = new SelectList(await _surveyService.GetSurveys(), "Id", "Name");
             return Page();
         }
 
@@ -50,15 +56,20 @@ namespace StudentMind.Razor.Pages.StudentHealthPages
                 return Page();
             }
 
-            _context.Attach(StudentHealth).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                StudentHealthDTO studentHealthDTO = new StudentHealthDTO
+                {
+                    StudentId = StudentHealth.StudentId,
+                    SurveyId = StudentHealth.SurveyId,
+                    Score = StudentHealth.Score,
+                    Category = StudentHealth.Category
+                };
+                await _studentHealthService.UpdateStudentHealth(StudentHealth.Id, studentHealthDTO);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!StudentHealthExists(StudentHealth.Id))
+                if (!(await StudentHealthExists(StudentHealth.Id)))
                 {
                     return NotFound();
                 }
@@ -71,9 +82,9 @@ namespace StudentMind.Razor.Pages.StudentHealthPages
             return RedirectToPage("./Index");
         }
 
-        private bool StudentHealthExists(string id)
+        private async Task<bool> StudentHealthExists(string id)
         {
-            return _context.StudentHealths.Any(e => e.Id == id);
+            return await _studentHealthService.GetStudentHealthById(id) != null;
         }
     }
 }

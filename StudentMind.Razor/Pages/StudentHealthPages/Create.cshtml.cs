@@ -7,22 +7,28 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.DTO;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.StudentHealthPages
 {
     public class CreateModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IStudentHealthService _studentHealthService;
+        private readonly IUserService _userService;
+        private readonly ISurveyService _surveyService;
 
-        public CreateModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public CreateModel(IStudentHealthService studentHealthService, IUserService userService, ISurveyService surveyService)
         {
-            _context = context;
+            _studentHealthService = studentHealthService;
+            _userService = userService;
+            _surveyService = surveyService;
         }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-        ViewData["StudentId"] = new SelectList(_context.Users, "Id", "Id");
-        ViewData["SurveyId"] = new SelectList(_context.Surveys, "Id", "Id");
+            ViewData["StudentId"] = new SelectList(await _userService.GetAllUsersAsync(), "Id", "FullName");
+            ViewData["SurveyId"] = new SelectList(await _surveyService.GetSurveys(), "Id", "Name");
             return Page();
         }
 
@@ -37,8 +43,14 @@ namespace StudentMind.Razor.Pages.StudentHealthPages
                 return Page();
             }
 
-            _context.StudentHealths.Add(StudentHealth);
-            await _context.SaveChangesAsync();
+            StudentHealthDTO studentHealthDTO = new StudentHealthDTO
+            {
+                StudentId = StudentHealth.StudentId,
+                SurveyId = StudentHealth.SurveyId,
+                Score = StudentHealth.Score,
+                Category = StudentHealth.Category
+            };
+            await _studentHealthService.CreateStudentHealth(studentHealthDTO);
 
             return RedirectToPage("./Index");
         }

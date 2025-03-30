@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentMind.Core.Entity;
 using StudentMind.Infrastructure.Context;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.StudentHealthPages
 {
     public class DetailsModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IStudentHealthService _studentHealthService;
 
-        public DetailsModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public DetailsModel(IStudentHealthService studentHealthService)
         {
-            _context = context;
+            _studentHealthService = studentHealthService;
         }
 
         public StudentHealth StudentHealth { get; set; } = default!;
@@ -28,7 +29,7 @@ namespace StudentMind.Razor.Pages.StudentHealthPages
                 return NotFound();
             }
 
-            var studenthealth = await _context.StudentHealths.FirstOrDefaultAsync(m => m.Id == id);
+            var studenthealth = await _studentHealthService.GetStudentHealthById(id);
             if (studenthealth == null)
             {
                 return NotFound();

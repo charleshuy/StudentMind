@@ -12,6 +12,7 @@ namespace StudentMind.Core.Entity
         public string Content { get; set; }
         public string QuestionId { get; set; }
 
+        public int Point { get; set; }
         public Question? Question { get; set; }
         public ICollection<SurveyResponse>? SurveyResponses { get; set; }
     }

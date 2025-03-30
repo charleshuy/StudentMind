@@ -39,6 +39,8 @@ namespace StudentMind.Core.Entity
         public virtual ICollection<UserEvent>? UserEvents { get; set; } = new List<UserEvent>();
         [JsonIgnore]
         public virtual ICollection<History>? Histories { get; set; } = new List<History>();
+        [JsonIgnore]
+        public virtual ICollection<StudentHealth>? StudentHealths { get; set; } = new List<StudentHealth>();
 
     }
 }

@@ -98,6 +98,19 @@ namespace StudentMind.Infrastructure.Context
                 .HasForeignKey(hsr => hsr.SurveyId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            // StudentHealth - Survey, User Relationship
+            modelBuilder.Entity<StudentHealth>()
+                .HasOne(sh => sh.Student)  
+                .WithMany(u => u.StudentHealths)  
+                .HasForeignKey(sh => sh.StudentId)  
+                .OnDelete(DeleteBehavior.Cascade);  // If a student is deleted, delete their health records
+
+            modelBuilder.Entity<StudentHealth>()
+                .HasOne(sh => sh.Survey)
+                .WithMany(s => s.StudentHealths)
+                .HasForeignKey(sh => sh.SurveyId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             // Question - Choice Relationship
             modelBuilder.Entity<Choice>()
                 .HasOne(c => c.Question)

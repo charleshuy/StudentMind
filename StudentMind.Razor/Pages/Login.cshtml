@@ -1,25 +1,32 @@
 ﻿@page
 @model StudentMind.Razor.Pages.LoginModel
 @{
-    ViewData["Title"] = "Firebase Login";
+    ViewData["Title"] = "StudentMind Login";
 }
 
-<h2>Login with Firebase</h2>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
+        <h2 class="text-center mb-4">Login</h2>
 
-<form method="post">
-    <div>
-        <label>Email:</label>
-        <input type="email" asp-for="Email" required />
+        <form method="post">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" asp-for="Email" required />
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" asp-for="Password" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            <div class="alert alert-danger mt-3 text-center">@Model.Message</div>
+        }
+
+        <div class="text-center mt-3">
+            <p>Don't have an account? <a asp-page="/Register">Register here</a></p>
+        </div>
     </div>
-    <div>
-        <label>Password:</label>
-        <input type="password" asp-for="Password" required />
-    </div>
-    <button type="submit">Login</button>
-</form>
-
-@if (!string.IsNullOrEmpty(Model.Message))
-{
-    <p style="color:red">@Model.Message</p>
-}
-
+</div>

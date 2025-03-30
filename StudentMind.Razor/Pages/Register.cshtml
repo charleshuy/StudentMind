@@ -2,28 +2,38 @@
 @model StudentMind.Razor.Pages.RegisterModel
 
 @{
-    ViewData["Title"] = "Firebase Register";
+    ViewData["Title"] = "StudentMind Register";
 }
 
-<h2>Register</h2>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
+        <h2 class="text-center mb-4">Register</h2>
 
-<form method="post">
-    <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control" id="email" name="Email" required />
-    </div>
-    <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" id="password" name="Password" required />
-    </div>
-    <div class="mb-3">
-        <label for="confirmPassword" class="form-label">Confirm Password</label>
-        <input type="password" class="form-control" id="confirmPassword" name="ConfirmPassword" required />
-    </div>
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
+        <form method="post">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" asp-for="Email" required />
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" asp-for="Password" required />
+            </div>
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirmPassword" asp-for="ConfirmPassword" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+        </form>
 
-@if (!string.IsNullOrEmpty(Model.Message))
-{
-    <div class="alert alert-danger mt-3">@Model.Message</div>
-}
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            <div class="alert @(Model.IsSuccess ? "alert-success" : "alert-danger") mt-3 text-center">
+                @Model.Message
+            </div>
+        }
+
+        <div class="text-center mt-3">
+            <p>Already have an account? <a asp-page="/Login">Login here</a></p>
+        </div>
+    </div>
+</div>

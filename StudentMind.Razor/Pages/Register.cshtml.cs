@@ -23,6 +23,7 @@ namespace StudentMind.Razor.Pages
         public string ConfirmPassword { get; set; }
 
         public string Message { get; set; }
+        public bool IsSuccess { get; set; } // New property to track success
 
         public void OnGet() { }
 
@@ -31,6 +32,7 @@ namespace StudentMind.Razor.Pages
             if (Password != ConfirmPassword)
             {
                 Message = "Passwords do not match!";
+                IsSuccess = false;
                 return Page();
             }
 
@@ -38,14 +40,15 @@ namespace StudentMind.Razor.Pages
             {
                 await _firebaseAuthService.RegisterUserAsync(Email, Password);
                 Message = "Registration successful! Please check your email to verify your account.";
+                IsSuccess = true;
             }
             catch (Exception ex)
             {
                 Message = $"Registration failed: {ex.Message}";
+                IsSuccess = false;
             }
 
             return Page();
         }
-
     }
 }

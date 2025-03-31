@@ -14,6 +14,7 @@ namespace StudentMind.Razor.Pages.HealthScoreRulePages
     public class IndexModel : PageModel
     {
         private readonly IHealthScoreRuleService _healthScoreRuleService;
+        private const int PageSize = 4;
 
         public IndexModel(IHealthScoreRuleService healthScoreRuleService)
         {
@@ -21,10 +22,26 @@ namespace StudentMind.Razor.Pages.HealthScoreRulePages
         }
 
         public IList<HealthScoreRule> HealthScoreRule { get;set; } = default!;
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string SearchHealthScores { get; set; } = string.Empty;
 
         public async Task OnGetAsync()
         {
-            HealthScoreRule = await _healthScoreRuleService.GetHealthScoreRules();
+            var healthScoreRules = await _healthScoreRuleService.GetHealthScoreRules();
+            if (!string.IsNullOrEmpty(SearchHealthScores))
+            {
+                healthScoreRules = healthScoreRules.Where(m =>
+                    (!string.IsNullOrEmpty(SearchHealthScores) && m.category.Contains(SearchHealthScores, StringComparison.OrdinalIgnoreCase))
+                ).ToList();
+            }
+
+            int totalRecords = healthScoreRules.Count;
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)PageSize);
+            HealthScoreRule = healthScoreRules.OrderBy(h => h.MinScore).Skip((CurrentPage - 1) * PageSize)
+                .Take(PageSize).ToList();
         }
     }
 }

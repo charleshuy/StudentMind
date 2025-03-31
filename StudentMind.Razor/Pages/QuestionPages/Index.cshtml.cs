@@ -14,6 +14,7 @@ namespace StudentMind.Razor.Pages.QuestionPages
     public class IndexModel : PageModel
     {
         private readonly IQuestionService _questionService;
+        private const int PageSize = 4;
 
         public IndexModel(IQuestionService questionService)
         {
@@ -21,10 +22,29 @@ namespace StudentMind.Razor.Pages.QuestionPages
         }
 
         public IList<Question> Question { get;set; } = default!;
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
 
-        public async Task OnGetAsync()
+        [BindProperty(SupportsGet = true)]
+        public string SearchQuestions { get; set; } = string.Empty;
+
+        public async Task OnGetAsync(int? pageNumber)
         {
-            Question = await _questionService.GetQuestions();
+            CurrentPage = pageNumber ?? 1;
+
+            var questions = await _questionService.GetQuestions();
+            if (!string.IsNullOrEmpty(SearchQuestions))
+            {
+                questions = questions.Where(m =>
+                    (!string.IsNullOrEmpty(SearchQuestions) && m.Content.Contains(SearchQuestions, StringComparison.OrdinalIgnoreCase))
+                ).ToList();
+            }
+
+            int totalRecords = questions.Count;
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)PageSize);
+
+            Question = questions.Skip((CurrentPage - 1) * PageSize)
+                .Take(PageSize).ToList();
         }
     }
 }

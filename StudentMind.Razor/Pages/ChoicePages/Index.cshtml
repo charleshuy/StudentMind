@@ -10,6 +10,18 @@
 <p>
     <a asp-page="Create">Create New</a>
 </p>
+
+<form method="get">
+    <div class="row">
+        <div class="col-md-4">
+            <label>Search Content:</label>
+            <input type="text" name="searchChoices" value="@Model.SearchChoices" class="form-control" />
+        </div>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -82,3 +94,20 @@
 }
     </tbody>
 </table>
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-page="./Index"
+                       asp-route-pageNumber="@i"
+                       asp-route-searchChoices="@Model.SearchChoices">
+                       @i
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

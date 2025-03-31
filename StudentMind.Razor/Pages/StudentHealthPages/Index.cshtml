@@ -7,9 +7,6 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -26,24 +23,12 @@
                 @Html.DisplayNameFor(model => model.StudentHealth[0].Student)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StudentHealth[0].CreatedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StudentHealth[0].LastUpdatedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StudentHealth[0].DeletedBy)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.StudentHealth[0].CreatedTime)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.StudentHealth[0].LastUpdatedTime)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StudentHealth[0].DeletedTime)
-            </th>
-            <th></th>
+            @* <th></th> *@
         </tr>
     </thead>
     <tbody>
@@ -62,28 +47,16 @@
                 @Html.DisplayFor(modelItem => item.Student.FullName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastUpdatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeletedBy)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.CreatedTime)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.LastUpdatedTime)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeletedTime)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+            @* <td> *@
+            @*     <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> | *@
+            @*     <a asp-page="./Details" asp-route-id="@item.Id">Details</a> | *@
+            @*     <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a> *@
+            @* </td> *@
         </tr>
 }
     </tbody>

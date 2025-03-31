@@ -4,15 +4,31 @@
     ViewData["Title"] = "Survey Results";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-lg p-4">
-        <h2 class="text-center mb-4">Survey Results</h2>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg p-4 rounded-4" style="max-width: 500px; width: 100%;">
+        <div class="text-center">
+            <h2 class="mb-3 fw-bold text-primary">Survey Results</h2>
+        </div>
 
-        <p class="fs-5">Your health category: <strong>@Model.HealthCategory</strong></p>
-        <p class="fs-5">Your total score: <strong>@Model.TotalScore</strong></p>
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger text-center fw-semibold">
+                @Model.ErrorMessage
+            </div>
+        }
+        else
+        {
+            <div class="text-center">
+                <p class="fs-5 text-muted">Your health category:</p>
+                <h4 class="fw-bold text-success">@Model.HealthCategory</h4>
+
+                <p class="fs-5 text-muted mt-3">Your total score:</p>
+                <h4 class="fw-bold text-warning">@Model.TotalScore</h4>
+            </div>
+        }
 
         <div class="text-center mt-4">
-            <a href="/" class="btn btn-primary">Back to Home</a>
+            <a href="/" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm">Back to Home</a>
         </div>
     </div>
 </div>

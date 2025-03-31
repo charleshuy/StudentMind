@@ -52,6 +52,12 @@ namespace StudentMind.Services.Services
             return await studentHealthRepo.Entities.Include(sh => sh.Student).Include(sh => sh.Survey).FirstOrDefaultAsync(s => s.Id == id);
         }
 
+        public async Task<StudentHealth> GetStudentHealthByUserIdSurveyId(string userId, string surveyId)
+        {
+            var studentHealthRepo = _unitOfWork.GetRepository<StudentHealth>();
+            return await studentHealthRepo.Entities.Include(sh => sh.Student).Include(sh => sh.Survey).FirstOrDefaultAsync(s => s.StudentId == userId && s.SurveyId == surveyId);
+        }
+
         public async Task<List<StudentHealth>> GetStudentHealths()
         {
             var StudentHealthRepo = _unitOfWork.GetRepository<StudentHealth>();

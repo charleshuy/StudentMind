@@ -4,13 +4,21 @@
     ViewData["Title"] = "Select a Survey";
 }
 
-<h2>Select a Survey</h2>
+<h2 class="mb-4">Select a Survey</h2>
 
-<ul>
-    @foreach (var survey in Model.Surveys)
-    {
-        <li>
-            <a asp-page="Start" asp-route-surveyId="@survey.Id">@survey.Name</a>
-        </li>
-    }
-</ul>
+<div class="container">
+    <div class="row">
+        @foreach (var survey in Model.Surveys)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@survey.Name</h5>
+                        <p class="card-text">@survey.Description</p>
+                        <a asp-page="Start" asp-route-surveyId="@survey.Id" class="btn btn-primary">Start Survey</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

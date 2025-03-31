@@ -10,5 +10,6 @@ namespace StudentMind.Services.Interfaces
         Task DeleteStudentHealth(string id);
         Task<StudentHealth> GetStudentHealthById(string id);
         Task<List<StudentHealth>> GetStudentHealths();
+        Task<StudentHealth> GetStudentHealthByUserIdSurveyId(string userId, string surveyId);
     }
 }

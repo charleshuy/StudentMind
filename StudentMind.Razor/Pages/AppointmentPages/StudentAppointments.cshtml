@@ -1,0 +1,96 @@
+﻿@page
+@model StudentMind.Razor.Pages.AppointmentPages.StudentAppointmentsModel
+
+@{
+    ViewData["Title"] = "My Schedule";
+}
+
+<div class="container">
+    <h2 class="mb-4">My Schedule</h2>
+
+    @if (!string.IsNullOrEmpty(Model.DebugMessage))
+    {
+        <div class="alert alert-info" role="alert">
+            @Model.DebugMessage
+        </div>
+    }
+
+    <p class="mb-4">
+        You have @Model.TotalAppointments total appointments.
+    </p>
+
+    <div class="mb-4">
+        <form method="get" asp-page="StudentAppointments">
+            <div class="row">
+                <div class="col-md-3">
+                    <label asp-for="FromDate" class="form-label">From Date</label>
+                    <input asp-for="FromDate" class="form-control" type="date" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="ToDate" class="form-label">To Date</label>
+                    <input asp-for="ToDate" class="form-control" type="date" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="StatusFilter" class="form-label">Status</label>
+                    <select asp-for="StatusFilter" asp-items="Model.StatusList" class="form-control"></select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="PsychologistNameFilter" class="form-label">Psychologist Name</label>
+                    <input asp-for="PsychologistNameFilter" class="form-control" type="text" placeholder="Enter psychologist name" />
+                </div>
+            </div>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                <a asp-page="StudentAppointments" class="btn btn-secondary">Clear Filters</a>
+            </div>
+        </form>
+    </div>
+
+    @if (Model.Appointments != null && Model.Appointments.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        <a asp-page="StudentAppointments"
+                           asp-all-route-data="@(new Dictionary<string, string> { { "SortBy", "PsychologistName" }, { "SortDescending", Model.SortBy == "PsychologistName" && !Model.SortDescending ? "true" : "false" }, { "FromDate", Model.FromDate?.ToString("yyyy-MM-dd") }, { "ToDate", Model.ToDate?.ToString("yyyy-MM-dd") }, { "StatusFilter", Model.StatusFilter }, { "PsychologistNameFilter", Model.PsychologistNameFilter } })">
+                            Psychologist Name @(Model.SortBy == "PsychologistName" ? (Model.SortDescending ? "▼" : "▲") : "")
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-page="StudentAppointments"
+                           asp-all-route-data="@(new Dictionary<string, string> { { "SortBy", "StartTime" }, { "SortDescending", Model.SortBy == "StartTime" && !Model.SortDescending ? "true" : "false" }, { "FromDate", Model.FromDate?.ToString("yyyy-MM-dd") }, { "ToDate", Model.ToDate?.ToString("yyyy-MM-dd") }, { "StatusFilter", Model.StatusFilter }, { "PsychologistNameFilter", Model.PsychologistNameFilter } })">
+                            Date and Time @(Model.SortBy == "StartTime" ? (Model.SortDescending ? "▼" : "▲") : "")
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-page="StudentAppointments"
+                           asp-all-route-data="@(new Dictionary<string, string> { { "SortBy", "Status" }, { "SortDescending", Model.SortBy == "Status" && !Model.SortDescending ? "true" : "false" }, { "FromDate", Model.FromDate?.ToString("yyyy-MM-dd") }, { "ToDate", Model.ToDate?.ToString("yyyy-MM-dd") }, { "StatusFilter", Model.StatusFilter }, { "PsychologistNameFilter", Model.PsychologistNameFilter } })">
+                            Status @(Model.SortBy == "Status" ? (Model.SortDescending ? "▼" : "▲") : "")
+                        </a>
+                    </th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var appointment in Model.Appointments)
+                {
+                    <tr>
+                        <td>@(appointment.Psychologist?.FullName ?? "Unknown")</td>
+                        <td>@appointment.StartTime.ToString("yyyy-MM-dd HH:mm") - @appointment.EndTime.ToString("HH:mm")</td>
+                        <td>@appointment.Status</td>
+                        <td>@(string.IsNullOrEmpty(appointment.Note) ? "No notes" : appointment.Note)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-muted">You have no appointments matching the current filters.</p>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

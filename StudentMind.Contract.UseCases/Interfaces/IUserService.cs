@@ -12,5 +12,6 @@ namespace StudentMind.Services.Interfaces
         Task<bool> UpdateUserAsync(string userId, UserRequestDTO userDto);
         Task<bool> DeleteUserAsync(string userId);
         Task<UserDTO?> GetProfileAsync();
+        string? GetUserIdFromToken();
     }
 }

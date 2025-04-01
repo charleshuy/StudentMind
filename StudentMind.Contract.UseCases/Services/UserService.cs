@@ -161,5 +161,24 @@ namespace StudentMind.Services.Services
 
             return user == null ? null : MapToUserDTO(user);
         }
+
+        public string? GetUserIdFromToken()
+        {
+            // Get the JWT token from the cookies
+            var jwtToken = _httpContextAccessor.HttpContext?.Request.Cookies["JWT_Token"];
+
+            if (string.IsNullOrEmpty(jwtToken))
+            {
+                return null; // User not logged in
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(jwtToken);
+
+            // Extract the UserId claim from the token
+            var userId = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            return userId;
+        }
     }
 }

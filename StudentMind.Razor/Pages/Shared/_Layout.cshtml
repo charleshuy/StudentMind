@@ -1,4 +1,7 @@
 ﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+
 @{
     var jwtToken = HttpContextAccessor.HttpContext?.Request.Cookies["JWT_Token"];
     bool isLoggedIn = !string.IsNullOrEmpty(jwtToken);
@@ -37,27 +40,43 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/surveypages/index">Survey</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/questionpages/index">Question</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/choicepages/index">Choice</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/surveyquestionpages/index">Survey Question</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/healthscorerulepages/index">Health Score Rule</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/studenthealthpages/index">Student Health</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/surveyresponsepages/index">Survey Response</a>
-                        </li>
+                        <!-- Appointments Dropdown -->
+                        @if (isLoggedIn)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-white dropdown-toggle" href="#" id="appointmentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Appointments
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="appointmentsDropdown">
+                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/AppointmentPages/Book">Book Appointment</a></li>
+                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/AppointmentPages/StudentAppointments">My Appointments</a></li>
+                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/AppointmentPages/PsychologistAppointments">Manage Appointments</a></li>
+                                </ul>
+                            </li>
+                            <!-- Surveys Dropdown -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-white dropdown-toggle" href="#" id="surveysDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Surveys
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="surveysDropdown">
+                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/surveypages/index">Survey</a></li>
+                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/questionpages/index">Question</a></li>
+                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/choicepages/index">Choice</a></li>
+                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/surveyquestionpages/index">Survey Question</a></li>
+                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/surveyresponsepages/index">Survey Response</a></li>
+                                </ul>
+                            </li>
+                            <!-- Health Dropdown -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-white dropdown-toggle" href="#" id="healthDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Health
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="healthDropdown">
+                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/healthscorerulepages/index">Health Score Rule</a></li>
+                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/studenthealthpages/index">Student Health</a></li>
+                                </ul>
+                            </li>
+                        }
                     </ul>
 
                     <!-- Login/Logout Button -->

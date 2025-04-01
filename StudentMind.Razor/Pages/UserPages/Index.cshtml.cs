@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using StudentMind.Services.DTO;
 using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.UserPages
 {
+    [Authorize(AuthenticationSchemes = "Jwt", Policy = "RequireAdmin")]
     public class IndexModel : PageModel
     {
         private readonly IUserService _userService;

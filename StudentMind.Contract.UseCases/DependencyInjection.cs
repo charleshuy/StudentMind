@@ -61,19 +61,19 @@ namespace StudentMind.Services
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             // Firebase Authentication
-            .AddJwtBearer("Firebase", options =>
-            {
-                options.Authority = $"https://securetoken.google.com/{configuration["Firebase:ProjectId"]}";
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = $"https://securetoken.google.com/{configuration["Firebase:ProjectId"]}",
-                    ValidateAudience = true,
-                    ValidAudience = configuration["Firebase:ProjectId"],
-                    ValidateLifetime = true
-                };
-            })
-            // Custom JWT Authentication
+            //.AddJwtBearer("Firebase", options =>
+            //{
+            //    options.Authority = $"https://securetoken.google.com/{configuration["Firebase:ProjectId"]}";
+            //    options.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidIssuer = $"https://securetoken.google.com/{configuration["Firebase:ProjectId"]}",
+            //        ValidateAudience = true,
+            //        ValidAudience = configuration["Firebase:ProjectId"],
+            //        ValidateLifetime = true
+            //    };
+            //})
+
             // Custom JWT Authentication
             .AddJwtBearer("Jwt", options =>
             {
@@ -85,6 +85,17 @@ namespace StudentMind.Services
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = jwtKey,
                     RoleClaimType = ClaimTypes.Role // Ensure this is set
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnChallenge = context =>
+                    {
+                        // Redirect to a specific page when not authorized
+                        context.HandleResponse(); // Avoid default behavior
+                        context.Response.Redirect("/AccessDenied"); // Redirect to a custom access-denied page
+                        return Task.CompletedTask;
+                    }
                 };
             });
 

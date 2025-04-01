@@ -1,6 +1,6 @@
 ﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @{
-    var jwtToken = HttpContextAccessor.HttpContext?.Session.GetString("JWT_Token");
+    var jwtToken = HttpContextAccessor.HttpContext?.Request.Cookies["JWT_Token"];
     bool isLoggedIn = !string.IsNullOrEmpty(jwtToken);
 }
 
@@ -58,6 +58,9 @@
                     <ul class="navbar-nav">
                         @if (isLoggedIn)
                         {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/userpages/profile">Profile</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="btn btn-danger" asp-page="/Logout">Logout</a>
                             </li>

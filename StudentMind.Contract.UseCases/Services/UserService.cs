@@ -1,21 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using StudentMind.Core.Entity;
 using StudentMind.Core.Interfaces;
 using StudentMind.Services.DTO;
 using StudentMind.Services.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace StudentMind.Services.Services
 {
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IUnitOfWork unitOfWork, IConfiguration configuration)
+        public UserService(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
-            _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<UserDTO?> GetUserByIdAsync(string userId)
@@ -30,7 +33,7 @@ namespace StudentMind.Services.Services
         public async Task<PaginatedList<UserDTO>> GetUsersAsync(int pageNumber, int pageSize)
         {
             var userRepo = _unitOfWork.GetRepository<User>();
-            var query = userRepo.Entities.AsNoTracking()
+            var query = userRepo.Entities.Include(u => u.Role).AsNoTracking()
                 .Select(u => new UserDTO
                 {
                     Id = u.Id,
@@ -39,6 +42,7 @@ namespace StudentMind.Services.Services
                     Username = u.Username,
                     Gender = u.Gender,
                     RoleId = u.RoleId,
+                    RoleName = u.Role!.RoleName ?? "",
                     Status = u.Status,
                     CreatedTime = u.CreatedTime,
                     LastUpdatedTime = u.LastUpdatedTime
@@ -133,6 +137,29 @@ namespace StudentMind.Services.Services
                 CreatedTime = user.CreatedTime,
                 LastUpdatedTime = user.LastUpdatedTime
             };
+        }
+        public async Task<UserDTO?> GetProfileAsync()
+        {
+            var jwtToken = _httpContextAccessor.HttpContext?.Request.Cookies["JWT_Token"];
+
+            if (string.IsNullOrEmpty(jwtToken))
+            {
+                return null; // User not logged in
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(jwtToken);
+            var userId = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return null; // Invalid token
+            }
+
+            var userRepo = _unitOfWork.GetRepository<User>();
+            var user = await userRepo.GetByIdAsync(userId);
+
+            return user == null ? null : MapToUserDTO(user);
         }
     }
 }

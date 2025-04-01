@@ -1,0 +1,22 @@
+﻿@page
+@model StudentMind.Razor.Pages.UserPages.ProfileModel
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<h2>User Profile</h2>
+
+@if (Model.CurrentUser != null)
+{
+    <p><strong>Full Name:</strong> @Model.CurrentUser.FullName</p>
+    <p><strong>Email:</strong> @Model.CurrentUser.Email</p>
+    <p><strong>Username:</strong> @Model.CurrentUser.Username</p>
+    <p><strong>Gender:</strong> @Model.CurrentUser.Gender</p>
+    <p><strong>Role:</strong> @ViewData["RoleName"]</p>
+    <p><strong>Status:</strong> @(Model.CurrentUser.Status ? "Active" : "Inactive")</p>
+    <p><strong>Created At:</strong> @Model.CurrentUser.CreatedTime.ToString("yyyy-MM-dd HH:mm")</p>
+}
+else
+{
+    <p>User is not logged in.</p>
+}

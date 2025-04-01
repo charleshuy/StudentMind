@@ -1,4 +1,5 @@
 ﻿using StudentMind.Services.DTO;
+using System.Security.Claims;
 
 namespace StudentMind.Services.Interfaces
 {
@@ -10,5 +11,6 @@ namespace StudentMind.Services.Interfaces
         Task<UserDTO> CreateUserAsync(UserRequestDTO userDto);
         Task<bool> UpdateUserAsync(string userId, UserRequestDTO userDto);
         Task<bool> DeleteUserAsync(string userId);
+        Task<UserDTO?> GetProfileAsync();
     }
 }

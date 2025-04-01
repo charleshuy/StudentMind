@@ -10,6 +10,7 @@ namespace StudentMind.Services.DTO
         public string Username { get; set; } = string.Empty;
         public string Gender { get; set; } = "Male";
         public string RoleId { get; set; } = string.Empty;
+        public string RoleName { get; set; } = string.Empty;
         public bool Status { get; set; }
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }

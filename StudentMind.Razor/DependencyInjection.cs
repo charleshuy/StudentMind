@@ -13,6 +13,7 @@ namespace StudentMind.Razor
             services.AddServiceLayer(configuration);
             services.AddHttpContextAccessor();
             services.AddSignalR();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout

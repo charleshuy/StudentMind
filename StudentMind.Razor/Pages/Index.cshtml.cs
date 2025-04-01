@@ -17,7 +17,7 @@ namespace StudentMind.Razor.Pages
 
         public void OnGet()
         {
-            var token = HttpContext.Session.GetString("JWT_Token");
+            var token = HttpContext?.Request.Cookies["JWT_Token"];
 
             if (!string.IsNullOrEmpty(token))
             {

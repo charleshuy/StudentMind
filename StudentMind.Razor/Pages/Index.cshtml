@@ -4,48 +4,61 @@
     ViewData["Title"] = "Home - Student Mind";
 }
 
-<div class="text-center">
-    @if (!string.IsNullOrEmpty(Model.UserName))
-    {
-        <h1 class="display-4">Welcome, @Model.UserName!</h1>
-    }
-    else
-    {
-        <h1 class="display-4">Welcome to the School Mental Health Support System</h1>
-        <p>Your trusted platform for student well-being.</p>
-    }
-</div>
-
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-4">
-            <h3>About Our School</h3>
-            <p>Providing quality education and mental health support for students.</p>
-        </div>
-        <div class="col-md-4">
-            <h3>Mental Health Resources</h3>
-            <p>Access materials on psychological well-being and self-care strategies.</p>
-        </div>
-        <div class="col-md-4">
-            <h3>Community Blog</h3>
-            <p>Read shared experiences and expert advice on student mental health.</p>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="text-center">
+<div class="container py-5">
+    <!-- Welcome Section -->
+    <div class="text-center mb-5 fade-in">
         @if (!string.IsNullOrEmpty(Model.UserName))
         {
-            <h2>Explore Your Mind</h2>
-            <p><a class="btn btn-primary" asp-page="/TakeSurvey/Index">Take a survey</a></p>
+            <h1 class="welcome-header">Welcome, @Model.UserName! <i class="fas fa-smile text-coral"></i></h1>
         }
         else
         {
-            <h2>Get Started</h2>
-            <p><a class="btn btn-primary" asp-page="/Login">Login</a></p>
-            <p class="mt-2"><strong>or</strong></p>
-            <p><a class="btn btn-primary" asp-page="/Register">Create an Account</a></p>
+            <h1 class="welcome-header">Welcome to Student Mind <i class="fas fa-brain text-coral"></i></h1>
+            <p class="lead text-muted">Your trusted platform for student well-being.</p>
+        }
+    </div>
+
+    <!-- Features Section -->
+    <div class="row justify-content-center g-4">
+        <div class="col-md-4 col-sm-6 fade-in">
+            <div class="feature-card">
+                <i class="fas fa-school fa-2x text-coral mb-3"></i>
+                <h3>About Our School</h3>
+                <p>Providing quality education and mental health support for students.</p>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 fade-in">
+            <div class="feature-card">
+                <i class="fas fa-heartbeat fa-2x text-coral mb-3"></i>
+                <h3>Mental Health Resources</h3>
+                <p>Access materials on psychological well-being and self-care strategies.</p>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 fade-in">
+            <div class="feature-card">
+                <i class="fas fa-blog fa-2x text-coral mb-3"></i>
+                <h3>Community Blog</h3>
+                <p>Read shared experiences and expert advice on student mental health.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <hr class="my-5">
+
+    <!-- Call to Action Section -->
+    <div class="text-center fade-in">
+        @if (!string.IsNullOrEmpty(Model.UserName))
+        {
+            <h2 class="welcome-header">Explore Your Mind</h2>
+            <p><a class="btn cobalt-blue-btn btn-lg pulse" asp-page="/TakeSurvey/Index">Take a Survey</a></p>
+        }
+        else
+        {
+            <h2 class="welcome-header">Get Started</h2>
+            <p><a class="btn cobalt-blue-btn btn-lg pulse" asp-page="/Login">Login</a></p>
+            <p class="mt-3 text-muted"><strong>or</strong></p>
+            <p><a class="btn cobalt-blue-btn btn-lg pulse" asp-page="/Register">Create an Account</a></p>
         }
     </div>
 </div>

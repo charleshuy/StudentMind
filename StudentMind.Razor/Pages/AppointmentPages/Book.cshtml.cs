@@ -9,6 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StudentMind.Razor.Pages.AppointmentPages
 {
@@ -115,18 +118,22 @@ namespace StudentMind.Razor.Pages.AppointmentPages
                 ModelState.AddModelError("SelectedPsychologistId", "Selected psychologist does not exist or is not a valid psychologist.");
             }
 
-            // Hardcode the UserId since authentication isn't ready
-            const string hardcodedUserId = "EF70BBD4-E206-430A-A8E4-E8CB91BBDF03";
+            var userId = GetUserIdFromToken();
+            if (string.IsNullOrEmpty(userId))
+            {
+                ModelState.AddModelError("", "Unable to identify the current user. Please log in again.");
+                return Page();
+            }
 
-            // Validate that the hardcoded user exists and has the "User" role
+            // Validate that the user exists and has the "User" role
             var userRepo = _unitOfWork.GetRepository<User>();
             var currentUser = await userRepo.Entities
                 .Include(u => u.Role)
-                .FirstOrDefaultAsync(u => u.Id == hardcodedUserId && u.Role != null && u.Role.RoleName == "User");
+                .FirstOrDefaultAsync(u => u.Id == userId && u.Role != null && u.Role.RoleName == "User");
 
             if (currentUser == null)
             {
-                ModelState.AddModelError("", "The hardcoded user does not exist or is not a valid student.");
+                ModelState.AddModelError("", "The user does not exist or is not a valid student.");
             }
 
             // Validate the selected date
@@ -182,7 +189,7 @@ namespace StudentMind.Razor.Pages.AppointmentPages
 
             // Set appointment details
             Appointment.PsychologistId = SelectedPsychologistId;
-            Appointment.UserId = hardcodedUserId; // Use the hardcoded user ID
+            Appointment.UserId = userId;
             Appointment.Status = EnumStatus.Pending;
 
             // Save the appointment
@@ -244,6 +251,21 @@ namespace StudentMind.Razor.Pages.AppointmentPages
             ));
 
             return slots;
+        }
+
+        public string GetUserIdFromToken()
+        {
+            var jwtToken = Request.Cookies["JWT_Token"];
+
+            if (string.IsNullOrEmpty(jwtToken))
+                return null;
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(jwtToken);
+
+            var userId = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            return userId;
         }
     }
 }

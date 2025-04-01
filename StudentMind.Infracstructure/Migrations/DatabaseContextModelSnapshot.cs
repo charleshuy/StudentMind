@@ -185,14 +185,12 @@ namespace StudentMind.Infracstructure.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("HostId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LastUpdatedBy")
@@ -202,7 +200,6 @@ namespace StudentMind.Infracstructure.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
@@ -738,9 +735,7 @@ namespace StudentMind.Infracstructure.Migrations
                 {
                     b.HasOne("StudentMind.Core.Entity.User", "Host")
                         .WithMany()
-                        .HasForeignKey("HostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HostId");
 
                     b.Navigation("Host");
                 });

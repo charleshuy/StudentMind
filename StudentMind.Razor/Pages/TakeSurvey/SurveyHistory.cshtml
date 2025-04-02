@@ -8,6 +8,22 @@
     <div class="card shadow-lg p-4">
         <h2 class="text-lg-start mb-4">@Model.Survey?.Name</h2>
 
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger" role="alert">
+                @Model.ErrorMessage
+            </div>
+        }
+
+        @if (Model.TotalScore > 0)
+        {
+            <div class="mb-4">
+                <h5>Your Health Result</h5>
+                <p><strong>Total Score:</strong> @Model.TotalScore</p>
+                <p><strong>Health Category:</strong> @Model.HealthCategory</p>
+            </div>
+        }
+
         <form>
             <input type="hidden" name="SurveyId" value="@Model.Survey.Id" />
 

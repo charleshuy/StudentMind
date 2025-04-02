@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using StudentMind.Core.Entity;
 using StudentMind.Services.Interfaces;
+using StudentMind.Services.DTO;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -14,19 +15,22 @@ namespace StudentMind.Razor.Pages.TakeSurvey
         private readonly ISurveyQuestionService _surveyQuestionService;
         private readonly IChoiceService _choiceService;
         private readonly ISurveyResponseService _surveyResponseService;
+        private readonly IStudentHealthService _studentHealthService;
 
         public SurveyHistoryModel(
             ISurveyService surveyService,
             IQuestionService questionService,
             ISurveyQuestionService surveyQuestionService,
             IChoiceService choiceService,
-            ISurveyResponseService surveyResponseService)
+            ISurveyResponseService surveyResponseService,
+            IStudentHealthService studentHealthService)
         {
             _surveyService = surveyService;
             _questionService = questionService;
             _surveyQuestionService = surveyQuestionService;
             _choiceService = choiceService;
             _surveyResponseService = surveyResponseService;
+            _studentHealthService = studentHealthService;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -36,6 +40,10 @@ namespace StudentMind.Razor.Pages.TakeSurvey
         public List<Choice> Choices { get; set; }
         public Dictionary<string, string> Answers { get; set; } = new(); // QuestionId -> Selected ChoiceId
         public string UserId { get; private set; }
+
+        public int TotalScore { get; set; }
+        public string HealthCategory { get; set; }
+        public string ErrorMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string surveyId)
         {
@@ -56,12 +64,18 @@ namespace StudentMind.Razor.Pages.TakeSurvey
             Questions = await _surveyQuestionService.GetQuestionsBySurveyId(SurveyId);
             Choices = await _choiceService.GetChoicesBySurveyId(SurveyId);
 
-            // Load selected answers
             var responses = await _surveyResponseService.GetSurveyResponsesByUserIdSurveyId(UserId, SurveyId);
             Answers = responses.ToDictionary(r => r.QuestionId, r => r.ChoiceId);
-            foreach(var (questionId, choiceId) in Answers)
+
+            var studentHealth = await _studentHealthService.GetStudentHealthByUserIdSurveyId(UserId, SurveyId);
+            if (studentHealth != null)
             {
-                Console.WriteLine(questionId + " : " + choiceId);
+                TotalScore = studentHealth.Score;
+                HealthCategory = studentHealth.Category;
+            }
+            else
+            {
+                ErrorMessage = "No health results found for this survey. Please try taking the survey again.";
             }
 
             return Page();

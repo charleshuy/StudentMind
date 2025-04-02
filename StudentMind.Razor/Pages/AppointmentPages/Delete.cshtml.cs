@@ -4,9 +4,11 @@ using StudentMind.Core.Entity;
 using StudentMind.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StudentMind.Razor.Pages.AppointmentPages
 {
+    [Authorize(AuthenticationSchemes = "Jwt", Roles = "Admin,Psychologist")]
     public class DeleteModel : PageModel
     {
         private readonly IUnitOfWork _unitOfWork;

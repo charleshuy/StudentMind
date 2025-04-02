@@ -8,9 +8,11 @@ using System;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StudentMind.Razor.Pages.EventPages
 {
+    [Authorize(AuthenticationSchemes = "Jwt", Roles = "Admin,Psychologist")]
     public class EditModel : PageModel
     {
         private readonly IUnitOfWork _unitOfWork;

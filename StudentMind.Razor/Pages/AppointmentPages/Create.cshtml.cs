@@ -6,10 +6,12 @@ using StudentMind.Core.Interfaces;
 using StudentMind.Core.Enum;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StudentMind.Razor.Pages.AppointmentPages
 {
-    public class CreateModel : PageModel
+    [Authorize(AuthenticationSchemes = "Jwt", Roles ="Admin,Psychologist")]
+    class CreateModel : PageModel
     {
         private readonly IUnitOfWork _unitOfWork;
 

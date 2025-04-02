@@ -13,25 +13,19 @@ namespace StudentMind.Razor.Pages.UserEventPages
         private readonly IUnitOfWork _unitOfWork;
 
         public Event Event { get; set; }
-        public bool IsJoined { get; set; }
-        public IEnumerable<User> JoinedUsers { get; set; }
-        public int CurrentPage { get; set; }
-        public int TotalPages { get; set; }
-        private const int PageSize = 5; 
 
         public DetailsModel(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IActionResult> OnGetAsync(string id, int page = 1)
+        public async Task<IActionResult> OnGetAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
 
-            // Fetch the event
             var eventRepo = _unitOfWork.GetRepository<Event>();
             Event = await eventRepo.Entities
                 .Include(e => e.Host)
@@ -39,85 +33,54 @@ namespace StudentMind.Razor.Pages.UserEventPages
 
             if (Event == null)
             {
-                return Page();
+                return NotFound();
             }
-
-            // Check if the user has already joined the event
-            var userId = GetCurrentUserId();
-            if (!string.IsNullOrEmpty(userId))
-            {
-                IsJoined = await _unitOfWork.GetRepository<UserEvent>().Entities
-                    .AnyAsync(ue => ue.UserId == userId && ue.ProgramId == id && ue.DeletedTime == null);
-            }
-
-            // Fetch the list of users who joined the event with pagination
-            var userEventRepo = _unitOfWork.GetRepository<UserEvent>();
-            var joinedUserEvents = userEventRepo.Entities
-                .Where(ue => ue.ProgramId == id && ue.DeletedTime == null)
-                .Include(ue => ue.User);
-
-            // Calculate pagination
-            var totalUsers = await joinedUserEvents.CountAsync();
-            TotalPages = (int)Math.Ceiling(totalUsers / (double)PageSize);
-            CurrentPage = page < 1 ? 1 : page > TotalPages ? TotalPages : page;
-
-            // Fetch the users for the current page
-            JoinedUsers = await joinedUserEvents
-                .Skip((CurrentPage - 1) * PageSize)
-                .Take(PageSize)
-                .Select(ue => ue.User)
-                .ToListAsync();
 
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string id)
+        public async Task<IActionResult> OnPostEnrollAsync(string eventId)
         {
-            if (string.IsNullOrEmpty(id))
+            // Retrieve the current user's ID from the JWT token
+            var jwtToken = HttpContext.Request.Cookies["JWT_Token"];
+            if (string.IsNullOrEmpty(jwtToken))
             {
-                return NotFound();
+                return RedirectToPage("/Login"); 
             }
 
-            var userId = GetCurrentUserId();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(jwtToken);
+            var userId = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
             if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToPage("/Account/Login");
+                return RedirectToPage("/Login"); 
             }
 
-            // Check if the user has already joined the event
+            // Check if the user is already enrolled in the event
             var userEventRepo = _unitOfWork.GetRepository<UserEvent>();
-            var alreadyJoined = await userEventRepo.Entities
-                .AnyAsync(ue => ue.UserId == userId && ue.ProgramId == id && ue.DeletedTime == null);
+            var existingEnrollment = await userEventRepo.Entities
+                .FirstOrDefaultAsync(ue => ue.UserId == userId && ue.ProgramId == eventId);
 
-            if (alreadyJoined)
+            if (existingEnrollment != null)
             {
-                return RedirectToPage("Details", new { id });
+                TempData["ErrorMessage"] = "You are already enrolled in this event.";
+                return RedirectToPage(new { id = eventId });
             }
 
-            // Create a new UserEvent entry
+            // Create a new UserEvent to enroll the user
             var userEvent = new UserEvent
             {
-                ProgramId = id,
-                UserId = userId
+                ProgramId = eventId, // Event ID :D dont ask why
+                UserId = userId,
+                CreatedTime = DateTime.UtcNow
             };
 
             await userEventRepo.InsertAsync(userEvent);
             await _unitOfWork.SaveAsync();
 
-            return RedirectToPage("Details", new { id });
-        }
-
-        private string GetCurrentUserId()
-        {
-            var jwtToken = HttpContext.Request.Cookies["JWT_Token"];
-            if (string.IsNullOrEmpty(jwtToken))
-            {
-                return null;
-            }
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.ReadJwtToken(jwtToken);
-            return token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            TempData["SuccessMessage"] = "Successfully enrolled in the event!";
+            return RedirectToPage(new { id = eventId });
         }
     }
 }

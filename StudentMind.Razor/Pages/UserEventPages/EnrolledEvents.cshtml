@@ -1,0 +1,41 @@
+﻿@page
+@model StudentMind.Razor.Pages.UserEventPages.EnrolledEventsModel
+@{
+    ViewData["Title"] = "My Enrolled Events - Student Mind";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5 fade-in">
+        <h1 class="welcome-header">My Enrolled Events <i class="fas fa-calendar-check text-coral"></i></h1>
+        <p class="lead text-muted">View all the events you have joined.</p>
+    </div>
+
+    <div class="fade-in">
+        @if (Model.EnrolledEvents.Any())
+        {
+            <div class="row g-4">
+                @foreach (var evt in Model.EnrolledEvents)
+                {
+                    <div class="col-md-4 col-sm-6">
+                        <div class="feature-card">
+                            <i class="fas fa-calendar-check fa-2x text-coral mb-3"></i>
+                            <h3>@evt.Name</h3>
+                            <p>@evt.Description</p>
+                            <p><strong>Start:</strong> @evt.StartDate.ToString("MMM dd, yyyy")</p>
+                            <p><strong>End:</strong> @evt.EndDate.ToString("MMM dd, yyyy")</p>
+                            <p><strong>Host:</strong> @evt.Host?.Username</p>
+                            <a asp-page="Details" asp-route-id="@evt.Id" class="btn cobalt-blue-btn">View Details</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-center text-muted">You haven't enrolled in any events yet.</p>
+            <div class="text-center">
+                <a asp-page="Index" class="btn cobalt-blue-btn">Browse Events</a>
+            </div>
+        }
+    </div>
+</div>

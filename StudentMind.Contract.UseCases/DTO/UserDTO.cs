@@ -21,8 +21,7 @@ namespace StudentMind.Services.DTO
         public string? Username { get; set; }
         [Required]
         public required string Email { get; set; }
-        [Required]
-        public required string Password { get; set; }
+        public string? Password { get; set; }
         public string? FullName { get; set; }
         public required string RoleId { get; set; }
         public string? Gender { get; set; }

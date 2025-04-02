@@ -1,0 +1,58 @@
+﻿@page
+@model StudentMind.Razor.Pages.EventPages.CreateModel
+@{
+    ViewData["Title"] = "Create Event - Student Mind";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5 fade-in">
+        <h1 class="welcome-header">Create New Event <i class="fas fa-calendar-plus text-coral"></i></h1>
+    </div>
+
+    <div class="row justify-content-center fade-in">
+        <div class="col-md-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="EventDTO.Name" class="form-label"></label>
+                    <input asp-for="EventDTO.Name" class="form-control" />
+                    <span asp-validation-for="EventDTO.Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EventDTO.Description" class="form-label"></label>
+                    <textarea asp-for="EventDTO.Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="EventDTO.Description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EventDTO.StartDate" class="form-label"></label>
+                    <input asp-for="EventDTO.StartDate" class="form-control" type="date" />
+                    <span asp-validation-for="EventDTO.StartDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EventDTO.EndDate" class="form-label"></label>
+                    <input asp-for="EventDTO.EndDate" class="form-control" type="date" />
+                    <span asp-validation-for="EventDTO.EndDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EventDTO.HostId" class="form-label"></label>
+                    <input asp-for="EventDTO.HostId" class="form-control" />
+                    <span asp-validation-for="EventDTO.HostId" class="text-danger"></span>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn cobalt-blue-btn">Create</button>
+                    <a asp-page="Index" class="btn cobalt-blue-btn-dark">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,37 @@
+﻿@page
+@model StudentMind.Razor.Pages.EventPages.DetailsModel
+@{
+    ViewData["Title"] = "Event Details - Student Mind";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5 fade-in">
+        <h1 class="welcome-header">Event Details <i class="fas fa-info-circle text-coral"></i></h1>
+    </div>
+
+    <div class="row justify-content-center fade-in">
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-4">Name</dt>
+                <dd class="col-sm-8">@Model.EventDTO.Name</dd>
+
+                <dt class="col-sm-4">Description</dt>
+                <dd class="col-sm-8">@Model.EventDTO.Description</dd>
+
+                <dt class="col-sm-4">Start Date</dt>
+                <dd class="col-sm-8">@Model.EventDTO.StartDate.ToString("MMM dd, yyyy")</dd>
+
+                <dt class="col-sm-4">End Date</dt>
+                <dd class="col-sm-8">@Model.EventDTO.EndDate.ToString("MMM dd, yyyy")</dd>
+
+                <dt class="col-sm-4">Host</dt>
+                <dd class="col-sm-8">@Model.EventDTO.HostName</dd>
+            </dl>
+
+            <div class="text-center">
+                <a asp-page="Edit" asp-route-id="@Model.EventDTO.Id" class="btn cobalt-blue-btn">Edit</a>
+                <a asp-page="Index" class="btn cobalt-blue-btn-dark">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>

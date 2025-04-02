@@ -86,6 +86,7 @@ namespace StudentMind.Services.Services
         {
             return new EventDTO
             {
+                Id = eventEntity.Id,
                 Name = eventEntity.Name,
                 Description = eventEntity.Description,
                 StartDate = eventEntity.StartDate,

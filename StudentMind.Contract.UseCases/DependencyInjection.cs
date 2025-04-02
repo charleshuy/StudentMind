@@ -27,6 +27,8 @@ namespace StudentMind.Services
 
             services.AddScoped<IFirebaseAuthService, FirebaseAuthService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
+            services.AddScoped<IEventService, EventService>();
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<ISurveyTypeService, SurveyTypeService>();
             services.AddScoped<IQuestionService, QuestionService>();

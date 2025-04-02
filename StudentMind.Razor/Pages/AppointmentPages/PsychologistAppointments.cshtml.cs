@@ -134,11 +134,14 @@ namespace StudentMind.Razor.Pages.AppointmentPages
             return Page();
         }
 
-        public async Task<IActionResult> OnPostApproveAsync(int id)
+        public async Task<IActionResult> OnPostApproveAsync(string id)
         {
+            DebugMessage = $"OnPostApproveAsync called with id: {id}";
+
             var userId = GetUserIdFromToken();
             if (string.IsNullOrEmpty(userId))
             {
+                DebugMessage += " JWT token missing or invalid.";
                 return RedirectToPage("/Account/Login");
             }
 
@@ -149,6 +152,7 @@ namespace StudentMind.Razor.Pages.AppointmentPages
 
             if (currentUser == null)
             {
+                DebugMessage += " User does not exist or does not have the 'Psychologist' role.";
                 TempData["ErrorMessage"] = "The user does not exist or does not have the 'Psychologist' role.";
                 return RedirectToPage();
             }
@@ -161,12 +165,14 @@ namespace StudentMind.Razor.Pages.AppointmentPages
 
             if (appointment == null)
             {
+                DebugMessage += $" Appointment with id {id} not found or user does not have permission to modify it.";
                 TempData["ErrorMessage"] = "Appointment not found or you do not have permission to modify it.";
                 return RedirectToPage();
             }
 
             if (appointment.Status != EnumStatus.Pending)
             {
+                DebugMessage += " Only pending appointments can be approved.";
                 TempData["ErrorMessage"] = "Only pending appointments can be approved.";
                 return RedirectToPage();
             }
@@ -175,15 +181,19 @@ namespace StudentMind.Razor.Pages.AppointmentPages
             await appointmentRepo.UpdateAsync(appointment);
             await _unitOfWork.SaveAsync();
 
+            DebugMessage += " Appointment approved successfully.";
             TempData["SuccessMessage"] = "Appointment approved successfully.";
             return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostCancelAsync(int id)
+        public async Task<IActionResult> OnPostCancelAsync(string id)
         {
+            DebugMessage = $"OnPostCancelAsync called with id: {id}";
+
             var userId = GetUserIdFromToken();
             if (string.IsNullOrEmpty(userId))
             {
+                DebugMessage += " JWT token missing or invalid.";
                 return RedirectToPage("/Account/Login");
             }
 
@@ -194,6 +204,7 @@ namespace StudentMind.Razor.Pages.AppointmentPages
 
             if (currentUser == null)
             {
+                DebugMessage += " User does not exist or does not have the 'Psychologist' role.";
                 TempData["ErrorMessage"] = "The user does not exist or does not have the 'Psychologist' role.";
                 return RedirectToPage();
             }
@@ -206,12 +217,14 @@ namespace StudentMind.Razor.Pages.AppointmentPages
 
             if (appointment == null)
             {
+                DebugMessage += $" Appointment with id {id} not found or user does not have permission to modify it.";
                 TempData["ErrorMessage"] = "Appointment not found or you do not have permission to modify it.";
                 return RedirectToPage();
             }
 
             if (appointment.Status == EnumStatus.Cancelled)
             {
+                DebugMessage += " Appointment's already cancelled.";
                 TempData["ErrorMessage"] = "Appointment is already cancelled.";
                 return RedirectToPage();
             }
@@ -220,6 +233,7 @@ namespace StudentMind.Razor.Pages.AppointmentPages
             await appointmentRepo.UpdateAsync(appointment);
             await _unitOfWork.SaveAsync();
 
+            DebugMessage += " Appointment cancelled successfully.";
             TempData["SuccessMessage"] = "Appointment cancelled successfully.";
             return RedirectToPage();
         }

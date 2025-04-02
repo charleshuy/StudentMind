@@ -33,6 +33,22 @@
                             <h5 class="card-title">Role Information</h5>
                             <p><strong>Role:</strong> @ViewData["RoleName"]</p>
                         </div>
+
+                        <div id="resetPasswordSection" class="card shadow-sm mt-4">
+                            <div class="card-body">
+                                <h5 class="card-title">Reset Password</h5>
+
+                                <!-- Password Reset Request -->
+                                <form method="post" asp-page-handler="RequestPasswordReset">
+                                    <div class="mb-3">
+                                        <label for="ResetEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="ResetEmail" name="ResetEmail" placeholder="Enter your email" required />
+                                    </div>
+                                    <button type="submit" class="btn btn-warning">Request Password Reset</button>
+                                </form>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

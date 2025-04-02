@@ -185,6 +185,63 @@ namespace StudentMind.Services.Services
             }
         }
 
+        public async Task SendPasswordResetEmailAsync(string email)
+        {
+            try
+            {
+                var apiKey = _configuration["Firebase:ApiKey"];
+                var resetPasswordUrl = $"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={apiKey}";
+
+                var payload = new
+                {
+                    requestType = "PASSWORD_RESET",
+                    email = email
+                };
+
+                var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(resetPasswordUrl, content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Failed to send password reset email.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Password reset email sending failed: {ex.Message}");
+            }
+        }
+
+        public async Task ResetPasswordAsync(string oobCode, string newPassword)
+        {
+            try
+            {
+                var apiKey = _configuration["Firebase:ApiKey"];
+                var resetPasswordUrl = $"https://identitytoolkit.googleapis.com/v1/accounts:resetPassword?key={apiKey}";
+
+                var payload = new
+                {
+                    oobCode = oobCode,  // Verification code from the email
+                    newPassword = newPassword
+                };
+
+                var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(resetPasswordUrl, content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Failed to reset password.");
+                }
+
+                // Optionally: Handle any post-reset actions, such as notifying the user
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Password reset failed: {ex.Message}");
+            }
+        }
+
+
 
 
         private async Task<string> GenerateJwtToken(User user)

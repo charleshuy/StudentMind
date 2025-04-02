@@ -1,10 +1,28 @@
 ﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject StudentMind.Core.Interfaces.IUnitOfWork UnitOfWork
 @using System.IdentityModel.Tokens.Jwt
 @using System.Security.Claims
+@using Microsoft.EntityFrameworkCore
 
 @{
     var jwtToken = HttpContextAccessor.HttpContext?.Request.Cookies["JWT_Token"];
     bool isLoggedIn = !string.IsNullOrEmpty(jwtToken);
+    string userRole = null;
+
+    if (isLoggedIn)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.ReadJwtToken(jwtToken);
+        var userId = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (!string.IsNullOrEmpty(userId))
+        {
+            var userRepo = UnitOfWork.GetRepository<StudentMind.Core.Entity.User>();
+            var user = await userRepo.Entities
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            userRole = user?.Role?.RoleName;
+        }
+    }
 }
 
 <!DOCTYPE html>
@@ -74,6 +92,16 @@
                                 <ul class="dropdown-menu" aria-labelledby="healthDropdown">
                                     <li><a class="dropdown-item text-cobalt-blue" asp-page="/healthscorerulepages/index">Health Score Rule</a></li>
                                     <li><a class="dropdown-item text-cobalt-blue" asp-page="/studenthealthpages/index">Student Health</a></li>
+                                </ul>
+                            </li>
+                            <!-- Events Dropdown -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-white dropdown-toggle" href="#" id="eventsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Events
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="eventsDropdown">
+                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/UserEventPages/Index">Browse Events</a></li>
+                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/EventPages/Index">Manage Events</a></li>
                                 </ul>
                             </li>
                         }

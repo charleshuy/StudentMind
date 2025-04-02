@@ -1,12 +1,12 @@
 ﻿@page
-@model StudentMind.Razor.Pages.LoginModel
+@model StudentMind.Razor.Pages.AdminLoginModel
 @{
-    ViewData["Title"] = "StudentMind Login";
+    ViewData["Title"] = "Admin Login - StudentMind";
 }
 
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
-        <h2 class="text-center mb-4">Login</h2>
+        <h2 class="text-center mb-4">Admin Login</h2>
 
         <form method="post">
             <div class="mb-3">
@@ -27,7 +27,6 @@
 
         <div class="text-center mt-3">
             <p>Don't have an account? <a asp-page="/Register">Register here</a></p>
-            <p><a href="/ForgotPassword">Forgot your password?</a></p> <!-- Added link to forgot password page -->
         </div>
     </div>
 </div>

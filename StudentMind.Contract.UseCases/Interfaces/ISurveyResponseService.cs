@@ -15,5 +15,6 @@ namespace StudentMind.Services.Interfaces
         Task DeleteSurveyResponse(string id);
         Task<SurveyResponse> GetSurveyResponseById(string id);
         Task<List<SurveyResponse>> GetSurveyResponses();
+        Task<List<SurveyResponse>> GetSurveyResponsesByUserIdSurveyId(string userId, string surveyId);
     }
 }

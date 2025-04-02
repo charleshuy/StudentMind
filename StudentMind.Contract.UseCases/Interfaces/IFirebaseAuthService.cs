@@ -6,5 +6,6 @@
         Task RegisterUserAsync(string email, string password);
         Task SendPasswordResetEmailAsync(string email);
         Task ResetPasswordAsync(string oobCode, string newPassword);
+        Task<string> AdminLoginAsync(string email, string password);
     }
 }

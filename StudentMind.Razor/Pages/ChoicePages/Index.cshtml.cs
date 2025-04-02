@@ -8,7 +8,7 @@ namespace StudentMind.Razor.Pages.ChoicePages
     public class IndexModel : PageModel
     {
         private readonly IChoiceService _choiceService;
-        private const int PageSize = 8;
+        private const int PageSize = 4;
 
         public IndexModel(IChoiceService choiceService)
         {

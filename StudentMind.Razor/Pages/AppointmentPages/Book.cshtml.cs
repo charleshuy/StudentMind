@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authorization;
 
 namespace StudentMind.Razor.Pages.AppointmentPages
 {
@@ -32,9 +31,9 @@ namespace StudentMind.Razor.Pages.AppointmentPages
         public string SelectedSlot { get; set; }
 
         public SelectList PsychologistList { get; set; }
-        public User SelectedPsychologist { get; set; }
-        public List<(DateTimeOffset Start, DateTimeOffset End, bool IsAvailable)> AvailableSlots { get; set; }
+        public List<SelectListItem> AvailableSlots { get; set; } = new List<SelectListItem>();
         public string DebugMessage { get; set; }
+        public User SelectedPsychologist { get; set; }
 
         public BookModel(IUnitOfWork unitOfWork)
         {
@@ -43,52 +42,45 @@ namespace StudentMind.Razor.Pages.AppointmentPages
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Load psychologists for the dropdown
-            var psychologistRepo = _unitOfWork.GetRepository<User>();
-            var psychologists = await psychologistRepo.Entities
-                .Include(u => u.Role)
-                .Where(u => u.Role != null && u.Role.RoleName == "Psychologist")
-                .ToListAsync();
+            await PopulateDropdownsAsync();
 
-            if (!psychologists.Any())
+            // Set default date to today if not selected
+            if (SelectedDate == default)
             {
-                DebugMessage = "No psychologists are available at this time.";
+                SelectedDate = DateTime.Today;
+                DebugMessage = "Default date set to today.";
             }
             else
             {
-                DebugMessage = $"Found {psychologists.Count} psychologists.";
+                DebugMessage = $"Selected date: {SelectedDate.ToString("yyyy-MM-dd")}";
             }
 
-            PsychologistList = new SelectList(psychologists, "Id", "FullName", SelectedPsychologistId);
-
-            // If a psychologist is selected, load their details
+            // Set Appointment.PsychologistId from the query parameter and load psychologist details
             if (!string.IsNullOrEmpty(SelectedPsychologistId))
             {
-                DebugMessage += $" SelectedPsychologistId: {SelectedPsychologistId}.";
+                Appointment.PsychologistId = SelectedPsychologistId;
+                DebugMessage += $" Psychologist selected: {SelectedPsychologistId}.";
+
+                // Load the selected psychologist's details
+                var psychologistRepo = _unitOfWork.GetRepository<User>();
                 SelectedPsychologist = await psychologistRepo.Entities
-                    .FirstOrDefaultAsync(u => u.Id == SelectedPsychologistId && u.Role != null && u.Role.RoleName == "Psychologist");
+                    .FirstOrDefaultAsync(u => u.Id == SelectedPsychologistId);
 
                 if (SelectedPsychologist == null)
                 {
-                    DebugMessage += " Selected psychologist not found or not a valid psychologist.";
+                    DebugMessage += " Selected psychologist not found.";
                 }
                 else
                 {
-                    DebugMessage += $" Selected psychologist: {SelectedPsychologist.FullName}.";
+                    DebugMessage += $" Loaded psychologist: {SelectedPsychologist.FullName}.";
                 }
-            }
 
-            // Set a default date if none is selected
-            if (SelectedDate == default && SelectedPsychologist != null)
-            {
-                SelectedDate = DateTime.Today;
+                await PopulateAvailableSlotsAsync(SelectedPsychologistId, SelectedDate);
+                DebugMessage += $" Found {AvailableSlots.Count} available slots.";
             }
-
-            // If a date is selected and a psychologist is selected, calculate available slots
-            if (SelectedDate != default && SelectedPsychologist != null)
+            else
             {
-                DebugMessage += $" Calculating slots for date: {SelectedDate.ToString("yyyy-MM-dd")}.";
-                AvailableSlots = await CalculateAvailableSlots(SelectedPsychologist.Id, SelectedDate);
+                DebugMessage += " No psychologist selected.";
             }
 
             return Page();
@@ -96,111 +88,92 @@ namespace StudentMind.Razor.Pages.AppointmentPages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            // Repopulate dropdown and psychologist info in case of validation failure
+            await PopulateDropdownsAsync();
+
+            var userId = GetUserIdFromToken();
+            if (string.IsNullOrEmpty(userId))
+            {
+                DebugMessage = "JWT token missing or invalid.";
+                return RedirectToPage("/Account/Login");
+            }
+            DebugMessage = $"User ID retrieved: {userId}.";
+
+            // Set Appointment.PsychologistId from SelectedPsychologistId
+            Appointment.PsychologistId = SelectedPsychologistId;
+            DebugMessage += $" Psychologist ID set: {SelectedPsychologistId}.";
+
+            // Load the selected psychologist's details for display after form submission
+            if (!string.IsNullOrEmpty(SelectedPsychologistId))
+            {
+                var psychologistRepo = _unitOfWork.GetRepository<User>();
+                SelectedPsychologist = await psychologistRepo.Entities
+                    .FirstOrDefaultAsync(u => u.Id == SelectedPsychologistId);
+            }
+
+            // Populate available slots (needed to set StartTime and EndTime)
+            if (!string.IsNullOrEmpty(Appointment.PsychologistId))
+            {
+                await PopulateAvailableSlotsAsync(Appointment.PsychologistId, SelectedDate);
+            }
+
+            // Set StartTime and EndTime from the selected slot
+            if (!string.IsNullOrEmpty(SelectedSlot))
+            {
+                var slotTimes = GetSlotTimes(SelectedDate);
+                var selectedSlotTimes = slotTimes.FirstOrDefault(s => $"{s.Start:HH:mm}-{s.End:HH:mm}" == SelectedSlot);
+                if (selectedSlotTimes.Start != default && selectedSlotTimes.End != default)
+                {
+                    Appointment.StartTime = selectedSlotTimes.Start;
+                    Appointment.EndTime = selectedSlotTimes.End;
+                    DebugMessage += $" Slot set: {SelectedSlot}, StartTime: {Appointment.StartTime}, EndTime: {Appointment.EndTime}.";
+                }
+                else
+                {
+                    DebugMessage += " Invalid time slot selected.";
+                }
+            }
+            else
+            {
+                DebugMessage += " No time slot selected.";
+            }
+
+            // Set appointment details
+            Appointment.UserId = userId;
+            Appointment.Status = EnumStatus.Pending;
+
+            // Save the appointment
+            try
+            {
+                var appointmentRepo = _unitOfWork.GetRepository<Appointment>();
+                await appointmentRepo.InsertAsync(Appointment);
+                await _unitOfWork.SaveAsync();
+                DebugMessage += " Appointment saved successfully.";
+
+                // Set success message in TempData
+                TempData["SuccessMessage"] = "Appointment booked successfully!";
+            }
+            catch (Exception ex)
+            {
+                DebugMessage += $" Error saving appointment: {ex.Message}";
+                return Page();
+            }
+
+            // Redirect to StudentAppointments page
+            return RedirectToPage("./StudentAppointments");
+        }
+
+        private async Task PopulateDropdownsAsync()
+        {
             var psychologistRepo = _unitOfWork.GetRepository<User>();
             var psychologists = await psychologistRepo.Entities
                 .Include(u => u.Role)
                 .Where(u => u.Role != null && u.Role.RoleName == "Psychologist")
                 .ToListAsync();
 
-            if (!psychologists.Any())
-            {
-                DebugMessage = "No psychologists are available at this time.";
-            }
-
             PsychologistList = new SelectList(psychologists, "Id", "FullName", SelectedPsychologistId);
-
-            SelectedPsychologist = await psychologistRepo.Entities
-                .FirstOrDefaultAsync(u => u.Id == SelectedPsychologistId && u.Role != null && u.Role.RoleName == "Psychologist");
-
-            if (SelectedPsychologist == null)
-            {
-                ModelState.AddModelError("SelectedPsychologistId", "Selected psychologist does not exist or is not a valid psychologist.");
-            }
-
-            var userId = GetUserIdFromToken();
-            if (string.IsNullOrEmpty(userId))
-            {
-                ModelState.AddModelError("", "Unable to identify the current user. Please log in again.");
-                return Page();
-            }
-
-            // Validate that the user exists and has the "User" role
-            var userRepo = _unitOfWork.GetRepository<User>();
-            var currentUser = await userRepo.Entities
-                .Include(u => u.Role)
-                .FirstOrDefaultAsync(u => u.Id == userId && u.Role != null && u.Role.RoleName == "User");
-
-            if (currentUser == null)
-            {
-                ModelState.AddModelError("", "The user does not exist or is not a valid student.");
-            }
-
-            // Validate the selected date
-            if (SelectedDate < DateTime.Today)
-            {
-                ModelState.AddModelError("SelectedDate", "Selected date must be today or in the future.");
-            }
-
-            // Validate the selected slot and set StartTime and EndTime
-            if (string.IsNullOrEmpty(SelectedSlot))
-            {
-                ModelState.AddModelError("SelectedSlot", "Please select a time slot.");
-            }
-            else
-            {
-                var slotTimes = GetSlotTimes(SelectedDate);
-                var selectedSlotTimes = slotTimes.FirstOrDefault(s => $"{s.Start:HH:mm}-{s.End:HH:mm}" == SelectedSlot);
-
-                if (selectedSlotTimes.Start == default || selectedSlotTimes.End == default)
-                {
-                    ModelState.AddModelError("SelectedSlot", "Invalid time slot selected.");
-                }
-                else
-                {
-                    Appointment.StartTime = selectedSlotTimes.Start;
-                    Appointment.EndTime = selectedSlotTimes.End;
-                }
-            }
-
-            // Validate no overlapping appointments
-            if (ModelState.IsValid)
-            {
-                var appointmentRepo = _unitOfWork.GetRepository<Appointment>();
-                var overlappingAppointments = await appointmentRepo.Entities
-                    .Where(a => a.PsychologistId == SelectedPsychologistId &&
-                                a.Status != EnumStatus.Cancelled &&
-                                ((Appointment.StartTime >= a.StartTime && Appointment.StartTime < a.EndTime) ||
-                                 (Appointment.EndTime > a.StartTime && Appointment.EndTime <= a.EndTime) ||
-                                 (Appointment.StartTime <= a.StartTime && Appointment.EndTime >= a.EndTime)))
-                    .AnyAsync();
-
-                if (overlappingAppointments)
-                {
-                    ModelState.AddModelError("SelectedSlot", "The selected time slot is no longer available.");
-                }
-            }
-
-            if (!ModelState.IsValid)
-            {
-                AvailableSlots = await CalculateAvailableSlots(SelectedPsychologistId, SelectedDate);
-                return Page();
-            }
-
-            // Set appointment details
-            Appointment.PsychologistId = SelectedPsychologistId;
-            Appointment.UserId = userId;
-            Appointment.Status = EnumStatus.Pending;
-
-            // Save the appointment
-            var appointmentRepoSave = _unitOfWork.GetRepository<Appointment>();
-            await appointmentRepoSave.InsertAsync(Appointment);
-            await _unitOfWork.SaveAsync();
-
-            return RedirectToPage("./Index");
         }
 
-        private async Task<List<(DateTimeOffset Start, DateTimeOffset End, bool IsAvailable)>> CalculateAvailableSlots(string psychologistId, DateTime date)
+        private async Task PopulateAvailableSlotsAsync(string psychologistId, DateTime date)
         {
             var slots = GetSlotTimes(date);
             var appointmentRepo = _unitOfWork.GetRepository<Appointment>();
@@ -210,8 +183,7 @@ namespace StudentMind.Razor.Pages.AppointmentPages
                             a.Status != EnumStatus.Cancelled)
                 .ToListAsync();
 
-            var availableSlots = new List<(DateTimeOffset Start, DateTimeOffset End, bool IsAvailable)>();
-
+            AvailableSlots = new List<SelectListItem>();
             foreach (var slot in slots)
             {
                 bool isAvailable = !appointments.Any(a =>
@@ -219,18 +191,22 @@ namespace StudentMind.Razor.Pages.AppointmentPages
                     (slot.End > a.StartTime && slot.End <= a.EndTime) ||
                     (slot.Start <= a.StartTime && slot.End >= a.EndTime));
 
-                availableSlots.Add((slot.Start, slot.End, isAvailable));
+                if (isAvailable)
+                {
+                    var slotValue = $"{slot.Start:HH:mm}-{slot.End:HH:mm}";
+                    AvailableSlots.Add(new SelectListItem
+                    {
+                        Value = slotValue,
+                        Text = $"{slot.Start:HH:mm} - {slot.End:HH:mm}"
+                    });
+                }
             }
-
-            return availableSlots;
         }
 
         private List<(DateTimeOffset Start, DateTimeOffset End)> GetSlotTimes(DateTime date)
         {
             var slots = new List<(DateTimeOffset Start, DateTimeOffset End)>();
-            // Use DateTimeKind.Unspecified to avoid automatic offset assumptions
             var baseDate = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Unspecified);
-            // Define the offset for UTC+7
             var offset = TimeSpan.FromHours(7);
 
             slots.Add((
@@ -256,15 +232,12 @@ namespace StudentMind.Razor.Pages.AppointmentPages
         public string GetUserIdFromToken()
         {
             var jwtToken = Request.Cookies["JWT_Token"];
-
             if (string.IsNullOrEmpty(jwtToken))
                 return null;
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.ReadJwtToken(jwtToken);
-
             var userId = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
             return userId;
         }
     }

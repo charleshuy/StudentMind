@@ -1,0 +1,60 @@
+﻿@page
+@model StudentMind.Razor.Pages.UserEventPages.DetailsModel
+@{
+    ViewData["Title"] = "Event Details - Student Mind";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5 fade-in">
+        <h1 class="welcome-header">Event Details <i class="fas fa-info-circle text-coral"></i></h1>
+    </div>
+
+    <div class="row justify-content-center fade-in">
+        <div class="col-md-6">
+            @if (Model.Event != null)
+            {
+                <dl class="row">
+                    <dt class="col-sm-4">Name</dt>
+                    <dd class="col-sm-8">@Model.Event.Name</dd>
+
+                    <dt class="col-sm-4">Description</dt>
+                    <dd class="col-sm-8">@Model.Event.Description</dd>
+
+                    <dt class="col-sm-4">Start Date</dt>
+                    <dd class="col-sm-8">@Model.Event.StartDate.ToString("MMM dd, yyyy")</dd>
+
+                    <dt class="col-sm-4">End Date</dt>
+                    <dd class="col-sm-8">@Model.Event.EndDate.ToString("MMM dd, yyyy")</dd>
+
+                    <dt class="col-sm-4">Host</dt>
+                    <dd class="col-sm-8">@Model.Event.Host?.Username</dd>
+                </dl>
+
+                @if (Model.IsJoined)
+                {
+                    <p class="text-center text-success">You have already joined this event!</p>
+                }
+                else
+                {
+                    <form method="post">
+                        <input type="hidden" asp-for="Event.Id" />
+                        <div class="text-center">
+                            <button type="submit" class="btn cobalt-blue-btn">Join Event</button>
+                        </div>
+                    </form>
+                }
+
+                <div class="text-center mt-3">
+                    <a asp-page="Index" class="btn cobalt-blue-btn-dark">Back to Events</a>
+                </div>
+            }
+            else
+            {
+                <p class="text-center text-muted">Event not found.</p>
+                <div class="text-center">
+                    <a asp-page="Index" class="btn cobalt-blue-btn-dark">Back to Events</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

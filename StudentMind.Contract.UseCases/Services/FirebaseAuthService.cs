@@ -55,7 +55,7 @@ namespace StudentMind.Services.Services
 
                 // Check if user exists in the database
                 var userRepo = _unitOfWork.GetRepository<User>();
-                var user = await userRepo.Entities.FirstOrDefaultAsync(u => u.Email == email);
+                var user = await userRepo.Entities.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);
 
                 if (user == null)
                 {
@@ -241,6 +241,33 @@ namespace StudentMind.Services.Services
             }
         }
 
+        public async Task<string> AdminLoginAsync(string email, string password)
+        {
+            try
+            {
+                // Check if user exists in the database
+                var userRepo = _unitOfWork.GetRepository<User>();
+                var user = await userRepo.Entities.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);
+
+                if (user == null)
+                    throw new Exception("User not found.");
+
+                // Check if the user is an admin
+                if (user.Role?.RoleName != "Admin")
+                    throw new Exception("You do not have admin access.");
+
+                // Verify password (you should implement hashing and comparison of stored password)
+                if (user.Password != password) // Replace this with proper password comparison (e.g., Hashing)
+                    throw new Exception("Invalid password.");
+
+                // Generate JWT Token
+                return await GenerateJwtToken(user);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Admin login failed: {ex.Message}");
+            }
+        }
 
 
 

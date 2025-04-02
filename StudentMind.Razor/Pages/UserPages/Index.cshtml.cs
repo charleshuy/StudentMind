@@ -5,7 +5,7 @@ using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.UserPages
 {
-    [Authorize(AuthenticationSchemes = "Jwt", Policy = "RequireAdmin")]
+    [Authorize(AuthenticationSchemes = "Jwt", Roles = "Admin")]
     public class IndexModel : PageModel
     {
         private readonly IUserService _userService;

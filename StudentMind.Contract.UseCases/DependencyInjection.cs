@@ -22,6 +22,7 @@ namespace StudentMind.Services
                 options.AddPolicy("RequireAdmin", policy => policy.RequireRole("Admin"));
                 options.AddPolicy("RequireManager", policy => policy.RequireRole("Manager"));
                 options.AddPolicy("RequireUser", policy => policy.RequireRole("User"));
+                options.AddPolicy("RequirePsychologist", policy => policy.RequireRole("Psychologist"));
                 options.AddPolicy("AdminOrManager", policy => policy.RequireRole("Admin", "Manager"));
             });
 

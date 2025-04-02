@@ -1,3 +1,5 @@
+using StudentMind.Razor.Middleware;
+
 namespace StudentMind.Razor
 {
     public class Program
@@ -25,6 +27,8 @@ namespace StudentMind.Razor
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseMiddleware<JwtCookieMiddleware>();
 
             app.UseAuthentication();  
             app.UseAuthorization();

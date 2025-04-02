@@ -15,7 +15,13 @@
                     <div class="card-body">
                         <h5 class="card-title">@survey.Name</h5>
                         <p class="card-text">@survey.Description</p>
+
                         <a asp-page="Start" asp-route-surveyId="@survey.Id" class="btn btn-primary">Start Survey</a>
+
+                        @if (Model.SurveysAlreadyTaken.Contains(survey.Id))
+                        {
+                            <a asp-page="SurveyHistory" asp-route-surveyId="@survey.Id" class="btn btn-primary">View History</a>
+                        }
                     </div>
                 </div>
             </div>

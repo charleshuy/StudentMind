@@ -43,15 +43,7 @@ namespace StudentMind.Razor.Pages.TakeSurvey
 
         public async Task<IActionResult> OnGetAsync(string surveyId)
         {
-            var token = HttpContext.Session.GetString("JWT_Token");
-
-            if (!string.IsNullOrEmpty(token))
-            {
-                var handler = new JwtSecurityTokenHandler();
-                var jwtToken = handler.ReadJwtToken(token);
-
-                userId = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            }
+            userId = GetUserIdFromToken();
 
             Survey = await _surveyService.GetSurveyById(surveyId);
 
@@ -73,15 +65,7 @@ namespace StudentMind.Razor.Pages.TakeSurvey
                 return Page();
             }
 
-            var token = HttpContext.Session.GetString("JWT_Token");
-
-            if (!string.IsNullOrEmpty(token))
-            {
-                var handler = new JwtSecurityTokenHandler();
-                var jwtToken = handler.ReadJwtToken(token);
-
-                userId = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            }
+            userId = GetUserIdFromToken();
 
             List<Choice> selectedChoices = new();
             foreach (var (questionId, choiceId) in Answers)
@@ -125,6 +109,20 @@ namespace StudentMind.Razor.Pages.TakeSurvey
             }
 
             return RedirectToPage("Submit", new { surveyId = SurveyId, userId });
+        }
+        public string GetUserIdFromToken()
+        {
+            var jwtToken = Request.Cookies["JWT_Token"];
+
+            if (string.IsNullOrEmpty(jwtToken))
+                return null;
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(jwtToken);
+
+            var userId = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            return userId;
         }
     }
 }

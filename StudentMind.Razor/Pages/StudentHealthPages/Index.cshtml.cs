@@ -14,6 +14,7 @@ namespace StudentMind.Razor.Pages.StudentHealthPages
     public class IndexModel : PageModel
     {
         private readonly IStudentHealthService _studentHealthService;
+        private const int PageSize = 4;
 
         public IndexModel(IStudentHealthService studentHealthService)
         {
@@ -21,10 +22,18 @@ namespace StudentMind.Razor.Pages.StudentHealthPages
         }
 
         public IList<StudentHealth> StudentHealth { get;set; } = default!;
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int? pageNumber)
         {
-            StudentHealth = await _studentHealthService.GetStudentHealths();    
+            CurrentPage = pageNumber ?? 1;
+
+            var studentHealths = await _studentHealthService.GetStudentHealths();
+            int totalRecords = studentHealths.Count;
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)PageSize);
+            StudentHealth = studentHealths.Skip((CurrentPage - 1) * PageSize)
+                .Take(PageSize).ToList();
         }
     }
 }

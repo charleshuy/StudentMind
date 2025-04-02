@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using StudentMind.Core.Entity;
 using StudentMind.Core.Interfaces;
 using StudentMind.Services.DTO;
@@ -99,9 +98,8 @@ namespace StudentMind.Services.Services
 
             user.Username = userDto.Username ?? user.Username;
             user.Email = userDto.Email;
-            user.Password = userDto.Password; // Hash if needed
+            // Do not update the password, keep the existing one
             user.FullName = userDto.FullName ?? user.FullName;
-            user.RoleId = userDto.RoleId;
             user.Gender = userDto.Gender ?? user.Gender;
             user.Status = userDto.Status;
             user.LastUpdatedTime = DateTimeOffset.UtcNow;
@@ -111,6 +109,7 @@ namespace StudentMind.Services.Services
 
             return true;
         }
+
 
         public async Task<bool> DeleteUserAsync(string userId)
         {

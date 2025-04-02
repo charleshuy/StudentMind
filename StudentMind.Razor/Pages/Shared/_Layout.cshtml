@@ -66,12 +66,24 @@
                                     Appointments
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="appointmentsDropdown">
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/AppointmentPages/Book">Book Appointment</a></li>
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/AppointmentPages/StudentAppointments">My Appointments</a></li>
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/AppointmentPages/PsychologistAppointments">Manage Appointments</a></li>
+                                    @if (userRole != "Psychologist")
+                                    {
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/AppointmentPages/Book">Book Appointment</a></li>
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/AppointmentPages/StudentAppointments">My Appointments</a></li>
+                                    }
+                                    @if (userRole == "Psychologist" || userRole == "Admin")
+                                    {
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/AppointmentPages/PsychologistAppointments">Manage Appointments</a></li>
+                                    }
+                                    @if (userRole == "Admin")
+                                    {
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><h6 class="dropdown-header">Admin</h6></li>
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/AppointmentPages/Index">Manage All Appointments</a></li>
+                                    }
                                 </ul>
                             </li>
-                            <!-- Surveys Dropdown -->
+                            <!-- Surveys Dropdown  -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link text-white dropdown-toggle" href="#" id="surveysDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Surveys
@@ -84,7 +96,7 @@
                                     <li><a class="dropdown-item text-cobalt-blue" asp-page="/surveyresponsepages/index">Survey Response</a></li>
                                 </ul>
                             </li>
-                            <!-- Health Dropdown -->
+                            <!-- Health Dropdown  -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link text-white dropdown-toggle" href="#" id="healthDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Health
@@ -100,9 +112,21 @@
                                     Events
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="eventsDropdown">
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/UserEventPages/Index">Browse Events</a></li>
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/UserEventPages/EnrolledEvents">My Enrolled Events</a></li>
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/EventPages/Index">Manage Events</a></li>
+                                    @if (userRole != "Psychologist")
+                                    {
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/UserEventPages/Index">Browse Events</a></li>
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/UserEventPages/EnrolledEvents">My Enrolled Events</a></li>
+                                    }
+                                    @if (userRole == "Psychologist" || userRole == "Admin")
+                                    {
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/EventPages/Index">Manage Events</a></li>
+                                    }
+                                    @if (userRole == "Admin")
+                                    {
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><h6 class="dropdown-header">Admin</h6></li>
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/UserEventPages/Index">Manage All Events</a></li>
+                                    }
                                 </ul>
                             </li>
                         }

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentMind.Core.Entity;
 using StudentMind.Core.Interfaces;
 using StudentMind.Core.Enum;
@@ -15,8 +14,6 @@ namespace StudentMind.Razor.Pages.AppointmentPages
 
         [BindProperty]
         public Appointment Appointment { get; set; } = new Appointment();
-
-        public SelectList StatusList { get; set; }
 
         public EditModel(IUnitOfWork unitOfWork)
         {
@@ -41,23 +38,22 @@ namespace StudentMind.Razor.Pages.AppointmentPages
                 return NotFound();
             }
 
-            StatusList = new SelectList(Enum.GetValues(typeof(EnumStatus)));
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            StatusList = new SelectList(Enum.GetValues(typeof(EnumStatus)));
-
+            // Validate StartTime
             if (Appointment.StartTime < DateTimeOffset.UtcNow)
             {
                 ModelState.AddModelError("Appointment.StartTime", "Start time must be in the future.");
             }
 
+            // Check for overlapping appointments
             var appointmentRepo = _unitOfWork.GetRepository<Appointment>();
             var overlappingAppointments = await appointmentRepo.Entities
                 .Where(a => a.PsychologistId == Appointment.PsychologistId &&
-                            a.Id != Appointment.Id && 
+                            a.Id != Appointment.Id &&
                             a.Status != EnumStatus.Cancelled &&
                             ((Appointment.StartTime >= a.StartTime && Appointment.StartTime < a.EndTime) ||
                              (Appointment.EndTime > a.StartTime && Appointment.EndTime <= a.EndTime) ||
@@ -78,7 +74,20 @@ namespace StudentMind.Razor.Pages.AppointmentPages
 
             try
             {
-                appointmentRepo.Update(Appointment);
+                // Fetch the original appointment to preserve the Status
+                var originalAppointment = await appointmentRepo.GetByIdAsync(Appointment.Id);
+                if (originalAppointment == null)
+                {
+                    return NotFound();
+                }
+
+                // Update the fields we allow to be edited
+                originalAppointment.StartTime = Appointment.StartTime;
+                originalAppointment.EndTime = Appointment.EndTime;
+                originalAppointment.Note = Appointment.Note;
+                // Status is not updated, so it remains unchanged
+
+                appointmentRepo.Update(originalAppointment);
                 await _unitOfWork.SaveAsync();
             }
             catch (DbUpdateConcurrencyException)

@@ -41,11 +41,7 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label asp-for="Appointment.Status" class="form-label">Status</label>
-                <select asp-for="Appointment.Status"
-                        asp-items="Model.StatusList"
-                        class="form-control">
-                </select>
-                <span asp-validation-for="Appointment.Status" class="text-danger"></span>
+                <p class="form-control-plaintext">@Model.Appointment.Status</p>
             </div>
 
             <div class="col-md-6 mb-3">

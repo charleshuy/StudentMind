@@ -35,22 +35,10 @@
                 @Html.DisplayNameFor(model => model.Choice[0].Point)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Choice[0].CreatedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Choice[0].LastUpdatedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Choice[0].DeletedBy)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Choice[0].CreatedTime)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Choice[0].LastUpdatedTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Choice[0].DeletedTime)
             </th>
             <th>Action</th>
         </tr>
@@ -68,22 +56,10 @@
                 @Html.DisplayFor(modelItem => item.Point)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastUpdatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeletedBy)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.CreatedTime)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.LastUpdatedTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeletedTime)
             </td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |

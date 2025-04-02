@@ -9,6 +9,13 @@
         <h1 class="welcome-header">Event Details <i class="fas fa-info-circle text-coral"></i></h1>
     </div>
 
+    @if (!string.IsNullOrEmpty(Model.DebugMessage))
+    {
+        <div class="alert alert-info" role="alert">
+            @Model.DebugMessage
+        </div>
+    }
+
     <div class="row justify-content-center fade-in">
         <div class="col-md-6">
             <dl class="row">

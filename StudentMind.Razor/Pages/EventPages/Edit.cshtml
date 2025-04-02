@@ -9,6 +9,13 @@
         <h1 class="welcome-header">Edit Event <i class="fas fa-edit text-coral"></i></h1>
     </div>
 
+    @if (!string.IsNullOrEmpty(Model.DebugMessage))
+    {
+        <div class="alert alert-info" role="alert">
+            @Model.DebugMessage
+        </div>
+    }
+
     <div class="row justify-content-center fade-in">
         <div class="col-md-6">
             <form method="post">
@@ -16,33 +23,27 @@
                 <input type="hidden" asp-for="EventDTO.Id" />
 
                 <div class="mb-3">
-                    <label asp-for="EventDTO.Name" class="form-label"></label>
+                    <label asp-for="EventDTO.Name" class="form-label">Event Name</label>
                     <input asp-for="EventDTO.Name" class="form-control" />
                     <span asp-validation-for="EventDTO.Name" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="EventDTO.Description" class="form-label"></label>
+                    <label asp-for="EventDTO.Description" class="form-label">Description</label>
                     <textarea asp-for="EventDTO.Description" class="form-control" rows="3"></textarea>
                     <span asp-validation-for="EventDTO.Description" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="EventDTO.StartDate" class="form-label"></label>
+                    <label asp-for="EventDTO.StartDate" class="form-label">Start Date</label>
                     <input asp-for="EventDTO.StartDate" class="form-control" type="date" />
                     <span asp-validation-for="EventDTO.StartDate" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="EventDTO.EndDate" class="form-label"></label>
+                    <label asp-for="EventDTO.EndDate" class="form-label">End Date</label>
                     <input asp-for="EventDTO.EndDate" class="form-control" type="date" />
                     <span asp-validation-for="EventDTO.EndDate" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="EventDTO.HostId" class="form-label"></label>
-                    <input asp-for="EventDTO.HostId" class="form-control" />
-                    <span asp-validation-for="EventDTO.HostId" class="text-danger"></span>
                 </div>
 
                 <div class="text-center">

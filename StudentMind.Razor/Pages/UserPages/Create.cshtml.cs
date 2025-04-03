@@ -1,36 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using StudentMind.Core.Entity;
-using StudentMind.Infrastructure.Context;
+using StudentMind.Core.Interfaces;
+using StudentMind.Services.DTO;
+using StudentMind.Services.Interfaces;
 
 namespace StudentMind.Razor.Pages.UserPages
 {
     [Authorize(AuthenticationSchemes = "Jwt", Policy = "RequireAdmin")]
     public class CreateModel : PageModel
     {
-        private readonly StudentMind.Infrastructure.Context.DatabaseContext _context;
+        private readonly IUserService _userService;
+        private readonly IUnitOfWork _roleService;
 
-        public CreateModel(StudentMind.Infrastructure.Context.DatabaseContext context)
+        public CreateModel(IUserService userService, IUnitOfWork roleService)
         {
-            _context = context;
+            _userService = userService;
+            _roleService = roleService;
         }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-        ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id");
+            var roles = _roleService.GetRepository<Role>().Entities;
+            ViewData["RoleId"] = new SelectList(roles, "Id", "RoleName");
             return Page();
         }
 
         [BindProperty]
-        public User User { get; set; } = default!;
+        public UserRequestDTO User { get; set; } = new();
 
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -38,9 +38,7 @@ namespace StudentMind.Razor.Pages.UserPages
                 return Page();
             }
 
-            _context.Users.Add(User);
-            await _context.SaveChangesAsync();
-
+            await _userService.CreateUserAsync(User);
             return RedirectToPage("./Index");
         }
     }

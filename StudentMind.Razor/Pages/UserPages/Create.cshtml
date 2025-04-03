@@ -19,11 +19,6 @@
                 <span asp-validation-for="User.FullName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.PhoneNumber" class="control-label"></label>
-                <input asp-for="User.PhoneNumber" class="form-control" />
-                <span asp-validation-for="User.PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="User.Gender" class="control-label"></label>
                 <input asp-for="User.Gender" class="form-control" />
                 <span asp-validation-for="User.Gender" class="text-danger"></span>
@@ -34,28 +29,8 @@
                 <span asp-validation-for="User.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.DateOfBirth" class="control-label"></label>
-                <input asp-for="User.DateOfBirth" class="form-control" />
-                <span asp-validation-for="User.DateOfBirth" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="User.RoleId" class="control-label"></label>
                 <select asp-for="User.RoleId" class ="form-control" asp-items="ViewBag.RoleId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.VerificationToken" class="control-label"></label>
-                <input asp-for="User.VerificationToken" class="form-control" />
-                <span asp-validation-for="User.VerificationToken" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.PasswordResetToken" class="control-label"></label>
-                <input asp-for="User.PasswordResetToken" class="form-control" />
-                <span asp-validation-for="User.PasswordResetToken" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.ResetTokenExpiry" class="control-label"></label>
-                <input asp-for="User.ResetTokenExpiry" class="form-control" />
-                <span asp-validation-for="User.ResetTokenExpiry" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="User.Username" class="control-label"></label>
@@ -71,41 +46,6 @@
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="User.Status" /> @Html.DisplayNameFor(model => model.User.Status)
                 </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.Id" class="control-label"></label>
-                <input asp-for="User.Id" class="form-control" />
-                <span asp-validation-for="User.Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.CreatedBy" class="control-label"></label>
-                <input asp-for="User.CreatedBy" class="form-control" />
-                <span asp-validation-for="User.CreatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.LastUpdatedBy" class="control-label"></label>
-                <input asp-for="User.LastUpdatedBy" class="form-control" />
-                <span asp-validation-for="User.LastUpdatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.DeletedBy" class="control-label"></label>
-                <input asp-for="User.DeletedBy" class="form-control" />
-                <span asp-validation-for="User.DeletedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.CreatedTime" class="control-label"></label>
-                <input asp-for="User.CreatedTime" class="form-control" />
-                <span asp-validation-for="User.CreatedTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.LastUpdatedTime" class="control-label"></label>
-                <input asp-for="User.LastUpdatedTime" class="form-control" />
-                <span asp-validation-for="User.LastUpdatedTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.DeletedTime" class="control-label"></label>
-                <input asp-for="User.DeletedTime" class="form-control" />
-                <span asp-validation-for="User.DeletedTime" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

@@ -37,7 +37,7 @@ namespace StudentMind.Razor.Pages.UserPages
             return Page();
         }
 
-        public async Task<IActionResult> OnPostEditProfileAsync(string? fullName, string? username, string email, string? gender, bool status)
+        public async Task<IActionResult> OnPostEditProfileAsync(string? fullName, string? username, string email, string? gender)
         {
             CurrentUser = await _userService.GetProfileAsync();
             if (CurrentUser == null)
@@ -57,7 +57,7 @@ namespace StudentMind.Razor.Pages.UserPages
                 Username = username,
                 Email = email,
                 Gender = gender,
-                Status = status,
+                Status = true,
                 RoleId = CurrentUser.RoleId // The role doesn't change here
             };
 

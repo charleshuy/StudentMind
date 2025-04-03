@@ -80,13 +80,13 @@
                                 <option value="Other" selected="@(Model.CurrentUser.Gender == "Other")">Other</option>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="Status" class="form-label">Status</label>
-                            <select class="form-select" id="Status" name="Status">
-                                <option value="true" selected="@(Model.CurrentUser.Status)">Active</option>
-                                <option value="false" selected="@(!Model.CurrentUser.Status)">Inactive</option>
-                            </select>
-                        </div>
+                        @* <div class="mb-3"> *@
+                        @*     <label for="Status" class="form-label">Status</label> *@
+                        @*     <select class="form-select" id="Status" name="Status"> *@
+                        @*         <option value="true" selected="@(Model.CurrentUser.Status)">Active</option> *@
+                        @*         <option value="false" selected="@(!Model.CurrentUser.Status)">Inactive</option> *@
+                        @*     </select> *@
+                        @* </div> *@
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </form>
                 </div>

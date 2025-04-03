@@ -47,7 +47,7 @@
                     <i class="fas fa-brain me-2 text-coral"></i>Student Mind
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
@@ -83,29 +83,40 @@
                                     }
                                 </ul>
                             </li>
-                            <!-- Surveys Dropdown  -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link text-white dropdown-toggle" href="#" id="surveysDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Surveys
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="surveysDropdown">
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/surveypages/index">Survey</a></li>
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/questionpages/index">Question</a></li>
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/choicepages/index">Choice</a></li>
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/surveyquestionpages/index">Survey Question</a></li>
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/surveyresponsepages/index">Survey Response</a></li>
-                                </ul>
-                            </li>
-                            <!-- Health Dropdown  -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link text-white dropdown-toggle" href="#" id="healthDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Health
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="healthDropdown">
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/healthscorerulepages/index">Health Score Rule</a></li>
-                                    <li><a class="dropdown-item text-cobalt-blue" asp-page="/studenthealthpages/index">Student Health</a></li>
-                                </ul>
-                            </li>
+                            @if(userRole == "Admin")
+                            {
+                                <!-- Surveys Dropdown  -->
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link text-white dropdown-toggle" href="#" id="surveysDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Surveys
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="surveysDropdown">
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/surveypages/index">Survey</a></li>
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/questionpages/index">Question</a></li>
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/choicepages/index">Choice</a></li>
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/surveyquestionpages/index">Survey Question</a></li>
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/surveyresponsepages/index">Survey Response</a></li>
+                                    </ul>
+                                </li>
+                                <!-- Health Dropdown  -->
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link text-white dropdown-toggle" href="#" id="healthDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Health
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="healthDropdown">
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/healthscorerulepages/index">Health Score Rule</a></li>
+                                        <li><a class="dropdown-item text-cobalt-blue" asp-page="/studenthealthpages/index">Student Health</a></li>
+                                    </ul>
+                                </li>
+                            }
+
+                            @if (userRole == "User")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-page="/takesurvey/index">Take Survey</a>
+                                </li>
+                            }
+
                             <!-- Events Dropdown -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link text-white dropdown-toggle" href="#" id="eventsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
